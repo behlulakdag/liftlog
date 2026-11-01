@@ -3,10 +3,20 @@ import { useState } from 'react'
 import { AppError } from '../api/client'
 import { api } from '../api/endpoints'
 import { queryKeys } from '../api/queryKeys'
-import type { MuscleSets, MuscleStat } from '../api/types'
+import type { Exercise, MuscleSets, MuscleStat } from '../api/types'
 import { todayIso } from '../lib/nutrition'
 import { t } from '../lib/i18n'
-import { bandFor, bandThresholds, foldMuscleStats, formatSets, muscleName, type BandScope, type BodySide, type MapMuscle } from '../lib/muscles'
+import {
+  bandFor,
+  bandThresholds,
+  foldMuscleStats,
+  formatSets,
+  muscleName,
+  suggestedExercises,
+  type BandScope,
+  type BodySide,
+  type MapMuscle,
+} from '../lib/muscles'
 import { BodyMap } from './BodyMap'
 import { CloseIcon } from './Icons'
 
@@ -23,6 +33,8 @@ export function MuscleMapCard() {
     queryKey: [...queryKeys.stats, 'muscles', days, today],
     queryFn: () => api.muscleStats(days, today),
   })
+  // Same cache as the exercise picker; only read once a muscle is tapped, for "the exercises that work it"
+  const exercises = useQuery({ queryKey: queryKeys.exercises, queryFn: api.exercises, staleTime: 5 * 60_000, enabled: selected !== null })
 
   // A server from before the muscle map has no such endpoint: leave the card out
   if (query.error instanceof AppError && query.error.kind === 'notFound') return null
@@ -61,7 +73,8 @@ export function MuscleMapCard() {
         </div>
 
         <div className={empty ? 'muscle-stage empty' : 'muscle-stage'} aria-busy={query.isPending}>
-          <BodyMap side={side} muscles={muscles} scope={days} selected={selected} onSelect={empty ? undefined : toggleMuscle} />
+          {/* Tappable even with no sets: the panel then still lists the exercises that would work the muscle */}
+          <BodyMap side={side} muscles={muscles} scope={days} selected={selected} onSelect={query.isSuccess ? toggleMuscle : undefined} />
         </div>
 
         {query.isError ? (
@@ -80,11 +93,12 @@ export function MuscleMapCard() {
           <MuscleLegend scope={days} />
         )}
 
-        {selected && !empty && (
+        {selected && query.isSuccess && (
           <MuscleDetail
             muscle={selected}
             stat={muscles.get(selected) ?? { muscle: selected, sets: 0, exercises: [] }}
             scope={days}
+            catalog={exercises.data ?? []}
             onClose={() => setSelected(null)}
           />
         )}
@@ -131,8 +145,17 @@ export function MuscleLegend({ scope }: { scope: BandScope }) {
   )
 }
 
-function MuscleDetail({ muscle, stat, scope, onClose }: { muscle: MapMuscle; stat: MuscleStat; scope: BandScope; onClose: () => void }) {
+const SUGGESTED_EXERCISES = 6
+
+function MuscleDetail({ muscle, stat, scope, catalog, onClose }: {
+  muscle: MapMuscle
+  stat: MuscleStat
+  scope: BandScope
+  catalog: readonly Exercise[]
+  onClose: () => void
+}) {
   const name = muscleName(muscle)
+  const suggested = suggestedExercises(catalog, muscle, SUGGESTED_EXERCISES)
   return (
     <div className="muscle-detail" data-band={bandFor(stat.sets, scope)} role="region" aria-label={name} data-testid="muscle-detail">
       <div className="muscle-detail-head">
@@ -148,6 +171,17 @@ function MuscleDetail({ muscle, stat, scope, onClose }: { muscle: MapMuscle; sta
             </li>
           ))}
         </ul>
+      )}
+      {suggested.shown.length > 0 && (
+        <section className="muscle-detail-suggest" aria-label={t.muscleExercisesTitle} data-testid="muscle-suggestions">
+          <h3>{t.muscleExercisesTitle}</h3>
+          <ul className="muscle-suggest-list">
+            {suggested.shown.map((exercise) => (
+              <li key={exercise.id}>{exercise.name}</li>
+            ))}
+          </ul>
+          {suggested.more > 0 && <p className="muscle-suggest-more">{t.muscleExercisesMore(suggested.more)}</p>}
+        </section>
       )}
       <button className="muscle-detail-close" onClick={onClose} aria-label={t.close}>
         <CloseIcon size={18} />

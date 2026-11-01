@@ -3,7 +3,7 @@ import { cleanup, render, screen, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import type { ReactNode } from 'react'
 import { afterEach, describe, expect, it, vi } from 'vitest'
-import type { MuscleStats } from '../api/types'
+import type { Exercise, MuscleStats } from '../api/types'
 import { t } from '../lib/i18n'
 import { formatSets } from '../lib/muscles'
 import { todayIso } from '../lib/nutrition'
@@ -22,6 +22,29 @@ const week: MuscleStats = {
     { muscle: 'ADDUCTORS', sets: 1.5, exercises: [{ name: 'Squat', sets: 1.5 }] },
   ],
 }
+
+const primary = (muscle: string) => ({ muscle, role: 'PRIMARY' as const })
+const secondary = (muscle: string) => ({ muscle, role: 'SECONDARY' as const })
+const exercise = (id: number, name: string, equipment: Exercise['equipment'], muscles: Exercise['muscles']): Exercise => ({
+  id,
+  name,
+  muscleGroup: null,
+  custom: false,
+  bodyweight: equipment === 'BODYWEIGHT',
+  equipment,
+  muscles,
+})
+const catalog: Exercise[] = [
+  exercise(1, 'Bench Press', 'BARBELL', [primary('CHEST'), secondary('TRICEPS')]),
+  exercise(2, 'Incline Bench Press', 'BARBELL', [primary('CHEST')]),
+  exercise(3, 'Decline Bench Press', 'BARBELL', [primary('CHEST')]),
+  exercise(4, 'Dumbbell Fly', 'DUMBBELL', [primary('CHEST')]),
+  exercise(5, 'Pec Deck', 'MACHINE', [primary('CHEST')]),
+  exercise(6, 'Cable Crossover', 'CABLE', [primary('CHEST')]),
+  exercise(7, 'Push-up', 'BODYWEIGHT', [primary('CHEST')]),
+  exercise(8, 'Overhead Press', 'BARBELL', [primary('FRONT_DELTS'), secondary('CHEST')]),
+  exercise(9, 'Squat', 'BARBELL', [primary('QUADS')]),
+]
 
 const empty: MuscleStats = { days: 30, from: '2026-09-20', to: '2026-10-19', muscles: [] }
 
@@ -119,8 +142,33 @@ describe('muscle map card', () => {
     expect(await screen.findByText(t.muscleMapEmptyTitle(30))).toBeInTheDocument()
     expect(urls.at(-1)!.searchParams.get('days')).toBe('30')
     expect(screen.queryByText(t.muscleBandLow)).not.toBeInTheDocument()
-    // Nothing to tap: every muscle is a plain picture
-    expect(screen.queryByRole('button', { name: new RegExp(t.muscleNames.CHEST) })).not.toBeInTheDocument()
+    // Still tappable: the panel says "not trained" and which exercises would work it
+    await user.click(screen.getByRole('button', { name: new RegExp(t.muscleNames.CHEST) }))
+    expect(within(screen.getByTestId('muscle-detail')).getByText(t.muscleNotTrained)).toBeInTheDocument()
+  })
+
+  it('lists the exercises that work the tapped muscle, primary ones only, staples first and varied by equipment', async () => {
+    const urls = stubServer({ '/api/v1/stats/muscles': muscleRoute, '/api/v1/exercises': () => jsonResponse(200, catalog) })
+    const user = renderWithClient(<MuscleMapCard />)
+    await screen.findByRole('button', { name: new RegExp(t.muscleNames.CHEST) })
+    // The catalog is only asked for once a muscle is tapped
+    expect(urls.some((url) => url.pathname === '/api/v1/exercises')).toBe(false)
+
+    await user.click(screen.getByRole('button', { name: new RegExp(t.muscleNames.CHEST) }))
+
+    const suggestions = within(await screen.findByTestId('muscle-suggestions'))
+    expect(suggestions.getByText(t.muscleExercisesTitle)).toBeInTheDocument()
+    expect(suggestions.getAllByRole('listitem').map((li) => li.textContent)).toEqual([
+      'Bench Press',
+      'Pec Deck',
+      'Dumbbell Fly',
+      'Push-up',
+      'Cable Crossover',
+      'Incline Bench Press',
+    ])
+    // 7 primaries, 6 shown; Overhead Press only helps the chest and Squat does not touch it
+    expect(suggestions.getByText(t.muscleExercisesMore(1))).toBeInTheDocument()
+    expect(suggestions.queryByText('Overhead Press')).not.toBeInTheDocument()
   })
 
   it('leaves the card out on a server without the endpoint', async () => {

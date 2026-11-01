@@ -575,3 +575,28 @@ yüzünden her yeni istek limiter'dan geçiyor ve sonuçlar saklanıp tembelce y
   yok" yazıyor. Flex rütbesi olmayan oyuncuda düğmeler görünmüyor, grafik eskisi gibi.
 - Temizlik: birleşmiş dallar ve ajan çalışma klasörleri silindi; yalnızca main kaldı.
 - Doğrulama: web 485 test, tsc, lint, build; Docker'da sahte Riot verisiyle 375 px'te iki kuyruk da denendi.
+
+## 2026-11-01 — Daha fazla hareket ve kas haritasından hareket bulma (`feature/more-exercises`)
+
+- **Backend:** `V25__more_exercises.sql` hazır hareketleri 76 → 256 yaptı (+180): kalistenik 73 (negatif/geniş/nötr/
+  archer/L-sit barfiks, ring dip, şınav çeşitleri, front/back lever, planche, nordic curl, plank çeşitleri…), makine 40
+  (Hammer Strength serisi, Smith çeşitleri, pendulum/belt/V-squat, GHD…), kablo 26, barbell 21, dumbbell 20. Her birinin
+  `exercise_muscles` satırları (ana/yardımcı) var. Tek SQL ifadesi: olan isim kaslarıyla birlikte atlanıyor, tekrar
+  çalışınca 0 satır. Kalistenikler V5 gibi `bodyweight = true`, ekipman `BODYWEIGHT`. Yeni endpoint yok.
+- **Web — hareket seçici** (antrenmana ve rutine ekleme aynı bileşen): aramanın sağında "Kas haritası" düğmesi; ön ve
+  arka yan yana, altında kas adı çipleri. Kasa dokununca önce "Ana kas", sonra "Yardımcı" hareketler; arama ve
+  Tümü/Makine/Kalistenik süzgeci birlikte çalışıyor. "Tüm hareketler", aynı kasa tekrar dokunmak ya da haritayı kapatmak
+  sıfırlıyor.
+- **Web — İlerleme kartı:** kas paneline "Bu kası çalıştıran hareketler" (6 ana hareket, ekipmana göre karışık, önce
+  temel hareketler; katalog yalnızca kasa dokununca isteniyor). Boş dönemde de kaslara dokunulabiliyor.
+- **Dokunma:** kasların altında görünmez geniş kenar (ince ön kol/baldır kolay seçiliyor), `touch-action: manipulation`,
+  `.body-map` alt sekme kaydırmasının dışında.
+- Doğrulama: backend 332 test (`mvnw verify`, yeni `ExerciseCatalogIntegrationTest`), web 495 test, tsc, lint, build;
+  geçici Postgres (5499) + API (8099) ile 375 px'te denendi: harita, kalça → 43 ana kas hareketi, ön kolun 2 px
+  dışına dokunmak da ön kolu seçiyor, sayfa yatay taşmıyor.
+- `FakeRiotClientTest.namedPlayersAreAlwaysOrNeverInALiveGame` saat penceresinin ilk ~3 dakikasında düşüyordu
+  (sahte maçın başlangıcı geleceğe düşüyordu); başlangıç artık pencereden önce, düzeltildi.
+
+**Sıradaki adımlar:**
+1. PR aç; canlıda V25'i kontrol et.
+2. Android'deki hareket seçiciye de kas haritası modu.

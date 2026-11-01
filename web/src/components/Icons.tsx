@@ -19,6 +19,17 @@ export function DumbbellIcon({ size }: { size?: number }) {
   )
 }
 
+/** A small standing figure with a highlighted chest, for the body-map mode of the exercise picker. */
+export function BodyFigureIcon({ size = 16 }: { size?: number }) {
+  return (
+    <Icon size={size}>
+      <circle cx="12" cy="4" r="2" />
+      <path d="M7 8h10l-1 6h-8zM9 14l-1 8M15 14l1 8M7 8l-3 6M17 8l3 6" />
+      <path d="M10 10h4" />
+    </Icon>
+  )
+}
+
 export function PlateIcon({ size }: { size?: number }) {
   return (
     <Icon size={size}>

@@ -1,0 +1,223 @@
+-- More built-in exercises: calisthenics progressions, the named machines and cable stations of a real gym, and the
+-- free-weight lifts that were still missing. Names stay the English gym names people say on the floor.
+--
+-- One statement: the seed list feeds the exercise insert, and the rows it RETURNS get their muscles, so a name that
+-- already exists (a built-in from V2/V5/V16) is skipped together with its muscles, and running this again adds
+-- nothing. Muscles are space-separated lists of the V17 ids (ADDUCTORS / ABDUCTORS fold into QUADS / GLUTES on the
+-- map). Bodyweight moves are marked like V5 did (bodyweight = true, equipment BODYWEIGHT): the logged weight is the
+-- added load and statistics add the user's body weight.
+WITH seed (name, muscle_group, equipment, bodyweight, primaries, secondaries) AS (VALUES
+    -- Calisthenics: pulling
+    ('Negative Pull-up',                 'Back',      'BODYWEIGHT', true,  'LATS',                 'BICEPS REAR_DELTS FOREARMS'),
+    ('Band-Assisted Pull-up',            'Back',      'BODYWEIGHT', true,  'LATS',                 'BICEPS REAR_DELTS'),
+    ('Neutral-Grip Pull-up',             'Back',      'BODYWEIGHT', true,  'LATS',                 'BICEPS FOREARMS REAR_DELTS'),
+    ('Wide-Grip Pull-up',                'Back',      'BODYWEIGHT', true,  'LATS',                 'REAR_DELTS TRAPS BICEPS'),
+    ('Chest-to-Bar Pull-up',             'Back',      'BODYWEIGHT', true,  'LATS',                 'TRAPS REAR_DELTS BICEPS'),
+    ('Archer Pull-up',                   'Back',      'BODYWEIGHT', true,  'LATS',                 'BICEPS REAR_DELTS FOREARMS'),
+    ('Commando Pull-up',                 'Back',      'BODYWEIGHT', true,  'LATS BICEPS',          'OBLIQUES FOREARMS'),
+    -- The L hold makes the abs and the hip flexor (rectus femoris, drawn as QUADS) work the whole set
+    ('L-sit Pull-up',                    'Back',      'BODYWEIGHT', true,  'LATS ABS',             'BICEPS QUADS'),
+    ('Scapular Pull-up',                 'Back',      'BODYWEIGHT', true,  'TRAPS',                'LATS'),
+    ('Dead Hang',                        'Back',      'BODYWEIGHT', true,  'FOREARMS',             'LATS'),
+    ('Ring Row',                         'Back',      'BODYWEIGHT', true,  'LATS',                 'TRAPS REAR_DELTS BICEPS'),
+    ('Tuck Front Lever',                 'Back',      'BODYWEIGHT', true,  'LATS ABS',             'REAR_DELTS TRICEPS'),
+    ('Advanced Tuck Front Lever',        'Back',      'BODYWEIGHT', true,  'LATS ABS',             'REAR_DELTS TRICEPS'),
+    ('Front Lever',                      'Back',      'BODYWEIGHT', true,  'LATS ABS',             'REAR_DELTS TRICEPS OBLIQUES'),
+    -- Arms behind the body: the straight-arm biceps and front delts hold it, chest and lower back keep the line
+    ('Back Lever',                       'Back',      'BODYWEIGHT', true,  'FRONT_DELTS BICEPS',   'CHEST LATS LOWER_BACK ABS'),
+    ('Superman',                         'Back',      'BODYWEIGHT', true,  'LOWER_BACK',           'GLUTES'),
+    -- Calisthenics: pushing
+    ('Bench Dip',                        'Arms',      'BODYWEIGHT', true,  'TRICEPS',              'CHEST FRONT_DELTS'),
+    ('Ring Dip',                         'Chest',     'BODYWEIGHT', true,  'CHEST TRICEPS',        'FRONT_DELTS ABS'),
+    ('Straight Bar Dip',                 'Chest',     'BODYWEIGHT', true,  'CHEST TRICEPS',        'FRONT_DELTS'),
+    ('Knee Push-up',                     'Chest',     'BODYWEIGHT', true,  'CHEST',                'FRONT_DELTS TRICEPS'),
+    ('Incline Push-up',                  'Chest',     'BODYWEIGHT', true,  'CHEST',                'FRONT_DELTS TRICEPS'),
+    ('Decline Push-up',                  'Chest',     'BODYWEIGHT', true,  'CHEST FRONT_DELTS',    'TRICEPS'),
+    ('Wide Push-up',                     'Chest',     'BODYWEIGHT', true,  'CHEST',                'FRONT_DELTS TRICEPS'),
+    ('Diamond Push-up',                  'Arms',      'BODYWEIGHT', true,  'TRICEPS CHEST',        'FRONT_DELTS'),
+    ('Archer Push-up',                   'Chest',     'BODYWEIGHT', true,  'CHEST',                'FRONT_DELTS TRICEPS ABS'),
+    ('Clap Push-up',                     'Chest',     'BODYWEIGHT', true,  'CHEST',                'FRONT_DELTS TRICEPS'),
+    ('Ring Push-up',                     'Chest',     'BODYWEIGHT', true,  'CHEST',                'FRONT_DELTS TRICEPS ABS'),
+    ('One-Arm Push-up',                  'Chest',     'BODYWEIGHT', true,  'CHEST TRICEPS',        'FRONT_DELTS OBLIQUES ABS'),
+    -- Hands by the hips and leaning forward: the front delts carry it, the biceps are stretched straight
+    ('Pseudo Planche Push-up',           'Shoulders', 'BODYWEIGHT', true,  'FRONT_DELTS CHEST',    'TRICEPS ABS BICEPS'),
+    ('Elevated Pike Push-up',            'Shoulders', 'BODYWEIGHT', true,  'FRONT_DELTS',          'SIDE_DELTS TRICEPS TRAPS'),
+    ('Wall Handstand Hold',              'Shoulders', 'BODYWEIGHT', true,  'FRONT_DELTS',          'TRAPS TRICEPS ABS'),
+    ('Planche Lean',                     'Shoulders', 'BODYWEIGHT', true,  'FRONT_DELTS',          'CHEST BICEPS ABS'),
+    ('Tuck Planche',                     'Shoulders', 'BODYWEIGHT', true,  'FRONT_DELTS',          'CHEST TRICEPS ABS'),
+    -- Calisthenics: legs
+    ('Bodyweight Squat',                 'Legs',      'BODYWEIGHT', true,  'QUADS GLUTES',         'HAMSTRINGS'),
+    ('Jump Squat',                       'Legs',      'BODYWEIGHT', true,  'QUADS GLUTES',         'CALVES HAMSTRINGS'),
+    ('Shrimp Squat',                     'Legs',      'BODYWEIGHT', true,  'QUADS GLUTES',         'HAMSTRINGS'),
+    ('Sissy Squat',                      'Legs',      'BODYWEIGHT', true,  'QUADS',                'ABS'),
+    ('Cossack Squat',                    'Legs',      'BODYWEIGHT', true,  'QUADS GLUTES ADDUCTORS', 'HAMSTRINGS'),
+    ('Walking Lunge',                    'Legs',      'BODYWEIGHT', true,  'QUADS GLUTES',         'HAMSTRINGS ADDUCTORS'),
+    ('Reverse Lunge',                    'Legs',      'BODYWEIGHT', true,  'GLUTES QUADS',         'HAMSTRINGS'),
+    ('Lateral Lunge',                    'Legs',      'BODYWEIGHT', true,  'QUADS GLUTES ADDUCTORS', 'HAMSTRINGS'),
+    ('Jumping Lunge',                    'Legs',      'BODYWEIGHT', true,  'QUADS GLUTES',         'CALVES HAMSTRINGS'),
+    ('Step-up',                          'Legs',      'BODYWEIGHT', true,  'QUADS GLUTES',         'HAMSTRINGS'),
+    ('Box Jump',                         'Legs',      'BODYWEIGHT', true,  'QUADS GLUTES',         'CALVES HAMSTRINGS'),
+    ('Wall Sit',                         'Legs',      'BODYWEIGHT', true,  'QUADS',                'GLUTES'),
+    ('Nordic Curl',                      'Legs',      'BODYWEIGHT', true,  'HAMSTRINGS',           'GLUTES CALVES'),
+    ('Glute Bridge',                     'Legs',      'BODYWEIGHT', true,  'GLUTES',               'HAMSTRINGS'),
+    ('Single-Leg Glute Bridge',          'Legs',      'BODYWEIGHT', true,  'GLUTES',               'HAMSTRINGS ABS'),
+    ('Bodyweight Hip Thrust',            'Legs',      'BODYWEIGHT', true,  'GLUTES',               'HAMSTRINGS'),
+    ('Bodyweight Calf Raise',            'Legs',      'BODYWEIGHT', true,  'CALVES',               ''),
+    ('Single-Leg Calf Raise',            'Legs',      'BODYWEIGHT', true,  'CALVES',               ''),
+    -- Calisthenics: core and full body
+    ('Hanging Knee Raise',               'Core',      'BODYWEIGHT', true,  'ABS',                  'OBLIQUES FOREARMS'),
+    ('Captain''s Chair Leg Raise',       'Core',      'BODYWEIGHT', true,  'ABS',                  'OBLIQUES'),
+    ('Toes-to-Bar',                      'Core',      'BODYWEIGHT', true,  'ABS',                  'OBLIQUES LATS FOREARMS'),
+    ('Windshield Wiper',                 'Core',      'BODYWEIGHT', true,  'OBLIQUES ABS',         'FOREARMS'),
+    ('Dragon Flag',                      'Core',      'BODYWEIGHT', true,  'ABS',                  'OBLIQUES LATS'),
+    ('Hollow Body Hold',                 'Core',      'BODYWEIGHT', true,  'ABS',                  'OBLIQUES'),
+    ('Plank',                            'Core',      'BODYWEIGHT', true,  'ABS',                  'OBLIQUES FRONT_DELTS'),
+    ('RKC Plank',                        'Core',      'BODYWEIGHT', true,  'ABS',                  'OBLIQUES GLUTES'),
+    ('Side Plank',                       'Core',      'BODYWEIGHT', true,  'OBLIQUES',             'ABS GLUTES'),
+    ('Plank Shoulder Tap',               'Core',      'BODYWEIGHT', true,  'ABS OBLIQUES',         'FRONT_DELTS'),
+    ('Ab Wheel Rollout',                 'Core',      'BODYWEIGHT', true,  'ABS',                  'LATS OBLIQUES'),
+    ('Crunch',                           'Core',      'BODYWEIGHT', true,  'ABS',                  ''),
+    ('Sit-up',                           'Core',      'BODYWEIGHT', true,  'ABS',                  'OBLIQUES'),
+    ('Bicycle Crunch',                   'Core',      'BODYWEIGHT', true,  'OBLIQUES ABS',         ''),
+    ('Russian Twist',                    'Core',      'BODYWEIGHT', true,  'OBLIQUES',             'ABS'),
+    ('Lying Leg Raise',                  'Core',      'BODYWEIGHT', true,  'ABS',                  'OBLIQUES'),
+    ('Reverse Crunch',                   'Core',      'BODYWEIGHT', true,  'ABS',                  ''),
+    ('V-up',                             'Core',      'BODYWEIGHT', true,  'ABS',                  'OBLIQUES'),
+    ('Dead Bug',                         'Core',      'BODYWEIGHT', true,  'ABS',                  'OBLIQUES'),
+    ('Bird Dog',                         'Core',      'BODYWEIGHT', true,  'LOWER_BACK',           'GLUTES ABS'),
+    ('Mountain Climber',                 'Core',      'BODYWEIGHT', true,  'ABS',                  'QUADS FRONT_DELTS'),
+    ('Burpee',                           'Legs',      'BODYWEIGHT', true,  'QUADS CHEST',          'GLUTES FRONT_DELTS TRICEPS ABS CALVES'),
+
+    -- Machines, by the names on the plates in most gyms
+    ('Chest-Supported Row Machine',      'Back',      'MACHINE',    false, 'LATS',                 'TRAPS REAR_DELTS BICEPS'),
+    ('Chest-Supported T-Bar Row',        'Back',      'MACHINE',    false, 'LATS',                 'TRAPS REAR_DELTS BICEPS'),
+    ('Hammer Strength Iso-Lateral Row',  'Back',      'MACHINE',    false, 'LATS',                 'TRAPS REAR_DELTS BICEPS'),
+    ('Hammer Strength High Row',         'Back',      'MACHINE',    false, 'LATS',                 'TRAPS REAR_DELTS BICEPS'),
+    ('Hammer Strength Low Row',          'Back',      'MACHINE',    false, 'LATS',                 'TRAPS BICEPS REAR_DELTS'),
+    ('Hammer Strength Front Pulldown',   'Back',      'MACHINE',    false, 'LATS',                 'BICEPS REAR_DELTS'),
+    ('Pullover Machine',                 'Back',      'MACHINE',    false, 'LATS',                 'CHEST TRICEPS'),
+    ('Machine Shrug',                    'Back',      'MACHINE',    false, 'TRAPS',                'FOREARMS'),
+    ('45° Back Extension',               'Back',      'MACHINE',    false, 'LOWER_BACK',           'GLUTES HAMSTRINGS'),
+    ('Hammer Strength Chest Press',      'Chest',     'MACHINE',    false, 'CHEST',                'FRONT_DELTS TRICEPS'),
+    ('Hammer Strength Incline Press',    'Chest',     'MACHINE',    false, 'CHEST',                'FRONT_DELTS TRICEPS'),
+    ('Hammer Strength Decline Press',    'Chest',     'MACHINE',    false, 'CHEST',                'TRICEPS FRONT_DELTS'),
+    ('Assisted Dip Machine',             'Chest',     'MACHINE',    false, 'CHEST TRICEPS',        'FRONT_DELTS'),
+    ('Smith Machine Incline Bench Press', 'Chest',    'MACHINE',    false, 'CHEST',                'FRONT_DELTS TRICEPS'),
+    ('Hammer Strength Shoulder Press',   'Shoulders', 'MACHINE',    false, 'FRONT_DELTS',          'SIDE_DELTS TRICEPS'),
+    ('Smith Machine Shoulder Press',     'Shoulders', 'MACHINE',    false, 'FRONT_DELTS',          'SIDE_DELTS TRICEPS'),
+    ('Lateral Raise Machine',            'Shoulders', 'MACHINE',    false, 'SIDE_DELTS',           'TRAPS'),
+    ('Smith Machine Row',                'Back',      'MACHINE',    false, 'LATS',                 'TRAPS REAR_DELTS BICEPS LOWER_BACK'),
+    ('Smith Machine Shrug',              'Back',      'MACHINE',    false, 'TRAPS',                'FOREARMS'),
+    ('Smith Machine Close-Grip Bench Press', 'Arms',  'MACHINE',    false, 'TRICEPS CHEST',        'FRONT_DELTS'),
+    ('Smith Machine Romanian Deadlift',  'Legs',      'MACHINE',    false, 'HAMSTRINGS GLUTES',    'LOWER_BACK'),
+    ('Smith Machine Split Squat',        'Legs',      'MACHINE',    false, 'QUADS GLUTES',         'HAMSTRINGS ADDUCTORS'),
+    ('Smith Machine Hip Thrust',         'Legs',      'MACHINE',    false, 'GLUTES',               'HAMSTRINGS'),
+    ('Smith Machine Calf Raise',         'Legs',      'MACHINE',    false, 'CALVES',               ''),
+    ('Horizontal Leg Press',             'Legs',      'MACHINE',    false, 'QUADS',                'GLUTES ADDUCTORS'),
+    ('Single-Leg Leg Press',             'Legs',      'MACHINE',    false, 'QUADS',                'GLUTES ADDUCTORS'),
+    ('Leg Press Calf Raise',             'Legs',      'MACHINE',    false, 'CALVES',               ''),
+    ('Pendulum Squat',                   'Legs',      'MACHINE',    false, 'QUADS',                'GLUTES ADDUCTORS'),
+    ('Belt Squat',                       'Legs',      'MACHINE',    false, 'QUADS GLUTES',         'ADDUCTORS'),
+    ('V-Squat Machine',                  'Legs',      'MACHINE',    false, 'QUADS',                'GLUTES'),
+    -- Facing the pad, the hips sit back: more glutes and hamstrings than the regular hack squat
+    ('Reverse Hack Squat',               'Legs',      'MACHINE',    false, 'GLUTES QUADS',         'HAMSTRINGS'),
+    ('Standing Leg Curl',                'Legs',      'MACHINE',    false, 'HAMSTRINGS',           'CALVES'),
+    ('Glute Kickback Machine',           'Legs',      'MACHINE',    false, 'GLUTES',               'HAMSTRINGS'),
+    ('Glute-Ham Raise',                  'Legs',      'MACHINE',    false, 'HAMSTRINGS',           'GLUTES CALVES'),
+    ('Reverse Hyperextension',           'Legs',      'MACHINE',    false, 'GLUTES',               'HAMSTRINGS LOWER_BACK'),
+    ('Donkey Calf Raise Machine',        'Legs',      'MACHINE',    false, 'CALVES',               ''),
+    ('Machine Biceps Curl',              'Arms',      'MACHINE',    false, 'BICEPS',               'FOREARMS'),
+    ('Machine Triceps Extension',        'Arms',      'MACHINE',    false, 'TRICEPS',              ''),
+    ('Rotary Torso Machine',             'Core',      'MACHINE',    false, 'OBLIQUES',             'ABS'),
+    -- The hips are hooked under the pads, so the hip flexor (rectus femoris) works along with the abs
+    ('GHD Sit-up',                       'Core',      'MACHINE',    false, 'ABS',                  'QUADS OBLIQUES'),
+
+    -- Cable stations
+    ('Wide-Grip Lat Pulldown',           'Back',      'CABLE',      false, 'LATS',                 'REAR_DELTS BICEPS TRAPS'),
+    ('Neutral-Grip Lat Pulldown',        'Back',      'CABLE',      false, 'LATS',                 'BICEPS REAR_DELTS'),
+    ('Reverse-Grip Lat Pulldown',        'Back',      'CABLE',      false, 'LATS',                 'BICEPS REAR_DELTS'),
+    ('Single-Arm Lat Pulldown',          'Back',      'CABLE',      false, 'LATS',                 'BICEPS'),
+    ('Wide-Grip Seated Cable Row',       'Back',      'CABLE',      false, 'LATS',                 'REAR_DELTS TRAPS BICEPS'),
+    ('Cable Shrug',                      'Back',      'CABLE',      false, 'TRAPS',                'FOREARMS'),
+    ('Cable Crossover',                  'Chest',     'CABLE',      false, 'CHEST',                'FRONT_DELTS'),
+    ('High-to-Low Cable Fly',            'Chest',     'CABLE',      false, 'CHEST',                'FRONT_DELTS'),
+    ('Cable Chest Press',                'Chest',     'CABLE',      false, 'CHEST',                'FRONT_DELTS TRICEPS'),
+    ('Cable Front Raise',                'Shoulders', 'CABLE',      false, 'FRONT_DELTS',          'SIDE_DELTS'),
+    ('Cable Rear Delt Fly',              'Shoulders', 'CABLE',      false, 'REAR_DELTS',           'TRAPS'),
+    ('Cable Y-Raise',                    'Shoulders', 'CABLE',      false, 'SIDE_DELTS',           'TRAPS REAR_DELTS'),
+    ('Cable Upright Row',                'Shoulders', 'CABLE',      false, 'SIDE_DELTS TRAPS',     'BICEPS'),
+    -- The rotator cuff has no region on the map; the rear delt next to it does the same turning-out
+    ('Cable External Rotation',          'Shoulders', 'CABLE',      false, 'REAR_DELTS',           ''),
+    ('Rope Hammer Curl',                 'Arms',      'CABLE',      false, 'BICEPS FOREARMS',      ''),
+    ('Bayesian Cable Curl',              'Arms',      'CABLE',      false, 'BICEPS',               ''),
+    ('Cable Preacher Curl',              'Arms',      'CABLE',      false, 'BICEPS',               ''),
+    ('Cable Reverse Curl',               'Arms',      'CABLE',      false, 'FOREARMS',             'BICEPS'),
+    ('V-Bar Triceps Pushdown',           'Arms',      'CABLE',      false, 'TRICEPS',              ''),
+    ('Reverse-Grip Triceps Pushdown',    'Arms',      'CABLE',      false, 'TRICEPS',              'FOREARMS'),
+    ('Single-Arm Cable Pushdown',        'Arms',      'CABLE',      false, 'TRICEPS',              ''),
+    ('Cable Triceps Kickback',           'Arms',      'CABLE',      false, 'TRICEPS',              ''),
+    ('Cable Woodchopper',                'Core',      'CABLE',      false, 'OBLIQUES',             'ABS'),
+    ('Pallof Press',                     'Core',      'CABLE',      false, 'OBLIQUES',             'ABS'),
+    ('Cable Hip Abduction',              'Legs',      'CABLE',      false, 'GLUTES',               'ABDUCTORS'),
+    ('Cable Hip Adduction',              'Legs',      'CABLE',      false, 'ADDUCTORS',            ''),
+
+    -- Barbell lifts that were missing
+    ('Sumo Deadlift',                    'Back',      'BARBELL',    false, 'GLUTES QUADS HAMSTRINGS', 'ADDUCTORS LOWER_BACK TRAPS FOREARMS'),
+    ('Trap Bar Deadlift',                'Legs',      'BARBELL',    false, 'QUADS GLUTES HAMSTRINGS', 'LOWER_BACK TRAPS FOREARMS'),
+    ('Stiff-Leg Deadlift',               'Legs',      'BARBELL',    false, 'HAMSTRINGS',           'GLUTES LOWER_BACK'),
+    ('Rack Pull',                        'Back',      'BARBELL',    false, 'LOWER_BACK TRAPS',     'GLUTES LATS FOREARMS'),
+    ('Good Morning',                     'Legs',      'BARBELL',    false, 'HAMSTRINGS LOWER_BACK', 'GLUTES'),
+    ('Barbell Hip Thrust',               'Legs',      'BARBELL',    false, 'GLUTES',               'HAMSTRINGS'),
+    ('Barbell Lunge',                    'Legs',      'BARBELL',    false, 'QUADS GLUTES',         'HAMSTRINGS ADDUCTORS'),
+    ('Power Clean',                      'Legs',      'BARBELL',    false, 'HAMSTRINGS GLUTES TRAPS', 'QUADS CALVES LOWER_BACK FOREARMS'),
+    ('Landmine Squat',                   'Legs',      'BARBELL',    false, 'QUADS GLUTES',         'ABS'),
+    ('Pendlay Row',                      'Back',      'BARBELL',    false, 'LATS',                 'TRAPS REAR_DELTS BICEPS LOWER_BACK'),
+    ('Landmine Row',                     'Back',      'BARBELL',    false, 'LATS',                 'TRAPS BICEPS'),
+    ('Barbell Shrug',                    'Back',      'BARBELL',    false, 'TRAPS',                'FOREARMS'),
+    ('Decline Bench Press',              'Chest',     'BARBELL',    false, 'CHEST',                'TRICEPS FRONT_DELTS'),
+    ('Close-Grip Bench Press',           'Arms',      'BARBELL',    false, 'TRICEPS CHEST',        'FRONT_DELTS'),
+    ('Landmine Press',                   'Shoulders', 'BARBELL',    false, 'FRONT_DELTS CHEST',    'TRICEPS'),
+    ('Push Press',                       'Shoulders', 'BARBELL',    false, 'FRONT_DELTS',          'SIDE_DELTS TRICEPS QUADS'),
+    ('Upright Row',                      'Shoulders', 'BARBELL',    false, 'SIDE_DELTS TRAPS',     'BICEPS'),
+    ('EZ-Bar Curl',                      'Arms',      'BARBELL',    false, 'BICEPS',               'FOREARMS'),
+    ('EZ-Bar Preacher Curl',             'Arms',      'BARBELL',    false, 'BICEPS',               ''),
+    ('Reverse Barbell Curl',             'Arms',      'BARBELL',    false, 'FOREARMS BICEPS',      ''),
+    ('Barbell Wrist Curl',               'Arms',      'BARBELL',    false, 'FOREARMS',             ''),
+
+    -- Dumbbell lifts that were missing
+    ('Arnold Press',                     'Shoulders', 'DUMBBELL',   false, 'FRONT_DELTS',          'SIDE_DELTS TRICEPS'),
+    ('Dumbbell Front Raise',             'Shoulders', 'DUMBBELL',   false, 'FRONT_DELTS',          'SIDE_DELTS'),
+    ('Dumbbell Rear Delt Fly',           'Shoulders', 'DUMBBELL',   false, 'REAR_DELTS',           'TRAPS'),
+    ('Dumbbell Shrug',                   'Back',      'DUMBBELL',   false, 'TRAPS',                'FOREARMS'),
+    ('Chest-Supported Dumbbell Row',     'Back',      'DUMBBELL',   false, 'LATS',                 'TRAPS REAR_DELTS BICEPS'),
+    ('Dumbbell Pullover',                'Chest',     'DUMBBELL',   false, 'CHEST LATS',           'TRICEPS'),
+    ('Incline Dumbbell Fly',             'Chest',     'DUMBBELL',   false, 'CHEST',                'FRONT_DELTS'),
+    ('Dumbbell Romanian Deadlift',       'Legs',      'DUMBBELL',   false, 'HAMSTRINGS GLUTES',    'LOWER_BACK FOREARMS'),
+    ('Single-Leg Romanian Deadlift',     'Legs',      'DUMBBELL',   false, 'HAMSTRINGS GLUTES',    'LOWER_BACK'),
+    ('Dumbbell Bulgarian Split Squat',   'Legs',      'DUMBBELL',   false, 'QUADS GLUTES',         'HAMSTRINGS ADDUCTORS'),
+    ('Dumbbell Step-up',                 'Legs',      'DUMBBELL',   false, 'QUADS GLUTES',         'HAMSTRINGS'),
+    ('Dumbbell Sumo Squat',              'Legs',      'DUMBBELL',   false, 'QUADS GLUTES ADDUCTORS', 'HAMSTRINGS'),
+    ('Incline Dumbbell Curl',            'Arms',      'DUMBBELL',   false, 'BICEPS',               ''),
+    ('Concentration Curl',               'Arms',      'DUMBBELL',   false, 'BICEPS',               ''),
+    ('Dumbbell Preacher Curl',           'Arms',      'DUMBBELL',   false, 'BICEPS',               ''),
+    ('Zottman Curl',                     'Arms',      'DUMBBELL',   false, 'BICEPS FOREARMS',      ''),
+    ('Overhead Dumbbell Triceps Extension', 'Arms',   'DUMBBELL',   false, 'TRICEPS',              ''),
+    ('Dumbbell Triceps Kickback',        'Arms',      'DUMBBELL',   false, 'TRICEPS',              ''),
+    ('Dumbbell Skull Crusher',           'Arms',      'DUMBBELL',   false, 'TRICEPS',              ''),
+    ('Farmer''s Walk',                   'Arms',      'DUMBBELL',   false, 'FOREARMS TRAPS',       'ABS QUADS')
+),
+added AS (
+    INSERT INTO exercises (name, muscle_group, equipment, bodyweight)
+    SELECT s.name, s.muscle_group, s.equipment, s.bodyweight
+    FROM seed s
+    -- Case-insensitive, so "Chin-Up" next to an old "Chin-up" would also be skipped
+    WHERE NOT EXISTS (SELECT 1 FROM exercises e WHERE e.user_id IS NULL AND lower(e.name) = lower(s.name))
+    RETURNING id, name
+)
+INSERT INTO exercise_muscles (exercise_id, muscle, role)
+SELECT a.id, muscle, 'PRIMARY'
+FROM added a JOIN seed s ON s.name = a.name, unnest(string_to_array(s.primaries, ' ')) AS muscle
+UNION ALL
+SELECT a.id, muscle, 'SECONDARY'
+FROM added a JOIN seed s ON s.name = a.name, unnest(string_to_array(s.secondaries, ' ')) AS muscle
+WHERE muscle <> '';

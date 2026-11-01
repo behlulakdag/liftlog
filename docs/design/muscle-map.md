@@ -41,3 +41,21 @@ For a single workout: (0, 2) yellow, [2, 4) orange, ≥ 4 red.
 - Workout summary sheet: a small front+back map of that workout.
 - Turkish muscle names: Göğüs, Ön omuz, Yan omuz, Arka omuz, Pazı (biceps), Arka kol (triceps), Ön kol, Karın,
   Yan karın, Trapez, Kanat (lats), Bel, Kalça, Ön bacak (quadriceps), Arka bacak (hamstring), Baldır.
+
+## Finding exercises from the map (2026-11-01)
+A friend asked for more exercises and for a way to pick them by muscle.
+- Migration **V25** adds 180 built-ins (73 calisthenics, 40 machines, 26 cable, 21 barbell, 20 dumbbell; 256 in
+  total) with their `exercise_muscles` rows, in one statement: names that already exist are skipped with their
+  muscles, so it adds nothing when run again. Calisthenics are `bodyweight = true`, equipment `BODYWEIGHT`, as in V5.
+- No new endpoint: `GET /api/v1/exercises` already sends each exercise's muscles.
+- `lib/muscles.ts`: `exercisesForMuscle(exercises, muscle)` → `{primary, secondary}` (primary when any primary
+  muscle folds onto the region), and `suggestedExercises` (primaries, one per equipment in turn).
+- Exercise picker (workout and routine): a "Kas haritası" toggle next to search opens front and back side by side
+  on a lifted plate, plus a strip of muscle-name chips. A tapped muscle lists "Ana kas" exercises, then "Yardımcı";
+  search and the Tümü / Makine / Kalistenik filters still apply; "Tüm hareketler", a second tap or closing the map
+  resets it.
+- Progress card panel: "Bu kası çalıştıran hareketler", up to 6 primary exercises (the catalog is fetched only once
+  a muscle is tapped). Muscles are tappable in the empty state too.
+- Tapping: every tappable figure has wide invisible strokes under the muscles (thin forearms and calves are easy to
+  hit; a muscle drawn on top always wins), `touch-action: manipulation`, and `.body-map` is excluded from the
+  bottom-tab swipe.
