@@ -15,6 +15,8 @@ interface BodyMapProps {
   selected?: MapMuscle | null
   /** Makes each muscle a button; without it the map is a picture */
   onSelect?: (muscle: MapMuscle) => void
+  /** Accessible name of a muscle; by default its name and sets ("Chest: 12 sets") */
+  labelFor?: (muscle: MapMuscle, sets: number) => string
   className?: string
 }
 
@@ -23,7 +25,7 @@ interface BodyMapProps {
  * the silhouette sits offset behind the body, the neutral body (head, hands, joints) on it, the muscles on top
  * with thin separator strokes.
  */
-export function BodyMap({ side, muscles, scope, selected = null, onSelect, className }: BodyMapProps) {
+export function BodyMap({ side, muscles, scope, selected = null, onSelect, labelFor = defaultLabel, className }: BodyMapProps) {
   return (
     <svg
       viewBox={BODY_VIEWBOX}
@@ -38,6 +40,17 @@ export function BodyMap({ side, muscles, scope, selected = null, onSelect, class
       <g className="body-map-body" aria-hidden>
         <Halves paths={SILHOUETTE_SHAPES} />
       </g>
+      {onSelect && (
+        // Wide invisible strokes under the muscles: a tap that lands just beside a thin muscle (forearm, calf)
+        // still picks it, while a tap on a muscle itself always hits that muscle, which is drawn on top
+        <g className="body-map-hits" aria-hidden>
+          {SIDE_MUSCLES[side].map((muscle) => (
+            <g key={muscle} data-hit={muscle} onClick={() => onSelect(muscle)}>
+              <Halves paths={MUSCLE_SHAPES[side][muscle] ?? []} />
+            </g>
+          ))}
+        </g>
+      )}
       {SIDE_MUSCLES[side].map((muscle) => (
         <MuscleShape
           key={muscle}
@@ -47,6 +60,7 @@ export function BodyMap({ side, muscles, scope, selected = null, onSelect, class
           scope={scope}
           selected={muscle === selected}
           onSelect={onSelect}
+          label={labelFor(muscle, muscles.get(muscle)?.sets ?? 0)}
         />
       ))}
     </svg>
@@ -60,10 +74,13 @@ interface MuscleShapeProps {
   scope: BandScope
   selected: boolean
   onSelect?: (muscle: MapMuscle) => void
+  label: string
 }
 
-function MuscleShape({ muscle, paths, sets, scope, selected, onSelect }: MuscleShapeProps) {
-  const label = t.muscleAria(muscleName(muscle), sets > 0 ? t.muscleSets(formatSets(sets)) : t.muscleNotTrained)
+const defaultLabel = (muscle: MapMuscle, sets: number) =>
+  t.muscleAria(muscleName(muscle), sets > 0 ? t.muscleSets(formatSets(sets)) : t.muscleNotTrained)
+
+function MuscleShape({ muscle, paths, sets, scope, selected, onSelect, label }: MuscleShapeProps) {
   const common = { 'data-muscle': muscle, 'data-band': bandFor(sets, scope), 'aria-label': label }
   if (!onSelect) {
     return (

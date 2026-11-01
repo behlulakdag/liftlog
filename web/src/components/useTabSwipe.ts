@@ -4,8 +4,12 @@ import { vibrate } from '../lib/feedback'
 import { setNavDirection } from '../lib/navDirection'
 import { swipeTarget, TAB_PATHS, tabIndexOf } from '../lib/tabSwipe'
 
-/** Places that own horizontal gestures themselves: swipe-to-delete rows, scrolling chip rows, charts, inputs, sheets. */
-const OWNS_HORIZONTAL_GESTURE = '.swipe, .chip-row, .recharts-wrapper, .data-table-scroll, input, textarea, select, .sheet-backdrop, .menu'
+/**
+ * Places that own horizontal gestures themselves: swipe-to-delete rows, scrolling chip rows, charts, inputs, sheets,
+ * and the body map, where a slightly sliding tap on a muscle must not switch tabs.
+ */
+const OWNS_HORIZONTAL_GESTURE =
+  '.swipe, .chip-row, .recharts-wrapper, .data-table-scroll, input, textarea, select, .sheet-backdrop, .menu, .body-map'
 
 /**
  * True when the finger landed in something that scrolls sideways (a strip of routine chips or template
