@@ -663,7 +663,7 @@ class ApiIntegrationTest {
         assertThat(withoutPrimary).isEmpty();
 
         Integer builtIns = jdbcTemplate.queryForObject("select count(*) from exercises where user_id is null", Integer.class);
-        assertThat(builtIns).isEqualTo(76);
+        assertThat(builtIns).isEqualTo(256);
     }
 
     @Test
