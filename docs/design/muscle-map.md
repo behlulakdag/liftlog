@@ -59,3 +59,15 @@ A friend asked for more exercises and for a way to pick them by muscle.
 - Tapping: every tappable figure has wide invisible strokes under the muscles (thin forearms and calves are easy to
   hit; a muscle drawn on top always wins), `touch-action: manipulation`, and `.body-map` is excluded from the
   bottom-tab swipe.
+
+## Tappable workout maps (2026-11-01)
+Behlül found that the map on a workout's page and in the summary sheet did nothing when tapped.
+- `RecapMuscles` (both places) now has the Progress map's tapping: wide hit strokes, `touch-action: manipulation`, out of
+  the tab swipe (`.body-map`). Every muscle is tappable, trained or not; a second tap or the × closes the panel.
+- The panel is the Progress card's `MuscleDetail` with `workout`: an "In this workout" plate (this workout's exercises
+  with their sets, 1 primary / 0.5 secondary, from `muscleStatsOfSets` in `lib/muscles.ts`; else "Bu antrenmanda bu
+  kas çalışmadı"), then "Bu kası çalıştıran hareketler" (`suggestedExercises`, 6, plus "N more in the picker").
+- Workout page: each suggestion is a "+" button that opens the set editor with that exercise picked (reps kept, weight
+  by the picker's `weightAfterPick` rule).
+- Summary sheet: colours from the server's totals; the per-exercise split comes from the workout's cached sets and the
+  catalog. Suggestions are plain tags there (adding happens on the page behind the sheet).

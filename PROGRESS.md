@@ -600,3 +600,22 @@ yüzünden her yeni istek limiter'dan geçiyor ve sonuçlar saklanıp tembelce y
 **Sıradaki adımlar:**
 1. PR aç; canlıda V25'i kontrol et.
 2. Android'deki hareket seçiciye de kas haritası modu.
+
+## 2026-11-01 — Antrenman haritalarına dokunma (`feature/tappable-workout-maps`, yalnızca web)
+
+- Antrenman sayfasındaki ve "Antrenman tamam" özetindeki kas haritası artık dokunulabilir (İlerleme haritasıyla aynı
+  geniş dokunma alanı; sekme kaydırması tetiklenmiyor). Çalışmamış kaslar da açılıyor; aynı kasa tekrar dokunmak ya da ×
+  paneli kapatıyor.
+- Panel İlerleme kartınınkiyle aynı: üstte "Bu antrenmanda" (bu antrenmanın o kası çalıştıran hareketleri ve setleri,
+  ana 1 / yardımcı 0,5) ya da "Bu antrenmanda bu kas çalışmadı"; altında "Bu kası çalıştıran hareketler" (6 hareket +
+  "Hareket seçicide N hareket daha").
+- Antrenman sayfasında öneriler "+" düğmesi: dokununca set ekleme penceresi o hareket seçili açılıyor. Özet sayfasında
+  liste yalnızca bilgi.
+- Yeni yardımcı: `muscleStatsOfSets` (`lib/muscles.ts`).
+- Doğrulama: web 501 test, tsc, lint, build; geçici Postgres (5544) + API (8094) + web (5194) ile 375 px'te denendi:
+  karın (0 set) → not + 6 öneri, "Cable Crunch" → set penceresi seçili açıldı, kaydedince panel "Cable Crunch 1 set"
+  oldu; özet sayfasında göğüs → "Bench Press 2 set", ekleme düğmesi yok; yatay taşma yok.
+
+**Sıradaki adımlar:**
+1. PR aç.
+2. Android'deki antrenman haritasına da aynı panel.
