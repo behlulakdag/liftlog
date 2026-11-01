@@ -415,16 +415,23 @@ function editorProps(editor: Editor, sets: WorkoutSet[], saving: boolean): Omit<
   return {
     isEditing: editor.mode === 'edit',
     isSaving: saving,
-    // A preselected exercise is applied the way the picker applies a pick: reps stay, the weight only when it still fits
-    initial: picked
-      ? {
-          ...initial,
-          exerciseId: picked.id,
-          exerciseName: picked.name,
-          bodyweight: picked.bodyweight,
-          weight: weightAfterPick(initial.weight, initial.bodyweight, picked),
-        }
-      : initial,
+    initial: picked ? suggestedStart(picked, sets, initial.reps) : initial,
+  }
+}
+
+/**
+ * A suggestion from the muscle map starts from its own last set in this workout. Without one the weight is left
+ * empty rather than carried over from another exercise: 80 kg from a bench press means nothing on a cable crunch.
+ */
+function suggestedStart(picked: Exercise, sets: WorkoutSet[], reps: string): SetEditorProps['initial'] {
+  const last = sets.filter((set) => set.exerciseId === picked.id).at(-1)
+  return {
+    exerciseId: picked.id,
+    exerciseName: picked.name,
+    bodyweight: picked.bodyweight,
+    reps: last ? String(last.reps) : reps,
+    weight: last ? String(last.weightKg) : weightAfterPick('', !picked.bodyweight, picked),
+    rpe: '',
   }
 }
 

@@ -412,4 +412,18 @@ describe("the workout's muscle map", () => {
     await waitFor(() => expect(posts(calls)).toHaveLength(1))
     expect(posts(calls)[0].body).toMatchObject({ exerciseId: 3, reps: 5, weightKg: 0 })
   })
+
+  it("starts a weighted suggestion with an empty weight, not the last exercise's load", async () => {
+    mapServer()
+    const user = renderDetail()
+
+    await user.click(await muscle(t.muscleNames.ABS))
+    await user.click(await screen.findByRole('button', { name: t.muscleLogExercise('Cable Crunch') }))
+
+    const editor = within(await screen.findByRole('dialog', { name: t.addSet }))
+    expect(editor.getByText('Cable Crunch')).toBeInTheDocument()
+    // The squat's weight would mean nothing on a cable crunch
+    expect(editor.getByLabelText(t.weightKg)).toHaveValue('')
+    expect(editor.getByLabelText(t.reps)).toHaveValue('5')
+  })
 })
