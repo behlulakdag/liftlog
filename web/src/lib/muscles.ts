@@ -119,3 +119,58 @@ export function musclesOfSets(
   return [...totals].map(([muscle, sets]) => ({ muscle, sets: Math.round(sets * 10) / 10 }))
 }
 
+interface WithMuscles {
+  name: string
+  equipment?: string | null
+  muscles?: readonly { muscle: string; role: 'PRIMARY' | 'SECONDARY' }[]
+}
+
+/** The exercises that work one map region, split by role, each half sorted by name. */
+export interface MuscleExercises<T> {
+  primary: T[]
+  secondary: T[]
+}
+
+/**
+ * Exercises whose muscles include `muscle`: primary when any of their primary muscles folds onto it (a primary
+ * adductor counts as primary for the quads), secondary otherwise. Exercises without muscle data are left out.
+ */
+export function exercisesForMuscle<T extends WithMuscles>(exercises: readonly T[], muscle: MapMuscle): MuscleExercises<T> {
+  const primary: T[] = []
+  const secondary: T[] = []
+  for (const exercise of exercises) {
+    const roles = (exercise.muscles ?? []).filter((m) => foldMuscle(m.muscle) === muscle).map((m) => m.role)
+    if (roles.includes('PRIMARY')) primary.push(exercise)
+    else if (roles.length > 0) secondary.push(exercise)
+  }
+  const byName = (a: T, b: T) => a.name.localeCompare(b.name)
+  return { primary: primary.sort(byName), secondary: secondary.sort(byName) }
+}
+
+const EQUIPMENT_ORDER = ['BARBELL', 'DUMBBELL', 'MACHINE', 'CABLE', 'BODYWEIGHT']
+
+/**
+ * A short, varied pick of the primary exercises for the Progress panel: one per equipment in turn (barbell,
+ * dumbbell, machine, cable, bodyweight, then custom), so the first lines are not five barbell variants that
+ * only happen to sort first by name.
+ */
+export function suggestedExercises<T extends WithMuscles>(
+  exercises: readonly T[],
+  muscle: MapMuscle,
+  limit: number,
+): { shown: T[]; more: number } {
+  const { primary } = exercisesForMuscle(exercises, muscle)
+  const rank = (exercise: T) => {
+    const index = EQUIPMENT_ORDER.indexOf(exercise.equipment ?? '')
+    return index >= 0 ? index : EQUIPMENT_ORDER.length
+  }
+  const queues: T[][] = []
+  for (const exercise of primary) (queues[rank(exercise)] ??= []).push(exercise)
+  const lanes = queues.filter(Boolean)
+  const shown: T[] = []
+  for (let round = 0; shown.length < limit && lanes.some((lane) => lane.length > round); round++) {
+    for (const lane of lanes) if (lane[round] && shown.length < limit) shown.push(lane[round])
+  }
+  return { shown, more: primary.length - shown.length }
+}
+

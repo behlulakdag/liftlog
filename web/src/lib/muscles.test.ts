@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { bandFor, bandsFor, bandThresholds, foldMuscle, foldMuscleStats, formatSets, MAP_MUSCLES, SIDE_MUSCLES, musclesOfSets } from './muscles'
+import { bandFor, bandsFor, bandThresholds, exercisesForMuscle, foldMuscle, foldMuscleStats, formatSets, MAP_MUSCLES, SIDE_MUSCLES, musclesOfSets, suggestedExercises } from './muscles'
 
 describe('bandThresholds', () => {
   it('uses 5 and 10 sets for a week', () => {
@@ -121,6 +121,50 @@ describe('musclesOfSets', () => {
     expect(bandFor(1, 1)).toBe('low')
     expect(bandFor(2, 1)).toBe('mid')
     expect(bandFor(4, 1)).toBe('high')
+  })
+})
+
+describe('exercisesForMuscle', () => {
+  const p = (muscle: string) => ({ muscle, role: 'PRIMARY' as const })
+  const s = (muscle: string) => ({ muscle, role: 'SECONDARY' as const })
+  const exercises = [
+    { name: 'Squat', equipment: 'BARBELL', muscles: [p('QUADS'), p('GLUTES'), s('LOWER_BACK')] },
+    { name: 'Romanian Deadlift', equipment: 'BARBELL', muscles: [p('HAMSTRINGS'), p('GLUTES'), s('LOWER_BACK')] },
+    { name: 'Back Extension', equipment: 'MACHINE', muscles: [p('LOWER_BACK'), s('GLUTES')] },
+    { name: 'Cable Hip Adduction', equipment: 'CABLE', muscles: [p('ADDUCTORS')] },
+    { name: 'Hack Squat', equipment: 'MACHINE', muscles: [p('QUADS'), s('ADDUCTORS')] },
+    { name: 'Old custom', equipment: null },
+  ]
+
+  it('splits primary from secondary and sorts each by name', () => {
+    const glutes = exercisesForMuscle(exercises, 'GLUTES')
+    expect(glutes.primary.map((e) => e.name)).toEqual(['Romanian Deadlift', 'Squat'])
+    expect(glutes.secondary.map((e) => e.name)).toEqual(['Back Extension'])
+  })
+
+  it('counts folded muscles for their region, primary winning', () => {
+    const quads = exercisesForMuscle(exercises, 'QUADS')
+    expect(quads.primary.map((e) => e.name)).toEqual(['Cable Hip Adduction', 'Hack Squat', 'Squat'])
+    expect(quads.secondary).toEqual([])
+  })
+
+  it('finds nothing for a muscle no exercise works', () => {
+    expect(exercisesForMuscle(exercises, 'CALVES')).toEqual({ primary: [], secondary: [] })
+  })
+
+  it('suggests a few primaries, one per equipment in turn', () => {
+    const many = [
+      { name: 'Bench Press', equipment: 'BARBELL', muscles: [p('CHEST')] },
+      { name: 'Decline Bench Press', equipment: 'BARBELL', muscles: [p('CHEST')] },
+      { name: 'Incline Bench Press', equipment: 'BARBELL', muscles: [p('CHEST')] },
+      { name: 'Dumbbell Fly', equipment: 'DUMBBELL', muscles: [p('CHEST')] },
+      { name: 'Pec Deck', equipment: 'MACHINE', muscles: [p('CHEST')] },
+      { name: 'Push-up', equipment: 'BODYWEIGHT', muscles: [p('CHEST')] },
+      { name: 'Overhead Press', equipment: 'BARBELL', muscles: [s('CHEST')] },
+    ]
+    const { shown, more } = suggestedExercises(many, 'CHEST', 5)
+    expect(shown.map((e) => e.name)).toEqual(['Bench Press', 'Dumbbell Fly', 'Pec Deck', 'Push-up', 'Decline Bench Press'])
+    expect(more).toBe(1)
   })
 })
 
