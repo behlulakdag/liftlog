@@ -101,22 +101,45 @@ export function formatSets(sets: number, loc: string = locale): string {
  * secondary one, and when two of an exercise's muscles fold onto one map region the primary role wins, so a
  * set is never counted twice for a region (the same rule as the server's summary).
  */
-export function musclesOfSets(
-  sets: readonly { exerciseId: number }[],
-  exercises: readonly { id: number; muscles?: readonly { muscle: string; role: 'PRIMARY' | 'SECONDARY' }[] }[],
-): MuscleSets[] {
+export function musclesOfSets(sets: readonly { exerciseId: number }[], exercises: readonly CatalogEntry[]): MuscleSets[] {
+  return muscleStatsOfSets(sets, exercises).map(({ muscle, sets }) => ({ muscle, sets }))
+}
+
+type CatalogEntry = { id: number; name?: string; muscles?: readonly { muscle: string; role: 'PRIMARY' | 'SECONDARY' }[] }
+
+/**
+ * musclesOfSets plus which exercises of these sets made up each muscle's count (most sets first), so a tapped
+ * muscle on a workout's map can list them. An exercise is named by its set, else by the catalog.
+ */
+export function muscleStatsOfSets(
+  sets: readonly { exerciseId: number; exerciseName?: string }[],
+  exercises: readonly CatalogEntry[],
+): MuscleStat[] {
   const byId = new Map(exercises.map((exercise) => [exercise.id, exercise]))
-  const totals = new Map<MapMuscle, number>()
+  const stats = new Map<MapMuscle, MuscleStat>()
   for (const set of sets) {
+    const exercise = byId.get(set.exerciseId)
     const regions = new Map<MapMuscle, number>()
-    for (const { muscle, role } of byId.get(set.exerciseId)?.muscles ?? []) {
+    for (const { muscle, role } of exercise?.muscles ?? []) {
       const region = foldMuscle(muscle)
       if (!region) continue
       regions.set(region, Math.max(regions.get(region) ?? 0, role === 'PRIMARY' ? 1 : 0.5))
     }
-    for (const [region, weight] of regions) totals.set(region, (totals.get(region) ?? 0) + weight)
+    const name = set.exerciseName ?? exercise?.name ?? ''
+    for (const [region, weight] of regions) {
+      const stat = stats.get(region) ?? { muscle: region, sets: 0, exercises: [] }
+      stat.sets += weight
+      const entry = stat.exercises.find((e) => e.name === name)
+      if (entry) entry.sets += weight
+      else stat.exercises.push({ name, sets: weight })
+      stats.set(region, stat)
+    }
   }
-  return [...totals].map(([muscle, sets]) => ({ muscle, sets: Math.round(sets * 10) / 10 }))
+  return [...stats.values()].map((stat) => ({
+    muscle: stat.muscle,
+    sets: roundSets(stat.sets),
+    exercises: stat.exercises.map((e) => ({ ...e, sets: roundSets(e.sets) })).sort((a, b) => b.sets - a.sets),
+  }))
 }
 
 interface WithMuscles {
