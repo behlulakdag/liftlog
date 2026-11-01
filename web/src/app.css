@@ -6401,6 +6401,20 @@ body:has(.rest-timer) .finish-btn {
   outline: none;
 }
 
+/* No double-tap zoom delay on a tappable figure */
+.body-map:has([role='button']) {
+  touch-action: manipulation;
+}
+
+.body-map-hits path {
+  fill: none;
+  stroke: transparent;
+  stroke-width: 12;
+  stroke-linejoin: round;
+  pointer-events: stroke;
+  cursor: pointer;
+}
+
 .body-map [role='button']:focus-visible path,
 .body-map [data-selected] path {
   stroke: var(--text);
@@ -6628,6 +6642,168 @@ body:has(.rest-timer) .finish-btn {
 .muscle-detail li span:last-child {
   color: var(--text-muted);
   white-space: nowrap;
+}
+
+/* ---------- Exercise picker: body-map mode ---------- */
+.picker-search {
+  display: flex;
+  align-items: stretch;
+  gap: 8px;
+}
+
+.picker-search .field {
+  flex: 1;
+  min-width: 0;
+}
+
+.picker-map-toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  height: auto;
+  min-height: 44px;
+  white-space: nowrap;
+}
+
+.picker-map-toggle[aria-pressed='true'] {
+  background: var(--primary);
+  color: var(--on-primary);
+}
+
+/* Same build as the Progress card: a surface plate with a lime edge, lifted off a lime plate behind it */
+.picker-map {
+  position: relative;
+  margin: 0 6px 6px 0;
+}
+
+.picker-map::before {
+  content: '';
+  position: absolute;
+  inset: 6px -6px -6px 6px;
+  border-radius: var(--radius-xl);
+  background: var(--primary);
+  opacity: 0.85;
+}
+
+.picker-map-plate {
+  position: relative;
+  padding: 10px 10px 4px;
+  border: 1px solid var(--outline-variant);
+  border-left: 4px solid var(--primary);
+  border-radius: var(--radius-xl);
+  background: var(--surface);
+  --map-sep: var(--surface);
+}
+
+.picker-map-figures {
+  display: flex;
+  justify-content: center;
+  gap: 4%;
+}
+
+.picker-map-figures figure {
+  width: min(40%, 132px);
+  margin: 0;
+}
+
+.picker-map-figures figcaption {
+  margin-top: 2px;
+  color: var(--text-muted);
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 1px;
+  text-align: center;
+  text-transform: uppercase;
+}
+
+/* The picked muscle in the app colour; the rest stay plain since nothing is being measured here */
+.picker-map .body-map [data-selected] path {
+  fill: var(--primary);
+  stroke: var(--text);
+}
+
+.picker-map-chips {
+  padding: 10px 0 8px;
+}
+
+.picker-map-chips .filter-chip {
+  height: 32px;
+  padding: 0 12px;
+  font-size: 13px;
+}
+
+.picker-map-hint {
+  margin: 0 0 8px;
+  color: var(--text-muted);
+  font-size: 13px;
+  text-align: center;
+}
+
+.picker-muscle-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 8px 8px 8px 12px;
+  border-left: 3px solid var(--primary);
+  border-radius: var(--radius-s);
+  background: var(--surface-high);
+}
+
+.picker-muscle-bar .btn {
+  flex: none;
+  min-height: 36px;
+}
+
+.picker-role-title .num {
+  margin-left: auto;
+  font-weight: 600;
+}
+
+.picker-role-title[data-role='primary']::before {
+  background: var(--primary);
+}
+
+.picker-role-title[data-role='secondary']::before {
+  background: var(--outline);
+}
+
+/* Progress panel: the exercises that work the tapped muscle, as small tags */
+.muscle-detail-suggest {
+  margin-top: 10px;
+  padding-top: 8px;
+  border-top: 1px dashed var(--outline-variant);
+}
+
+.muscle-detail-suggest h3 {
+  margin: 0 0 6px;
+  color: var(--text-muted);
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+}
+
+.muscle-detail .muscle-suggest-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin: 0;
+}
+
+.muscle-detail .muscle-suggest-list li {
+  padding: 4px 8px;
+  border: 0;
+  border-radius: var(--radius-s);
+  background: var(--surface);
+  box-shadow: 2px 2px 0 var(--outline-variant);
+  font-size: 13px;
+}
+
+.muscle-suggest-more {
+  margin: 8px 0 0;
+  color: var(--text-muted);
+  font-size: 12px;
 }
 
 /* Workout summary: front and back side by side, small */

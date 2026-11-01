@@ -1,5 +1,5 @@
 import { useQuery, useQueryClient } from '@tanstack/react-query'
-import { useState } from 'react'
+import { useState, type ReactNode } from 'react'
 import { api } from '../api/endpoints'
 import { queryKeys } from '../api/queryKeys'
 import type { Exercise, SetInput } from '../api/types'
@@ -9,7 +9,9 @@ import { errorMessage, formatKg } from '../lib/format'
 import { t } from '../lib/i18n'
 import { clampSetCount, MAX_SETS_AT_ONCE, sanitizeDecimal, validateSet, type SetField, type SetForm } from '../lib/validation'
 import { groupByMuscle, weightAfterPick, matchesExerciseFilter, type ExerciseFilter } from '../lib/workoutLogic'
-import { BodyweightIcon } from '../components/Icons'
+import { BodyFigureIcon, BodyweightIcon } from '../components/Icons'
+import { exercisesForMuscle, muscleName, type MapMuscle } from '../lib/muscles'
+import { PickerMuscleMap } from './PickerMuscleMap'
 
 export interface SetEditorProps {
   initial: SetForm & { exerciseName: string | null; bodyweight: boolean }
@@ -179,17 +181,29 @@ function NumberField(props: {
   )
 }
 
-/** Searchable exercise list grouped by muscle, with machine and bodyweight filters and "new exercise"; also used by the routine editor. */
+/**
+ * Searchable exercise list grouped by muscle, with machine and bodyweight filters and "new exercise"; also used by
+ * the routine editor. The "Kas haritası" toggle opens a body map: tapping a muscle lists the exercises that work
+ * it, main-muscle ones first, and the search and the filters still narrow that list.
+ */
 export function ExercisePicker({ onPick, onBack }: { onPick: (exercise: Exercise) => void; onBack?: () => void }) {
   const [query, setQuery] = useState('')
   const [filter, setFilter] = useState<ExerciseFilter>('all')
   const [creating, setCreating] = useState(false)
+  const [mapOpen, setMapOpen] = useState(false)
+  const [muscle, setMuscle] = useState<MapMuscle | null>(null)
   const exercises = useQuery({ queryKey: queryKeys.exercises, queryFn: api.exercises, staleTime: 5 * 60_000 })
 
   if (creating) return <NewExerciseForm initialName={query} onCreated={onPick} onCancel={() => setCreating(false)} />
 
   const term = query.trim().toLowerCase()
   const filtered = (exercises.data ?? []).filter((e) => e.name.toLowerCase().includes(term) && matchesExerciseFilter(e, filter))
+  const toggleMap = () => {
+    setMapOpen((open) => !open)
+    setMuscle(null)
+  }
+  const pickMuscle = (picked: MapMuscle) => setMuscle((current) => (current === picked ? null : picked))
+  const row = (exercise: Exercise) => <ExerciseRow key={exercise.id} exercise={exercise} onPick={onPick} />
 
   return (
     <div className="stack">
@@ -198,8 +212,13 @@ export function ExercisePicker({ onPick, onBack }: { onPick: (exercise: Exercise
           ‹ {t.back}
         </button>
       )}
-      <div className="field">
-        <input placeholder={t.searchExercises} value={query} onChange={(e) => setQuery(e.target.value)} aria-label={t.searchExercises} />
+      <div className="picker-search">
+        <div className="field">
+          <input placeholder={t.searchExercises} value={query} onChange={(e) => setQuery(e.target.value)} aria-label={t.searchExercises} />
+        </div>
+        <button type="button" className={mapOpen ? 'filter-chip selected picker-map-toggle' : 'filter-chip picker-map-toggle'} aria-pressed={mapOpen} onClick={toggleMap}>
+          <BodyFigureIcon /> {t.pickerMuscleMap}
+        </button>
       </div>
       <div className="chip-row">
         <button className={filter === 'all' ? 'filter-chip selected' : 'filter-chip'} onClick={() => setFilter('all')}>
@@ -215,10 +234,21 @@ export function ExercisePicker({ onPick, onBack }: { onPick: (exercise: Exercise
           + {t.newExercise}
         </button>
       </div>
+      {mapOpen && <PickerMuscleMap selected={muscle} onSelect={pickMuscle} />}
+      {muscle && (
+        <div className="picker-muscle-bar">
+          <strong>{t.pickerFilteredBy(muscleName(muscle))}</strong>
+          <button type="button" className="btn btn-tonal" onClick={() => setMuscle(null)}>
+            {t.pickerShowAll}
+          </button>
+        </div>
+      )}
       {exercises.isPending ? (
         <div className="spinner" style={{ margin: '24px auto' }} />
       ) : exercises.isError ? (
         <ErrorState error={exercises.error} onRetry={() => exercises.refetch()} />
+      ) : muscle ? (
+        <MuscleExerciseList exercises={filtered} muscle={muscle} renderRow={row} />
       ) : (
         <div className="exercise-list">
           {filtered.length === 0 && <p className="muted">{t.noExerciseMatches(query.trim())}</p>}
@@ -227,20 +257,50 @@ export function ExercisePicker({ onPick, onBack }: { onPick: (exercise: Exercise
               <h4 className="exercise-section-title" data-muscle={section.muscleGroup}>
                 {t.muscleGroups[section.muscleGroup] ?? section.muscleGroup}
               </h4>
-              {section.exercises.map((exercise) => (
-                <button key={exercise.id} className="exercise-item" onClick={() => onPick(exercise)}>
-                  <span style={{ flex: 1 }}>{exercise.name}</span>
-                  {exercise.bodyweight && <span className="badge badge-bodyweight">{t.calisthenics}</span>}
-                  {exercise.equipment === 'MACHINE' && <span className="badge badge-machine">{t.machineBadge}</span>}
-                  {exercise.equipment === 'CABLE' && <span className="badge badge-machine">{t.cableBadge}</span>}
-                  {exercise.custom && <span className="badge">{t.custom}</span>}
-                </button>
-              ))}
+              {section.exercises.map(row)}
             </section>
           ))}
         </div>
       )}
     </div>
+  )
+}
+
+/** The picker list while a muscle is picked: "Ana kas" exercises, then "Yardımcı" ones. */
+function MuscleExerciseList({ exercises, muscle, renderRow }: {
+  exercises: Exercise[]
+  muscle: MapMuscle
+  renderRow: (exercise: Exercise) => ReactNode
+}) {
+  const { primary, secondary } = exercisesForMuscle(exercises, muscle)
+  const sections = [
+    { role: 'primary', title: t.pickerPrimary, list: primary },
+    { role: 'secondary', title: t.pickerSecondary, list: secondary },
+  ].filter((section) => section.list.length > 0)
+  return (
+    <div className="exercise-list" data-testid="muscle-exercise-list">
+      {sections.length === 0 && <p className="muted">{t.pickerNoMuscleMatches(muscleName(muscle))}</p>}
+      {sections.map((section) => (
+        <section key={section.role} className="exercise-section" data-role={section.role}>
+          <h4 className="exercise-section-title picker-role-title" data-role={section.role}>
+            {section.title} <span className="num">{section.list.length}</span>
+          </h4>
+          {section.list.map(renderRow)}
+        </section>
+      ))}
+    </div>
+  )
+}
+
+function ExerciseRow({ exercise, onPick }: { exercise: Exercise; onPick: (exercise: Exercise) => void }) {
+  return (
+    <button className="exercise-item" onClick={() => onPick(exercise)}>
+      <span style={{ flex: 1 }}>{exercise.name}</span>
+      {exercise.bodyweight && <span className="badge badge-bodyweight">{t.calisthenics}</span>}
+      {exercise.equipment === 'MACHINE' && <span className="badge badge-machine">{t.machineBadge}</span>}
+      {exercise.equipment === 'CABLE' && <span className="badge badge-machine">{t.cableBadge}</span>}
+      {exercise.custom && <span className="badge">{t.custom}</span>}
+    </button>
   )
 }
 
