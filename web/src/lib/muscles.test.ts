@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { bandFor, bandsFor, bandThresholds, exercisesForMuscle, foldMuscle, foldMuscleStats, formatSets, MAP_MUSCLES, SIDE_MUSCLES, musclesOfSets, suggestedExercises } from './muscles'
+import { bandFor, bandsFor, bandThresholds, exercisesForMuscle, foldMuscle, foldMuscleStats, formatSets, MAP_MUSCLES, SIDE_MUSCLES, musclesOfSets, muscleStatsOfSets, suggestedExercises } from './muscles'
 
 describe('bandThresholds', () => {
   it('uses 5 and 10 sets for a week', () => {
@@ -114,6 +114,21 @@ describe('musclesOfSets', () => {
       { muscle: 'CHEST', sets: 3 },
       { muscle: 'TRICEPS', sets: 1.5 },
       { muscle: 'QUADS', sets: 1 },
+    ])
+  })
+
+  it('lists the exercises behind each muscle, most sets first, with the same weights', () => {
+    const named = [
+      { exerciseId: 2, exerciseName: 'Squat' },
+      { exerciseId: 1, exerciseName: 'Bench Press' },
+      { exerciseId: 1, exerciseName: 'Bench Press' },
+      { exerciseId: 3 },
+    ]
+    const catalog = [...exercises, { id: 3, name: 'Dips', muscles: [{ muscle: 'CHEST', role: 'SECONDARY' as const }] }]
+    expect(muscleStatsOfSets(named, catalog)).toEqual([
+      { muscle: 'QUADS', sets: 1, exercises: [{ name: 'Squat', sets: 1 }] },
+      { muscle: 'CHEST', sets: 2.5, exercises: [{ name: 'Bench Press', sets: 2 }, { name: 'Dips', sets: 0.5 }] },
+      { muscle: 'TRICEPS', sets: 1, exercises: [{ name: 'Bench Press', sets: 1 }] },
     ])
   })
 

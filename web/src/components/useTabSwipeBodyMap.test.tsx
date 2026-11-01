@@ -1,5 +1,8 @@
-import { cleanup, render } from '@testing-library/react'
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
+import { cleanup, fireEvent, render } from '@testing-library/react'
 import { afterEach, describe, expect, it, vi } from 'vitest'
+import { t } from '../lib/i18n'
+import { RecapMuscles } from './MuscleMapCard'
 import { useTabSwipe } from './useTabSwipe'
 
 const navigate = vi.fn()
@@ -41,4 +44,23 @@ describe('tab swipe and the body map', () => {
     dragLeft(getByTestId('muscle'))
     expect(navigate).not.toHaveBeenCalled()
   })
+
+  it("leaves a drag on a workout's tappable map alone, and the tap still opens the muscle", () => {
+    const client = new QueryClient({ defaultOptions: { queries: { retry: false, enabled: false } } })
+    const { getByRole, getByTestId } = render(
+      <QueryClientProvider client={client}>
+        <WorkoutMapPage />
+      </QueryClientProvider>,
+    )
+    const quads = getByRole('button', { name: new RegExp(`^${t.muscleNames.QUADS}:`) })
+    dragLeft(quads)
+    fireEvent.click(quads)
+    expect(navigate).not.toHaveBeenCalled()
+    expect(getByTestId('muscle-detail')).toHaveAccessibleName(t.muscleNames.QUADS)
+  })
 })
+
+function WorkoutMapPage() {
+  useTabSwipe()
+  return <RecapMuscles muscles={[{ muscle: 'QUADS', sets: 3, exercises: [{ name: 'Squat', sets: 3 }] }]} />
+}

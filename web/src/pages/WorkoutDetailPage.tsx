@@ -4,7 +4,7 @@ import { useNavigate, useParams } from 'react-router'
 import { AppError } from '../api/client'
 import { api } from '../api/endpoints'
 import { queryKeys } from '../api/queryKeys'
-import type { Page, SetInput, WorkoutDetail, WorkoutSet, WorkoutSummary } from '../api/types'
+import type { Exercise, Page, SetInput, WorkoutDetail, WorkoutSet, WorkoutSummary } from '../api/types'
 import { Confetti } from '../components/Confetti'
 import { CountUp } from '../components/CountUp'
 import { useRestTimer } from '../components/contexts'
@@ -17,17 +17,18 @@ import { useFlushOutbox, useOutbox } from '../components/useOutbox'
 import { unlockAudio, vibrate } from '../lib/feedback'
 import { errorMessage, formatKg, formatLoad, formatLongDate } from '../lib/format'
 import { t } from '../lib/i18n'
-import { musclesOfSets } from '../lib/muscles'
+import { muscleStatsOfSets } from '../lib/muscles'
 import { RecapMuscles } from '../components/MuscleMapCard'
 import { ROUTINE_NAME_MAX } from '../lib/routineLogic'
 import { hasWaitingFor, maxSetOrder, outbox, overlaySets } from '../lib/outbox'
-import { effectiveLoad, groupByExercise, visibleVolume, type ExerciseGroup } from '../lib/workoutLogic'
+import { effectiveLoad, groupByExercise, visibleVolume, weightAfterPick, type ExerciseGroup } from '../lib/workoutLogic'
 import { SetEditorSheet, type SetEditorProps } from './SetEditorSheet'
 import { WorkoutMode } from './WorkoutMode'
 import { WorkoutRecapSheet } from './WorkoutRecapSheet'
 import { CheckIcon, CloudUploadIcon, DumbbellIcon } from '../components/Icons'
 
-type Editor = { mode: 'add' } | { mode: 'edit'; set: WorkoutSet }
+/** `exercise`: adding starts on it, as if it had been picked (from the muscle map's suggestions) */
+type Editor = { mode: 'add'; exercise?: Exercise } | { mode: 'edit'; set: WorkoutSet }
 
 /** A new set either reached the server or is waiting on the phone under a negative local id. */
 type AddResult = { saved: WorkoutSet } | { queuedId: number }
@@ -353,7 +354,12 @@ export function WorkoutDetailPage() {
             <div className="set-groups">{groupByExercise(visibleSets).map(renderGroup)}</div>
           )}
           {/* Which muscles this workout hit so far, from each exercise's muscles; no extra request */}
-          {visibleSets.length > 0 && <RecapMuscles muscles={musclesOfSets(visibleSets, exercises.data ?? [])} />}
+          {visibleSets.length > 0 && (
+            <RecapMuscles
+              muscles={muscleStatsOfSets(visibleSets, exercises.data ?? [])}
+              onPickExercise={(exercise) => setEditor({ mode: 'add', exercise })}
+            />
+          )}
           {visibleSets.length > 0 && (
             <button className="finish-btn" onClick={() => setFinishing(true)} data-testid="finish-workout">
               <span className="finish-btn-front">
@@ -397,17 +403,35 @@ function SavedCheck() {
 /** Adding pre-fills the previous set, since lifters usually repeat it; editing shows the set's values. */
 function editorProps(editor: Editor, sets: WorkoutSet[], saving: boolean): Omit<SetEditorProps, 'onSave' | 'onClose' | 'onDelete'> {
   const source = editor.mode === 'edit' ? editor.set : sets.at(-1)
+  const initial = {
+    exerciseId: source?.exerciseId ?? null,
+    exerciseName: source?.exerciseName ?? null,
+    bodyweight: source?.bodyweight ?? false,
+    reps: source ? String(source.reps) : '',
+    weight: source ? String(source.weightKg) : '',
+    rpe: editor.mode === 'edit' && editor.set.rpe != null ? String(editor.set.rpe) : '',
+  }
+  const picked = editor.mode === 'add' ? editor.exercise : undefined
   return {
     isEditing: editor.mode === 'edit',
     isSaving: saving,
-    initial: {
-      exerciseId: source?.exerciseId ?? null,
-      exerciseName: source?.exerciseName ?? null,
-      bodyweight: source?.bodyweight ?? false,
-      reps: source ? String(source.reps) : '',
-      weight: source ? String(source.weightKg) : '',
-      rpe: editor.mode === 'edit' && editor.set.rpe != null ? String(editor.set.rpe) : '',
-    },
+    initial: picked ? suggestedStart(picked, sets, initial.reps) : initial,
+  }
+}
+
+/**
+ * A suggestion from the muscle map starts from its own last set in this workout. Without one the weight is left
+ * empty rather than carried over from another exercise: 80 kg from a bench press means nothing on a cable crunch.
+ */
+function suggestedStart(picked: Exercise, sets: WorkoutSet[], reps: string): SetEditorProps['initial'] {
+  const last = sets.filter((set) => set.exerciseId === picked.id).at(-1)
+  return {
+    exerciseId: picked.id,
+    exerciseName: picked.name,
+    bodyweight: picked.bodyweight,
+    reps: last ? String(last.reps) : reps,
+    weight: last ? String(last.weightKg) : weightAfterPick('', !picked.bodyweight, picked),
+    rpe: '',
   }
 }
 

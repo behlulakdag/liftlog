@@ -722,6 +722,10 @@ const en = {
   pickerNoMuscleMatches: (muscle: string) => `No matching exercise for ${muscle.toLowerCase()}`,
   muscleExercisesTitle: 'Exercises that work this muscle',
   muscleExercisesMore: (count: number) => `+${count} more in the exercise picker`,
+  muscleInWorkoutTitle: 'In this workout',
+  muscleNotInWorkout: 'This muscle was not worked in this workout',
+  muscleMapTapHint: 'Tap a muscle for its exercises.',
+  muscleLogExercise: (name: string) => `Add a set of ${name}`,
   muscleNames: {
     CHEST: 'Chest',
     FRONT_DELTS: 'Front delts',
@@ -1464,6 +1468,10 @@ const tr: Strings = {
   pickerNoMuscleMatches: (muscle) => `${muscle} için eşleşen hareket yok`,
   muscleExercisesTitle: 'Bu kası çalıştıran hareketler',
   muscleExercisesMore: (count) => `Hareket seçicide ${count} hareket daha`,
+  muscleInWorkoutTitle: 'Bu antrenmanda',
+  muscleNotInWorkout: 'Bu antrenmanda bu kas çalışmadı',
+  muscleMapTapHint: 'Hareketleri görmek için bir kasa dokun.',
+  muscleLogExercise: (name) => `${name} için set ekle`,
   muscleNames: {
     CHEST: 'Göğüs',
     FRONT_DELTS: 'Ön omuz',

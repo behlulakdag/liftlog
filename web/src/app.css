@@ -6834,6 +6834,72 @@ body:has(.rest-timer) .finish-btn {
   margin-top: 10px;
 }
 
+.recap-muscles-hint {
+  margin: 8px 0 0;
+  color: var(--text-muted);
+  font-size: 12px;
+  text-align: center;
+}
+
+/* One workout's panel: "In this workout" on an inner plate lifted off the panel, the suggestions under it */
+.muscle-detail-workout {
+  margin-top: 10px;
+  padding: 8px 10px 6px;
+  border-radius: var(--radius-s);
+  background: var(--surface);
+  box-shadow: 3px 3px 0 var(--outline-variant);
+}
+
+.muscle-detail-workout h3 {
+  margin: 0;
+  color: var(--text-muted);
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+}
+
+.muscle-detail-workout ul {
+  margin-top: 4px;
+}
+
+.muscle-detail-workout li:first-child {
+  border-top: 0;
+}
+
+.muscle-detail-note {
+  margin: 4px 0 2px;
+  color: var(--text-muted);
+  font-size: 13px;
+}
+
+/* Workout page: a suggestion is a button that opens the set editor on it */
+.muscle-detail .muscle-suggest-list li.pickable {
+  padding: 0;
+}
+
+.muscle-suggest-list li.pickable button {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-height: 36px;
+  padding: 4px 10px 4px 6px;
+  color: inherit;
+  font: inherit;
+}
+
+.muscle-suggest-plus {
+  display: grid;
+  place-items: center;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: var(--primary);
+  color: var(--on-primary);
+  font-weight: 800;
+  line-height: 1;
+}
+
 /* Chips and cards in sideways strips are dragged, not read: without this a drag selects their text */
 .routine-chips,
 .chip-row,

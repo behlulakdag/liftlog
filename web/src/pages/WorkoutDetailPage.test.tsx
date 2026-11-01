@@ -3,11 +3,12 @@ import { act, cleanup, render, screen, waitFor, within } from '@testing-library/
 import userEvent from '@testing-library/user-event'
 import { createMemoryRouter, RouterProvider } from 'react-router'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
-import type { PlanItem, WorkoutDetail, WorkoutSet } from '../api/types'
+import type { Exercise, PlanItem, WorkoutDetail, WorkoutSet } from '../api/types'
 import { ConfirmProvider } from '../components/Confirm'
 import { RestTimerContext, ToastContext, type ToastOptions } from '../components/contexts'
 import { formatKg } from '../lib/format'
 import { t } from '../lib/i18n'
+import { formatSets } from '../lib/muscles'
 import { fakeServer, jsonResponse, type Handler } from '../test/fakeServer'
 import { swipeRowLeft } from '../test/swipe'
 import { WorkoutDetailPage } from './WorkoutDetailPage'
@@ -311,5 +312,118 @@ describe('save as routine', () => {
     await user.click(screen.getByTestId('save-routine'))
     await waitFor(() => expect(toast).toHaveBeenCalledWith({ message: t.routineSaved('Push A') }))
     expect(calls.find((c) => c.path === '/api/v1/routines/from-workout/7')?.body).toEqual({ name: 'Push A' })
+  })
+})
+
+describe("the workout's muscle map", () => {
+  const exercise = (id: number, name: string, equipment: Exercise['equipment'], muscles: Exercise['muscles']): Exercise => ({
+    id,
+    name,
+    muscleGroup: null,
+    custom: false,
+    bodyweight: equipment === 'BODYWEIGHT',
+    equipment,
+    muscles,
+  })
+  const catalog: Exercise[] = [
+    exercise(1, 'Squat', 'BARBELL', [{ muscle: 'QUADS', role: 'PRIMARY' }, { muscle: 'GLUTES', role: 'SECONDARY' }]),
+    exercise(2, 'Leg Press', 'MACHINE', [{ muscle: 'QUADS', role: 'PRIMARY' }]),
+    exercise(3, 'Crunch', 'BODYWEIGHT', [{ muscle: 'ABS', role: 'PRIMARY' }]),
+    exercise(4, 'Cable Crunch', 'CABLE', [{ muscle: 'ABS', role: 'PRIMARY' }]),
+  ]
+  const squat = (id: number): WorkoutSet => ({
+    id,
+    exerciseId: 1,
+    exerciseName: 'Squat',
+    setOrder: id,
+    reps: 5,
+    weightKg: 120,
+    rpe: null,
+    newPersonalRecord: false,
+    bodyweight: false,
+  })
+
+  function mapServer() {
+    const sets = [squat(1), squat(2), squat(3)]
+    return fakeServer({
+      'GET /api/v1/workouts/7': () => jsonResponse(200, { id: 7, workoutDate: '2026-10-19', notes: 'Legs', totalVolumeKg: 1800, sets }),
+      'GET /api/v1/profile': () => jsonResponse(200, { id: 1, displayName: null, heightCm: null, bodyWeightKg: 80, avatarVersion: null }),
+      'GET /api/v1/exercises': () => jsonResponse(200, catalog),
+      'POST /api/v1/workouts/7/sets': (body) => {
+        const input = body as { exerciseId: number; reps: number; weightKg: number }
+        const saved = { ...squat(10 + sets.length), ...input, exerciseName: 'Crunch', bodyweight: true }
+        sets.push(saved)
+        return jsonResponse(201, saved)
+      },
+    })
+  }
+
+  const map = async () => within(await screen.findByTestId('recap-muscles'))
+  const muscle = async (name: string) => (await map()).findByRole('button', { name: new RegExp(`^${name}:`) })
+
+  it("lists this workout's exercises with their sets for a trained muscle, and closes on a second tap", async () => {
+    mapServer()
+    const user = renderDetail()
+
+    // The same wide hit areas as the Progress map, so a thin forearm is easy to tap
+    await muscle(t.muscleNames.QUADS)
+    expect(screen.getByTestId('recap-muscles').querySelector('[data-hit="FOREARMS"]')).not.toBeNull()
+    await user.click(await muscle(t.muscleNames.QUADS))
+    const panel = within((await map()).getByRole('region', { name: t.muscleNames.QUADS }))
+    const inWorkout = within(panel.getByTestId('muscle-in-workout'))
+    expect(inWorkout.getByText('Squat')).toBeInTheDocument()
+    expect(inWorkout.getByText(t.muscleSets('3'))).toBeInTheDocument()
+    expect(within(await panel.findByTestId('muscle-suggestions')).getByText('Leg Press')).toBeInTheDocument()
+
+    // A secondary muscle counts half: three squat sets are 1.5 for the glutes
+    await user.click(await muscle(t.muscleNames.GLUTES))
+    const glutes = within((await map()).getByRole('region', { name: t.muscleNames.GLUTES }))
+    expect(within(glutes.getByTestId('muscle-in-workout')).getByText(t.muscleSets(formatSets(1.5)))).toBeInTheDocument()
+
+    await user.click(await muscle(t.muscleNames.GLUTES))
+    expect((await map()).queryByTestId('muscle-detail')).not.toBeInTheDocument()
+  })
+
+  it('says an untrained muscle was not worked and suggests its exercises', async () => {
+    mapServer()
+    const user = renderDetail()
+
+    await user.click(await muscle(t.muscleNames.ABS))
+    const panel = within((await map()).getByRole('region', { name: t.muscleNames.ABS }))
+    expect(panel.getByText(t.muscleNotInWorkout)).toBeInTheDocument()
+    const suggestions = within(await panel.findByTestId('muscle-suggestions'))
+    expect(suggestions.getByRole('button', { name: t.muscleLogExercise('Crunch') })).toBeInTheDocument()
+    expect(suggestions.getByRole('button', { name: t.muscleLogExercise('Cable Crunch') })).toBeInTheDocument()
+  })
+
+  it('opens the set editor on a suggested exercise and logs a set of it', async () => {
+    const calls = mapServer()
+    const user = renderDetail()
+
+    await user.click(await muscle(t.muscleNames.ABS))
+    await user.click(await screen.findByRole('button', { name: t.muscleLogExercise('Crunch') }))
+
+    const editor = within(await screen.findByRole('dialog', { name: t.addSet }))
+    expect(editor.getByText('Crunch')).toBeInTheDocument()
+    // Picked like in the exercise picker: reps stay, a bodyweight exercise starts at 0 kg added
+    expect(editor.getByLabelText(t.reps)).toHaveValue('5')
+    await user.click(editor.getByTestId('save-set'))
+
+    await waitFor(() => expect(posts(calls)).toHaveLength(1))
+    expect(posts(calls)[0].body).toMatchObject({ exerciseId: 3, reps: 5, weightKg: 0 })
+  })
+
+  it("starts a weighted suggestion with an empty weight, not the last exercise's load", async () => {
+    mapServer()
+    const user = renderDetail()
+
+    await user.click(await muscle(t.muscleNames.ABS))
+    await user.click(await screen.findByRole('button', { name: t.muscleLogExercise('Cable Crunch') }))
+
+    const editor = within(await screen.findByRole('dialog', { name: t.addSet }))
+    expect(editor.getByText('Cable Crunch')).toBeInTheDocument()
+    // The squat's weight would mean nothing on a cable crunch
+    expect(editor.getByLabelText(t.weightKg)).toHaveValue('')
+    expect(editor.getByLabelText(t.reps)).toHaveValue('5')
   })
 })
