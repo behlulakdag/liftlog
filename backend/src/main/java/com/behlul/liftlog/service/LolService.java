@@ -365,7 +365,10 @@ public class LolService {
         try {
             all = riot.championMasteries(platform, player.getPuuid());
         } catch (RiotUnavailableException e) {
-            if (e.reason() != Reason.RIOT_ERROR) {
+            // Riot answers 403 both for a bad key and for an API the key may not use. The profile request at the start
+            // of this refresh already went through with the same key, so a 403 here means mastery is not allowed for
+            // it: the refresh goes on without mastery instead of failing as "key rejected"
+            if (e.reason() != Reason.RIOT_ERROR && e.reason() != Reason.KEY_REJECTED) {
                 throw e;
             }
             log.info("Keeping the old mastery of {} for now: {}", player.getPuuid(), e.getMessage());
