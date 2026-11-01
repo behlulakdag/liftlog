@@ -598,6 +598,23 @@ class LolServiceTest {
     }
 
     @Test
+    void aKeyThatMayNotReadMasteryStillRefreshesTheRestOnAManualRefresh() {
+        LolPlayer player = player("a", 60);
+        when(playerRepository.isVisibleTo(USER_ID, "a")).thenReturn(true);
+        when(playerRepository.findById("a")).thenReturn(Optional.of(player));
+        everyClaimSucceeds();
+        // Riot's 403 for an API outside the key's access looks the same as a rejected key
+        doThrow(new RiotUnavailableException(Reason.KEY_REJECTED, "Riot rejected the API key (expired or invalid)"))
+                .when(riot).championMasteries(any(), anyString());
+
+        service.refreshNow("a");
+
+        verify(masteryRepository, never()).deleteByPuuid(anyString());
+        assertThat(player.getRefreshedAt()).isEqualTo(NOW);
+        assertThat(player.getMasteryRefreshedAt()).isNull();
+    }
+
+    @Test
     void theSeasonPeakIsTheHighestSnapshotSinceTheSeasonStarted() {
         LocalDateTime start = SEASON_START.atStartOfDay();
         when(rankHistoryRepository.findByPuuidAndQueueAndRecordedAtGreaterThanEqual("a", LolRankQueue.SOLO, start))
