@@ -149,7 +149,8 @@ public class FakeRiotClient implements RiotClient {
             return Optional.empty();
         }
         Random random = seeded(puuid + "game" + window);
-        long startedAt = window * LIVE_WINDOW_MS + 60_000L + random.nextInt(120_000);
+        // A few minutes before the window opened, so the start is never in the future, even right after a new window
+        long startedAt = window * LIVE_WINDOW_MS - 60_000L - random.nextInt(120_000);
         long length = Math.max(0, (System.currentTimeMillis() - startedAt) / 1000);
         int ownerTeam = random.nextBoolean() ? 100 : 200;
         List<Integer> keys = sortedChampionKeys();
