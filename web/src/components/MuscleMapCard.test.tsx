@@ -147,7 +147,7 @@ describe('muscle map card', () => {
     expect(within(screen.getByTestId('muscle-detail')).getByText(t.muscleNotTrained)).toBeInTheDocument()
   })
 
-  it('lists the exercises that work the tapped muscle, primary ones only, varied by equipment', async () => {
+  it('lists the exercises that work the tapped muscle, primary ones only, staples first and varied by equipment', async () => {
     const urls = stubServer({ '/api/v1/stats/muscles': muscleRoute, '/api/v1/exercises': () => jsonResponse(200, catalog) })
     const user = renderWithClient(<MuscleMapCard />)
     await screen.findByRole('button', { name: new RegExp(t.muscleNames.CHEST) })
@@ -160,11 +160,11 @@ describe('muscle map card', () => {
     expect(suggestions.getByText(t.muscleExercisesTitle)).toBeInTheDocument()
     expect(suggestions.getAllByRole('listitem').map((li) => li.textContent)).toEqual([
       'Bench Press',
-      'Dumbbell Fly',
       'Pec Deck',
-      'Cable Crossover',
+      'Dumbbell Fly',
       'Push-up',
-      'Decline Bench Press',
+      'Cable Crossover',
+      'Incline Bench Press',
     ])
     // 7 primaries, 6 shown; Overhead Press only helps the chest and Squat does not touch it
     expect(suggestions.getByText(t.muscleExercisesMore(1))).toBeInTheDocument()

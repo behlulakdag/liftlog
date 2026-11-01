@@ -120,6 +120,7 @@ export function musclesOfSets(
 }
 
 interface WithMuscles {
+  id?: number
   name: string
   equipment?: string | null
   muscles?: readonly { muscle: string; role: 'PRIMARY' | 'SECONDARY' }[]
@@ -147,19 +148,20 @@ export function exercisesForMuscle<T extends WithMuscles>(exercises: readonly T[
   return { primary: primary.sort(byName), secondary: secondary.sort(byName) }
 }
 
-const EQUIPMENT_ORDER = ['BARBELL', 'DUMBBELL', 'MACHINE', 'CABLE', 'BODYWEIGHT']
+const EQUIPMENT_ORDER = ['BARBELL', 'MACHINE', 'DUMBBELL', 'BODYWEIGHT', 'CABLE']
 
 /**
  * A short, varied pick of the primary exercises for the Progress panel: one per equipment in turn (barbell,
- * dumbbell, machine, cable, bodyweight, then custom), so the first lines are not five barbell variants that
- * only happen to sort first by name.
+ * machine, dumbbell, bodyweight, cable, then custom), so the first lines are not five barbell variants. Inside
+ * one equipment the oldest catalog entries come first: the ids follow the migrations, so the V2 staples (Squat,
+ * Bench Press) lead and the V25 variations follow.
  */
 export function suggestedExercises<T extends WithMuscles>(
   exercises: readonly T[],
   muscle: MapMuscle,
   limit: number,
 ): { shown: T[]; more: number } {
-  const { primary } = exercisesForMuscle(exercises, muscle)
+  const primary = [...exercisesForMuscle(exercises, muscle).primary].sort((a, b) => (a.id ?? 0) - (b.id ?? 0))
   const rank = (exercise: T) => {
     const index = EQUIPMENT_ORDER.indexOf(exercise.equipment ?? '')
     return index >= 0 ? index : EQUIPMENT_ORDER.length

@@ -154,16 +154,18 @@ describe('exercisesForMuscle', () => {
 
   it('suggests a few primaries, one per equipment in turn', () => {
     const many = [
-      { name: 'Bench Press', equipment: 'BARBELL', muscles: [p('CHEST')] },
-      { name: 'Decline Bench Press', equipment: 'BARBELL', muscles: [p('CHEST')] },
-      { name: 'Incline Bench Press', equipment: 'BARBELL', muscles: [p('CHEST')] },
-      { name: 'Dumbbell Fly', equipment: 'DUMBBELL', muscles: [p('CHEST')] },
-      { name: 'Pec Deck', equipment: 'MACHINE', muscles: [p('CHEST')] },
-      { name: 'Push-up', equipment: 'BODYWEIGHT', muscles: [p('CHEST')] },
-      { name: 'Overhead Press', equipment: 'BARBELL', muscles: [s('CHEST')] },
+      { id: 300, name: 'Decline Bench Press', equipment: 'BARBELL', muscles: [p('CHEST')] },
+      { id: 1, name: 'Bench Press', equipment: 'BARBELL', muscles: [p('CHEST')] },
+      { id: 2, name: 'Incline Bench Press', equipment: 'BARBELL', muscles: [p('CHEST')] },
+      { id: 60, name: 'Dumbbell Fly', equipment: 'DUMBBELL', muscles: [p('CHEST')] },
+      { id: 50, name: 'Pec Deck', equipment: 'MACHINE', muscles: [p('CHEST')] },
+      { id: 70, name: 'Cable Fly', equipment: 'CABLE', muscles: [p('CHEST')] },
+      { id: 20, name: 'Push-up', equipment: 'BODYWEIGHT', muscles: [p('CHEST')] },
+      { id: 3, name: 'Overhead Press', equipment: 'BARBELL', muscles: [s('CHEST')] },
     ]
-    const { shown, more } = suggestedExercises(many, 'CHEST', 5)
-    expect(shown.map((e) => e.name)).toEqual(['Bench Press', 'Dumbbell Fly', 'Pec Deck', 'Push-up', 'Decline Bench Press'])
+    // Barbell, machine, dumbbell, bodyweight, cable; the oldest (lowest id) of each first
+    const { shown, more } = suggestedExercises(many, 'CHEST', 6)
+    expect(shown.map((e) => e.name)).toEqual(['Bench Press', 'Pec Deck', 'Dumbbell Fly', 'Push-up', 'Cable Fly', 'Incline Bench Press'])
     expect(more).toBe(1)
   })
 })
