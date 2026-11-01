@@ -11,6 +11,7 @@ import { ErrorState } from '../components/StateViews'
 import { StreakChip } from '../components/StreakChip'
 import { formatKg, formatLongDate } from '../lib/format'
 import { t } from '../lib/i18n'
+import { muscleStatsOfSets } from '../lib/muscles'
 import { formatSignedKg, recapShareText, volumeDelta } from '../lib/recap'
 
 /** "Finish": the server-computed summary of a workout, with a share button. */
@@ -34,6 +35,11 @@ export function WorkoutRecapSheet({ workoutId, onClose, onDone }: { workoutId: n
 
 function RecapCard({ recap, onDone }: { recap: WorkoutRecap; onDone: () => void }) {
   const toast = useToast()
+  // The summary only has totals per muscle; the workout's sets (cached by the page behind the sheet) and the
+  // catalog split them per exercise for a tapped muscle
+  const workout = useQuery({ queryKey: queryKeys.workout(recap.workoutId), queryFn: () => api.workout(recap.workoutId) })
+  const exercises = useQuery({ queryKey: queryKeys.exercises, queryFn: api.exercises, staleTime: 5 * 60_000 })
+  const breakdown = workout.data && exercises.data ? muscleStatsOfSets(workout.data.sets, exercises.data) : undefined
   const delta = volumeDelta(recap)
   const records = recap.personalRecords
 
@@ -101,7 +107,8 @@ function RecapCard({ recap, onDone }: { recap: WorkoutRecap; onDone: () => void 
         </section>
       )}
 
-      <RecapMuscles muscles={recap.muscles} />
+      {/* Informational here: adding a set happens on the workout page behind the sheet */}
+      <RecapMuscles muscles={recap.muscles} breakdown={breakdown} />
 
       <div className="recap-actions">
         <button className="btn btn-primary" onClick={share} data-testid="recap-share">

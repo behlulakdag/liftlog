@@ -3,7 +3,7 @@ import { cleanup, render, screen, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { createMemoryRouter, RouterProvider } from 'react-router'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
-import type { WorkoutDetail, WorkoutRecap } from '../api/types'
+import type { Exercise, WorkoutDetail, WorkoutRecap } from '../api/types'
 import { ConfirmProvider } from '../components/Confirm'
 import { RestTimerContext, ToastContext, type ToastOptions } from '../components/contexts'
 import { formatKg } from '../lib/format'
@@ -38,12 +38,12 @@ const recap: WorkoutRecap = {
   weekStreak: 4,
 }
 
-function server({ detail = workout, summary = recap }: { detail?: WorkoutDetail; summary?: WorkoutRecap } = {}) {
+function server({ detail = workout, summary = recap, catalog = [] }: { detail?: WorkoutDetail; summary?: WorkoutRecap; catalog?: Exercise[] } = {}) {
   return fakeServer({
     'GET /api/v1/workouts/7': () => jsonResponse(200, detail),
     'GET /api/v1/workouts/7/summary': () => jsonResponse(200, summary),
     'GET /api/v1/profile': () => jsonResponse(200, { id: 1, displayName: null, heightCm: null, bodyWeightKg: 80, avatarVersion: null }),
-    'GET /api/v1/exercises': () => jsonResponse(200, []),
+    'GET /api/v1/exercises': () => jsonResponse(200, catalog),
   })
 }
 
@@ -139,11 +139,41 @@ describe('workout recap sheet', () => {
     const map = within(await sheet.findByTestId('recap-muscles'))
     expect(map.getByRole('group', { name: t.muscleMapFigure('front') })).toBeInTheDocument()
     expect(map.getByRole('group', { name: t.muscleMapFigure('back') })).toBeInTheDocument()
-    expect(map.getByRole('img', { name: t.muscleAria(t.muscleNames.QUADS, t.muscleSets('6')) })).toHaveAttribute('data-band', 'high')
-    expect(map.getByRole('img', { name: new RegExp(t.muscleNames.CHEST) })).toHaveAttribute('data-band', 'mid')
-    expect(map.getByRole('img', { name: new RegExp(t.muscleNames.GLUTES) })).toHaveAttribute('data-band', 'low')
-    // Only for looking: the summary map is not tappable
-    expect(map.queryByRole('button')).not.toBeInTheDocument()
+    expect(map.getByRole('button', { name: t.muscleAria(t.muscleNames.QUADS, t.muscleSets('6')) })).toHaveAttribute('data-band', 'high')
+    expect(map.getByRole('button', { name: new RegExp(t.muscleNames.CHEST) })).toHaveAttribute('data-band', 'mid')
+    expect(map.getByRole('button', { name: new RegExp(t.muscleNames.GLUTES) })).toHaveAttribute('data-band', 'low')
+  })
+
+  it("lists this workout's exercises and the staples for a tapped muscle, without adding", async () => {
+    server({
+      summary: { ...recap, muscles: [{ muscle: 'QUADS', sets: 1 }, { muscle: 'CHEST', sets: 1 }] },
+      catalog: [
+        { id: 1, name: 'Squat', muscleGroup: 'Legs', custom: false, bodyweight: false, equipment: 'BARBELL', muscles: [{ muscle: 'QUADS', role: 'PRIMARY' }] },
+        { id: 2, name: 'Bench Press', muscleGroup: 'Chest', custom: false, bodyweight: false, equipment: 'BARBELL', muscles: [{ muscle: 'CHEST', role: 'PRIMARY' }] },
+        { id: 3, name: 'Crunch', muscleGroup: 'Core', custom: false, bodyweight: true, equipment: 'BODYWEIGHT', muscles: [{ muscle: 'ABS', role: 'PRIMARY' }] },
+      ],
+    })
+    const user = renderDetail()
+    const sheet = await openRecap(user)
+    const map = within(await sheet.findByTestId('recap-muscles'))
+
+    await user.click(map.getByRole('button', { name: new RegExp(t.muscleNames.QUADS) }))
+    const panel = within(map.getByRole('region', { name: t.muscleNames.QUADS }))
+    const inWorkout = within(panel.getByTestId('muscle-in-workout'))
+    expect(await inWorkout.findByText('Squat')).toBeInTheDocument()
+    expect(inWorkout.getByText(t.muscleSets('1'))).toBeInTheDocument()
+    expect(within(await panel.findByTestId('muscle-suggestions')).getByText('Squat')).toBeInTheDocument()
+    // Informational only: the suggestions are plain tags, not "add a set" buttons
+    expect(panel.queryByRole('button', { name: t.muscleLogExercise('Squat') })).not.toBeInTheDocument()
+
+    // An untrained muscle opens too, with the note and its exercises
+    await user.click(map.getByRole('button', { name: new RegExp(t.muscleNames.ABS) }))
+    const abs = within(map.getByRole('region', { name: t.muscleNames.ABS }))
+    expect(abs.getByText(t.muscleNotInWorkout)).toBeInTheDocument()
+    expect(within(await abs.findByTestId('muscle-suggestions')).getByText('Crunch')).toBeInTheDocument()
+
+    await user.click(abs.getByRole('button', { name: t.close }))
+    expect(map.queryByTestId('muscle-detail')).not.toBeInTheDocument()
   })
 
   it('leaves the map out when the server sends no muscles', async () => {
