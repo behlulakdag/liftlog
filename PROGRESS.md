@@ -594,8 +594,8 @@ yüzünden her yeni istek limiter'dan geçiyor ve sonuçlar saklanıp tembelce y
 - Doğrulama: backend 332 test (`mvnw verify`, yeni `ExerciseCatalogIntegrationTest`), web 495 test, tsc, lint, build;
   geçici Postgres (5499) + API (8099) ile 375 px'te denendi: harita, kalça → 43 ana kas hareketi, ön kolun 2 px
   dışına dokunmak da ön kolu seçiyor, sayfa yatay taşmıyor.
-- Not: `FakeRiotClientTest.namedPlayersAreAlwaysOrNeverInALiveGame` saat penceresinin ilk ~3 dakikasında düşebiliyor
-  (başlangıç zamanı geleceğe düşüyor); bu daldan bağımsız, ikinci koşuda geçti.
+- `FakeRiotClientTest.namedPlayersAreAlwaysOrNeverInALiveGame` saat penceresinin ilk ~3 dakikasında düşüyordu
+  (sahte maçın başlangıcı geleceğe düşüyordu); başlangıç artık pencereden önce, düzeltildi.
 
 **Sıradaki adımlar:**
 1. PR aç; canlıda V25'i kontrol et.
