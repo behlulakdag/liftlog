@@ -1035,6 +1035,49 @@ class ApiIntegrationTest {
     }
 
     @Test
+    void waterAddsUpPerDayStaysWithinBoundsAndBelongsToTheCaller() throws Exception {
+        String token = register(randomEmail(), "s3cret-pass", null);
+        String today = LocalDate.now(ZoneOffset.UTC).toString();
+        String yesterday = LocalDate.now(ZoneOffset.UTC).minusDays(1).toString();
+        String day = "/api/v1/water/days/" + today;
+
+        // Nothing drunk yet: zero, no goal, the default glass
+        mockMvc.perform(get(day).header(HttpHeaders.AUTHORIZATION, "Bearer " + token))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.waterMl").value(0))
+                .andExpect(jsonPath("$.goalMl").doesNotExist())
+                .andExpect(jsonPath("$.glassMl").value(250));
+
+        authed(put(day + "/settings"), token, "{\"goalMl\":2000,\"glassMl\":300}")
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.goalMl").value(2000))
+                .andExpect(jsonPath("$.glassMl").value(300));
+        authed(put(day + "/settings"), token, "{\"goalMl\":100,\"glassMl\":300}").andExpect(status().isBadRequest());
+        authed(put(day + "/settings"), token, "{\"goalMl\":2000}").andExpect(status().isBadRequest());
+
+        // Taps add up; taking one back subtracts, and the total never goes below zero
+        authed(post(day + "/add"), token, "{\"deltaMl\":300}").andExpect(jsonPath("$.waterMl").value(300));
+        authed(post(day + "/add"), token, "{\"deltaMl\":300}").andExpect(jsonPath("$.waterMl").value(600));
+        authed(post(day + "/add"), token, "{\"deltaMl\":-300}").andExpect(jsonPath("$.waterMl").value(300));
+        authed(post(day + "/add"), token, "{\"deltaMl\":-5000}").andExpect(jsonPath("$.waterMl").value(0));
+        authed(post(day + "/add"), token, "{\"deltaMl\":0}").andExpect(status().isBadRequest());
+        authed(post(day + "/add"), token, "{\"deltaMl\":9000}").andExpect(status().isBadRequest());
+
+        // Each day keeps its own total
+        authed(post("/api/v1/water/days/" + yesterday + "/add"), token, "{\"deltaMl\":500}")
+                .andExpect(jsonPath("$.waterMl").value(500));
+        authed(post(day + "/add"), token, "{\"deltaMl\":250}").andExpect(jsonPath("$.waterMl").value(250));
+
+        // Another user starts from zero with their own settings
+        String stranger = register(randomEmail(), "s3cret-pass", null);
+        mockMvc.perform(get(day).header(HttpHeaders.AUTHORIZATION, "Bearer " + stranger))
+                .andExpect(jsonPath("$.waterMl").value(0))
+                .andExpect(jsonPath("$.goalMl").doesNotExist())
+                .andExpect(jsonPath("$.glassMl").value(250));
+        mockMvc.perform(get(day)).andExpect(status().isUnauthorized());
+    }
+
+    @Test
     void copyingADayDuplicatesItsEntriesForTheCallerOnly() throws Exception {
         String token = register(randomEmail(), "s3cret-pass", null);
         String today = LocalDate.now(ZoneOffset.UTC).toString();
