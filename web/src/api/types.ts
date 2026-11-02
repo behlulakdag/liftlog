@@ -272,6 +272,14 @@ export interface NutritionDay {
   goals: NutritionGoals
 }
 
+/** One day's water; goalMl is null until the user sets a daily goal. */
+export interface WaterDay {
+  date: string
+  waterMl: number
+  goalMl: number | null
+  glassMl: number
+}
+
 /** Built-in food list row; nutrition is per 100 g plus one typical serving. */
 export interface CatalogFood {
   id: number

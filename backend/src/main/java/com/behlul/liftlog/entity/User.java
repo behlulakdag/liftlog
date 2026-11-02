@@ -46,6 +46,13 @@ public class User {
     @Column(name = "protein_goal_g")
     private Integer proteinGoalG;
 
+    @Column(name = "water_goal_ml")
+    private Integer waterGoalMl;
+
+    /** What one tap on "a glass" adds to the day's water. */
+    @Column(name = "glass_ml", nullable = false)
+    private int glassMl = 250;
+
     /** The WebAuthn user handle inside every passkey of this account; null until the first passkey. */
     @Column(name = "passkey_handle", unique = true)
     private byte[] passkeyHandle;
@@ -123,6 +130,19 @@ public class User {
     public void setNutritionGoals(Integer calorieGoalKcal, Integer proteinGoalG) {
         this.calorieGoalKcal = calorieGoalKcal;
         this.proteinGoalG = proteinGoalG;
+    }
+
+    public Integer getWaterGoalMl() {
+        return waterGoalMl;
+    }
+
+    public int getGlassMl() {
+        return glassMl;
+    }
+
+    public void setWaterSettings(Integer waterGoalMl, int glassMl) {
+        this.waterGoalMl = waterGoalMl;
+        this.glassMl = glassMl;
     }
 
     public LocalDateTime getCreatedAt() {
