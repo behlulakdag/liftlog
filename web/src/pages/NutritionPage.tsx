@@ -10,6 +10,7 @@ import { Sheet } from '../components/Sheet'
 import { NutritionSkeleton } from '../components/Skeletons'
 import { ErrorState, MessageState } from '../components/StateViews'
 import { SwipeToDelete } from '../components/SwipeToDelete'
+import { WaterCard } from '../components/WaterCard'
 import { AddFoodSheet } from './AddFoodSheet'
 import { vibrate } from '../lib/feedback'
 import { errorMessage, formatKg, formatLongDate, formatShortDate } from '../lib/format'
@@ -154,6 +155,7 @@ export function NutritionPage() {
         <>
           <GoalRings calories={totals.calories} protein={totals.protein} goals={day.data.goals} onEdit={() => setEditingGoals(true)} />
           <MacroSplit protein={totals.protein} carbs={totals.carbs} fat={totals.fat} />
+          <WaterCard date={date} />
 
           {frequent.data && frequent.data.length > 0 && (
             <section className="quick-add">

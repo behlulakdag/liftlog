@@ -23,6 +23,7 @@ export const queryKeys = {
   nutrition: ['nutrition'] as const,
   nutritionDay: (date: string) => ['nutrition', 'day', date] as const,
   frequentFoods: ['nutrition', 'frequent'] as const,
+  waterDay: (date: string) => ['water', 'day', date] as const,
   foods: ['foods'] as const,
   lolPlayers: ['lol', 'players'] as const,
   lolPlayer: (puuid: string) => ['lol', 'player', puuid] as const,

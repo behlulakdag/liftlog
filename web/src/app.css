@@ -7937,3 +7937,189 @@ body:has(.rest-timer) .finish-btn {
   font-size: 11px;
   font-weight: 400;
 }
+
+/* Water: a card with an offset tertiary plate behind it, a row of filling glasses and a chunky add button */
+.water-card {
+  position: relative;
+  margin: 4px 8px 20px 0;
+  padding: 12px 14px 14px;
+  border-radius: var(--radius-l);
+  background: var(--surface);
+  border: 1px solid var(--outline-variant);
+  box-shadow: 8px 8px 0 color-mix(in srgb, var(--tertiary) 16%, var(--surface-low));
+}
+
+/* A thin cyan edge on the left marks the card as water at a glance */
+.water-card::before {
+  content: '';
+  position: absolute;
+  left: -1px;
+  top: 14px;
+  bottom: 14px;
+  width: 4px;
+  border-radius: 0 3px 3px 0;
+  background: var(--tertiary);
+}
+
+.water-card-loading {
+  min-height: 168px;
+  opacity: 0.5;
+}
+
+.water-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.water-head .section-title {
+  margin: 0;
+}
+
+.water-total {
+  display: flex;
+  align-items: baseline;
+  flex-wrap: wrap;
+  gap: 2px 4px;
+  margin: 2px 0 10px;
+  color: var(--text-muted);
+  font-weight: 600;
+}
+
+.water-total strong {
+  font-family: var(--font-display);
+  font-size: 34px;
+  line-height: 1;
+  color: var(--text);
+}
+
+.water-status {
+  flex-basis: 100%;
+  font-size: 13px;
+}
+
+.water-card.reached .water-status {
+  color: var(--tertiary);
+  font-weight: 700;
+}
+
+.water-glasses {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  gap: 6px;
+  margin-bottom: 10px;
+}
+
+.water-glass-body {
+  fill: var(--surface-highest);
+}
+
+.water-glass-water {
+  fill: var(--tertiary);
+  transition: d 0.5s var(--ease-spring);
+}
+
+.water-glass-outline {
+  fill: none;
+  stroke: var(--outline);
+  stroke-width: 1.4;
+}
+
+.water-glass.filled .water-glass-outline {
+  stroke: color-mix(in srgb, var(--tertiary) 70%, var(--text));
+}
+
+.water-glass-shine {
+  stroke: color-mix(in srgb, var(--text) 35%, transparent);
+  stroke-width: 1.4;
+  stroke-linecap: round;
+}
+
+.water-more {
+  align-self: center;
+  font-weight: 700;
+  color: var(--tertiary);
+}
+
+.water-bar {
+  height: 6px;
+  margin-bottom: 12px;
+  border-radius: 3px;
+  overflow: hidden;
+  background: var(--surface-highest);
+}
+
+.water-bar span {
+  display: block;
+  height: 100%;
+  border-radius: inherit;
+  background: var(--tertiary);
+  transition: width 0.6s var(--ease-spring);
+}
+
+.water-actions {
+  display: flex;
+  gap: 10px;
+}
+
+.water-take-back {
+  flex: none;
+  width: 52px;
+  border-radius: var(--radius-m);
+  border: 1px solid var(--outline);
+  font-size: 26px;
+  font-weight: 600;
+  color: var(--text-muted);
+}
+
+.water-take-back:disabled {
+  opacity: 0.35;
+}
+
+/* Same pressed-in feel as the copy-day button, in water colors */
+.water-add {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 14px;
+  border-radius: var(--radius-m);
+  background: var(--tertiary);
+  color: var(--surface-low);
+  box-shadow: 5px 5px 0 color-mix(in srgb, var(--tertiary) 35%, var(--surface-low));
+  transition: transform 0.45s var(--ease-spring), box-shadow 0.45s var(--ease-spring);
+}
+
+.water-add:active {
+  transform: translate(3px, 3px);
+  box-shadow: 2px 2px 0 color-mix(in srgb, var(--tertiary) 35%, var(--surface-low));
+  transition-duration: 0.08s;
+}
+
+.water-add-plus {
+  font-size: 24px;
+  font-weight: 700;
+  line-height: 1;
+}
+
+.water-add strong {
+  font-family: var(--font-display);
+  font-size: 20px;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+}
+
+.water-add-size {
+  margin-left: auto;
+  padding: 2px 8px;
+  border-radius: var(--radius-s);
+  background: color-mix(in srgb, var(--surface-low) 18%, transparent);
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.water-set-goal {
+  margin-top: 8px;
+  padding: 0;
+}

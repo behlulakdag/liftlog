@@ -1,6 +1,6 @@
 import type { CreationOptionsJson, CredentialJson, RequestOptionsJson } from '../lib/webauthn'
 import { request, requestFile } from './client'
-import type { AuthResponse, GroupTraining, LolDeepStats, LolGroup, LolGroupDuo, LolGroupLive, LolLiveGame, LolMastery, LolMatchDetail, LolPlayer, LolPlayerDetail, LolRankPoint, LolRankQueue, LolStatsQueue, LolStatsWindow, LolTimeline, CatalogFood, MuscleStats, Exercise, FoodEntry, FoodInput, FrequentFood, NutritionDay, NutritionGoals, Page, Passkey, PasskeyCeremony, PersonalRecord, PlanItem, Profile, ProgressPoint, Routine, RoutineInput, SetInput, Streak, WeeklyVolume, WeightEntry, WeightHistory, WorkoutDetail, WorkoutRecap, WorkoutSet, WorkoutSummary } from './types'
+import type { AuthResponse, GroupTraining, LolDeepStats, LolGroup, LolGroupDuo, LolGroupLive, LolLiveGame, LolMastery, LolMatchDetail, LolPlayer, LolPlayerDetail, LolRankPoint, LolRankQueue, LolStatsQueue, LolStatsWindow, LolTimeline, CatalogFood, MuscleStats, Exercise, FoodEntry, FoodInput, FrequentFood, NutritionDay, NutritionGoals, Page, Passkey, PasskeyCeremony, PersonalRecord, PlanItem, Profile, ProgressPoint, Routine, RoutineInput, SetInput, Streak, WeeklyVolume, WeightEntry, WeightHistory, WorkoutDetail, WorkoutRecap, WorkoutSet, WaterDay, WorkoutSummary } from './types'
 
 export const api = {
   register: (email: string, password: string) =>
@@ -53,6 +53,10 @@ export const api = {
   frequentFoods: () => request<FrequentFood[]>('/api/v1/nutrition/frequent'),
   // The response is cached for a day; the app version in the URL makes each release fetch the list anew
   foods: () => request<CatalogFood[]>(`/api/v1/foods?v=${__APP_VERSION__}`),
+  waterDay: (date: string) => request<WaterDay>(`/api/v1/water/days/${date}`),
+  addWater: (date: string, deltaMl: number) => request<WaterDay>(`/api/v1/water/days/${date}/add`, { method: 'POST', body: { deltaMl } }),
+  updateWaterSettings: (date: string, settings: { goalMl: number | null; glassMl: number }) =>
+    request<WaterDay>(`/api/v1/water/days/${date}/settings`, { method: 'PUT', body: settings }),
   updateNutritionGoals: (goals: NutritionGoals) => request<NutritionGoals>('/api/v1/nutrition/goals', { method: 'PUT', body: goals }),
 
   lolPlayers: () => request<LolPlayer[]>('/api/v1/lol/players'),
