@@ -619,3 +619,26 @@ yüzünden her yeni istek limiter'dan geçiyor ve sonuçlar saklanıp tembelce y
 **Sıradaki adımlar:**
 1. PR aç.
 2. Android'deki antrenman haritasına da aynı panel.
+
+## 2026-11-02 — Tarayıcı çevirisi kapatıldı (`fix/block-browser-translate`, #41)
+
+- Android'de Chrome'un otomatik çevirisi React'ın yazılarını değiştirip uygulamayı `removeChild` hatasıyla
+  çökertiyordu. `index.html`: `<html translate="no">` + `<meta name="google" content="notranslate">`.
+
+## 2026-11-02 — Su takibi (`feature/water-tracking`)
+
+- Backend: V26 `water_days` (kullanıcı + gün başına bir toplam, 0–20000 ml) ve `users.water_goal_ml` (boş = hedef
+  yok, 250–10000) + `users.glass_ml` (varsayılan 250, 50–1000). Uçlar: `GET /api/v1/water/days/{date}`,
+  `POST …/add` (`deltaMl`, eksi = geri al; tek SQL upsert, iki cihazdan hızlı dokunuşlar da sayılır),
+  `PUT …/settings`. Test: `waterAddsUpPerDayStaysWithinBoundsAndBelongsToTheCaller`.
+- Web: Beslenme sayfasında halkaların altında "Su" kartı. Hedef kadar bardak dizisi dolar, ilerleme çubuğu,
+  "+ Bardak" (her dokunuş bardak boyu kadar ekler), "−" bir bardak geri alır (Geri al bildirimiyle). Ayarlar
+  penceresinde hedef litre ("2,5") ve bardak boyu (200/250/330/500 ml ya da elle) girilir. Hedefe ulaşınca
+  "Hedefe ulaştın!" yazıyor ve telefon titriyor.
+- Doğrulama: backend `mvnw verify` geçti (ApiIntegrationTest 45/45); web 515 test, tsc, lint, build; yerelde
+  375 px'te: 2 L hedef, art arda 5 dokunuş → 1,25 L (sayfa yenilenince de aynı), "−" → 1 L + bildirim, 4 dokunuş
+  → "Hedefe ulaştın!"; açık ve koyu temada bakıldı.
+
+**Sıradaki adımlar:**
+1. PR'ı birleştir, canlıda V26'yı kontrol et.
+2. İstenirse: su geçmişi (haftalık grafik), dışa aktarmaya su, Android'e su kartı.
