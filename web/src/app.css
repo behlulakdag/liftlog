@@ -8123,3 +8123,10 @@ body:has(.rest-timer) .finish-btn {
   margin-top: 8px;
   padding: 0;
 }
+
+.route-error-actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 10px;
+}

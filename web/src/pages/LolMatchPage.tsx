@@ -21,6 +21,7 @@ import { formatDuration, kdaRatio, queueKey } from '../lib/lol'
 import { goldLeadPoints, laneDiffs, patchOf, signedNumber, splitTeams, zeroOffset, type ItemInfo, type LaneDiff, type RuneInfo } from '../lib/lolDeep'
 import { compact, DASH, percentText, utcDate } from '../lib/lolFormat'
 import { itemSlots, roundTo, toPercent } from '../lib/lolStats'
+import { goBackOrHome } from '../lib/navigation'
 
 const BLUE = 100
 
@@ -67,7 +68,7 @@ export function LolMatchPage() {
       ) : notStored ? (
         <MessageState icon={<ControllerIcon size={32} />} title={t.matchNotStoredTitle} body={t.matchNotStoredBody} />
       ) : match.isError ? (
-        <ErrorState error={match.error} onRetry={() => match.refetch()} />
+        <ErrorState error={match.error} onRetry={() => match.refetch()} onBack={() => goBackOrHome(navigate)} />
       ) : (
         <MatchContent match={match.data} viewer={viewer} timeline={timeline} />
       )}

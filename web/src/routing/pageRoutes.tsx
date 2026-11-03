@@ -1,4 +1,5 @@
 import type { RouteObject } from 'react-router'
+import { RouteError } from '../components/RouteError'
 import { WorkoutsPage } from '../pages/WorkoutsPage'
 import {
   LazyGamePage,
@@ -22,4 +23,6 @@ export const pageRoutes: RouteObject[] = [
   // Two segments after /game, so it never collides with a player's puuid
   { path: '/game/match/:matchId', element: <LazyLolMatchPage /> },
   { path: '/profile', element: <LazyProfilePage /> },
+  // Any other address: a page of our own with the bottom nav, not React Router's developer 404
+  { path: '*', element: <RouteError notFound /> },
 ]
