@@ -48,8 +48,7 @@ export function WelcomeScreen({ onStart, onRestored }: { onStart: () => void; on
   }
   return (
     <div className="page recovery-screen">
-      {/* CSS uppercases the title in the page language; lang="en" keeps the brand from becoming "LİFTLOG" in Turkish */}
-      <MessageState icon={<DumbbellIcon size={32} />} title={<span lang="en">LiftLog</span>} body={t.welcomeBody}>
+      <MessageState icon={<DumbbellIcon size={32} />} title="LiftLog" body={t.welcomeBody}>
         <div className="stack recovery-actions">
           <button className="btn btn-primary btn-block" onClick={onStart} data-testid="welcome-start">
             {t.welcomeStart}
