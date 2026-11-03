@@ -705,3 +705,16 @@ yüzünden her yeni istek limiter'dan geçiyor ve sonuçlar saklanıp tembelce y
 1. PR'ı birleştir; telefonda bak (özellikle barkod tarayıcı).
 2. Blok ve hedefler özelliği (blok başlangıcı, hafta sayısı, hareket başına hedef kg).
 3. Aynı tasarım dilini diğer sayfalara taşı (antrenman detayı, Beslenme, İlerleme, Profil).
+
+## 2026-11-03 — Diğer sayfalar yeni tasarımda (`feature/calm-pages`, yalnızca web)
+
+- Antrenman detayı: büyük hacim rakamı + "6 set · 2 hareket"; hareketler düz bölüm, kas adı renkli noktayla,
+  setler çizgili satırlar (renkli şerit, #1 çipleri, kart çerçeveleri kalktı).
+- Beslenme: yemekler düz satırlar, kilo tek sessiz satır, su "+ Bardak" düğmesi tonlu.
+- İlerleme: rekorlar çizgiyle ayrılmış iki sütun (72,5 kg × 5 tek satırda), kas haritası başlığı küçüldü.
+- Profil: yuvarlak avatar + isim + Düzenle kartsız; boy/kilo/VKİ sütunlar; son tartı düz büyük rakam,
+  haftalık değişim renkli düz yazı.
+- Doğrulama: web 531 test, tsc, lint, build; yerelde 375 px'te dört sayfaya bakıldı.
+
+**Sıradaki adımlar:**
+1. #45 (blok ve hedefler) ve bu PR'ı birleştir; telefonda bak.
