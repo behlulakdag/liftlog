@@ -8,6 +8,8 @@ export const queryKeys = {
   workoutPlan: (id: number) => ['workout', id, 'plan'] as const,
   workoutRecap: (id: number) => ['workout', id, 'summary'] as const,
   routines: ['routines'] as const,
+  // Under stats, so logging sets moves the goals' current values too
+  program: (today: string) => ['stats', 'program', today] as const,
   exercises: ['exercises'] as const,
   stats: ['stats'] as const,
   // Under stats, so logging or deleting sets refreshes the streak with the other numbers

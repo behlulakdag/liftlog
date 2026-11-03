@@ -274,6 +274,26 @@ export interface NutritionDay {
   goals: NutritionGoals
 }
 
+export interface LiftGoal {
+  exerciseId: number
+  exerciseName: string
+  bodyweight: boolean
+  startKg: number
+  targetKg: number
+  /** Best set so far; for a bodyweight exercise the added load alone */
+  currentKg: number
+}
+
+/** The training block and its goals; everything is null or empty until set. */
+export interface Program {
+  blockStart: string | null
+  blockWeeks: number | null
+  /** 1 in the block's first week; past blockWeeks once the block is over */
+  currentWeek: number | null
+  goals: LiftGoal[]
+  weightGoal: { startKg: number | null; targetKg: number; currentKg: number | null } | null
+}
+
 /** One day's water; goalMl is null until the user sets a daily goal. */
 export interface WaterDay {
   date: string
