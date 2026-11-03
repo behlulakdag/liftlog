@@ -140,22 +140,22 @@ describe('routine strip', () => {
 
 describe('templates when there are no routines yet', () => {
   const catalog: Exercise[] = [
-    { id: 21, name: 'Pull-up', muscleGroup: 'Back', custom: false, bodyweight: true },
-    { id: 22, name: 'Push-up', muscleGroup: 'Chest', custom: false, bodyweight: true },
-    { id: 23, name: 'Dip', muscleGroup: 'Chest', custom: false, bodyweight: true },
-    { id: 24, name: 'Inverted Row', muscleGroup: 'Back', custom: false, bodyweight: true },
-    { id: 25, name: 'Pistol Squat', muscleGroup: 'Legs', custom: false, bodyweight: true },
-    { id: 26, name: 'Hanging Leg Raise', muscleGroup: 'Core', custom: false, bodyweight: true },
+    { id: 21, name: 'Smith Machine Squat', muscleGroup: 'Legs', custom: false, bodyweight: false },
+    { id: 22, name: 'Romanian Deadlift', muscleGroup: 'Legs', custom: false, bodyweight: false },
+    { id: 23, name: 'Leg Press', muscleGroup: 'Legs', custom: false, bodyweight: false },
+    { id: 24, name: 'Lying Leg Curl', muscleGroup: 'Legs', custom: false, bodyweight: false },
+    { id: 25, name: 'Standing Calf Raise Machine', muscleGroup: 'Legs', custom: false, bodyweight: false },
+    { id: 26, name: 'Cable Crunch', muscleGroup: 'Core', custom: false, bodyweight: false },
   ]
-  const calisthenicsBody = {
-    name: t.templateNames.calisthenics,
+  const lowerABody = {
+    name: t.templateNames.lowerA,
     exercises: [
-      { exerciseId: 21, sets: 4, targetReps: 6 },
-      { exerciseId: 22, sets: 4, targetReps: 15 },
-      { exerciseId: 23, sets: 3, targetReps: 10 },
+      { exerciseId: 21, sets: 3, targetReps: 8 },
+      { exerciseId: 22, sets: 3, targetReps: 10 },
+      { exerciseId: 23, sets: 3, targetReps: 12 },
       { exerciseId: 24, sets: 3, targetReps: 12 },
-      { exerciseId: 25, sets: 3, targetReps: 6 },
-      { exerciseId: 26, sets: 3, targetReps: 12 },
+      { exerciseId: 25, sets: 4, targetReps: 15 },
+      { exerciseId: 26, sets: 3, targetReps: 15 },
     ],
   }
 
@@ -166,11 +166,11 @@ describe('templates when there are no routines yet', () => {
       'GET /api/v1/routines': () => jsonResponse(200, routines),
       'GET /api/v1/exercises': () => jsonResponse(200, catalog),
       'POST /api/v1/routines': (body) => {
-        const input = body as typeof calisthenicsBody
+        const input = body as typeof lowerABody
         const created: Routine = {
           id: 9,
           name: input.name,
-          exercises: input.exercises.map((e) => ({ ...e, name: catalog.find((c) => c.id === e.exerciseId)!.name, bodyweight: true })),
+          exercises: input.exercises.map((e) => ({ ...e, name: catalog.find((c) => c.id === e.exerciseId)!.name, bodyweight: false })),
         }
         routines = [created]
         return jsonResponse(201, created)
@@ -184,13 +184,13 @@ describe('templates when there are no routines yet', () => {
     const user = renderWorkouts()
 
     const templates = await screen.findByRole('region', { name: t.readyTemplates })
-    await user.click(within(templates).getByRole('button', { name: new RegExp(t.templateNames.calisthenics) }))
+    await user.click(within(templates).getByRole('button', { name: new RegExp(t.templateNames.lowerA) }))
     const sheet = screen.getByRole('dialog', { name: t.readyTemplates })
     await user.click(await within(sheet).findByTestId('template-add'))
 
-    await waitFor(() => expect(calls.find((c) => c.method === 'POST')?.body).toEqual(calisthenicsBody))
+    await waitFor(() => expect(calls.find((c) => c.method === 'POST')?.body).toEqual(lowerABody))
     const strip = await screen.findByRole('region', { name: t.startWithRoutine })
-    expect(within(strip).getByRole('button', { name: new RegExp(t.templateNames.calisthenics) })).toBeInTheDocument()
+    expect(within(strip).getByRole('button', { name: new RegExp(t.templateNames.lowerA) })).toBeInTheDocument()
     expect(screen.queryByRole('region', { name: t.readyTemplates })).not.toBeInTheDocument()
   })
 
@@ -203,11 +203,11 @@ describe('templates when there are no routines yet', () => {
     const sheet = screen.getByRole('dialog', { name: t.newWorkout })
     fireEvent.change(within(sheet).getByLabelText(t.date), { target: { value: '2026-10-18' } })
     const offered = within(sheet).getByRole('region', { name: t.readyTemplates })
-    await user.click(within(offered).getByRole('button', { name: new RegExp(t.templateNames.calisthenics) }))
+    await user.click(within(offered).getByRole('button', { name: new RegExp(t.templateNames.lowerA) }))
     await user.click(await within(sheet).findByTestId('template-add-start'))
 
     expect(await screen.findByText('opened workout 77')).toBeInTheDocument()
-    expect(calls.find((c) => c.method === 'POST' && c.path === '/api/v1/routines')?.body).toEqual(calisthenicsBody)
+    expect(calls.find((c) => c.method === 'POST' && c.path === '/api/v1/routines')?.body).toEqual(lowerABody)
     expect(calls.find((c) => c.path === '/api/v1/routines/9/start')?.body).toEqual({ workoutDate: '2026-10-18' })
   })
 
