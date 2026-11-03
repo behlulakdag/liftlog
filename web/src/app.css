@@ -501,114 +501,63 @@
 /* The date as a calendar tile inside the card's left side */
 /* ---------- Workout detail ---------- */
 .summary {
-  position: relative;
-  margin-bottom: 16px;
-}
-
-.summary-card {
-  padding: 18px 20px;
-  border: 1px solid var(--outline-variant);
-  border-radius: var(--radius-xl);
-  background: var(--surface);
+  margin: 4px 4px 26px;
 }
 
 .summary-date {
-  color: var(--primary);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--text-muted);
+  font-size: 15px;
+  font-weight: 500;
+}
+
+.summary-volume {
+  color: var(--text-muted);
+  font-size: 22px;
   font-weight: 600;
-  font-size: 12px;
+}
+
+.summary-volume strong {
+  color: var(--text);
+  font-size: 52px;
+  font-weight: 700;
+  letter-spacing: -1.5px;
+  line-height: 1;
+}
+
+.summary-meta {
+  margin-top: 4px;
+  color: var(--text-muted);
+  font-size: 14px;
 }
 
 .summary-title {
-  margin: 4px 0 16px;
+  margin: 2px 0 10px;
   font-family: var(--font-display);
   font-size: 26px;
-  font-weight: 600;
-  line-height: 1;
-}
-
-.summary-stats {
-  display: flex;
-  gap: 24px;
-}
-
-.stat-value {
-  font-size: 30px;
-  letter-spacing: -0.3px;
-  line-height: 1;
-}
-
-.stat-label {
-  font-size: 11px;
-  font-weight: 600;
-  color: var(--text-muted);
+  font-weight: 700;
+  letter-spacing: -0.4px;
+  line-height: 1.15;
 }
 
 /* Total volume in the card's lower right, on a tinted panel rather than hanging off the edge */
-.volume-badge {
-  position: absolute;
-  right: 16px;
-  bottom: 16px;
-  padding: 8px 12px;
-  border-radius: var(--radius-m);
-  background: var(--primary-container);
-  color: var(--on-primary-container);
-  text-align: right;
-}
-
-.volume-badge small {
-  display: block;
-  font-size: 11px;
-  font-weight: 600;
-  opacity: 0.8;
-}
-
-.volume-badge strong {
-  font-family: var(--font-display);
-  font-size: 22px;
-  font-weight: 600;
-  font-variant-numeric: tabular-nums;
-}
-
 .exercise-group {
-  display: flex;
-  border-radius: var(--radius-l);
-  background: var(--surface);
-  overflow: hidden;
-  margin-bottom: 14px;
+  margin-bottom: 24px;
   animation: card-in 0.55s var(--ease-spring) backwards;
 }
 
-.exercise-rail {
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-  padding: 14px 0;
-}
-
-.exercise-rail::before {
-  content: '';
-  width: 6px;
-  height: 28px;
-  border-radius: 0 4px 4px 0;
-  background: var(--muscle-color, var(--primary));
-}
-
-.exercise-rail::after {
-  content: '';
-  flex: 1;
-  width: 3px;
-  border-radius: 0 2px 2px 0;
-  background: color-mix(in srgb, var(--muscle-color, var(--primary)) 30%, transparent);
-}
-
 .exercise-group-body {
-  flex: 1;
   min-width: 0;
-  padding: 14px 12px 8px;
 }
 
 .exercise-group-title {
-  margin: 0 0 6px;
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+  margin: 0 4px 4px;
   font-size: 17px;
   font-weight: 650;
 }
@@ -621,7 +570,8 @@
   width: 100%;
   min-height: 48px;
   padding: 6px 4px;
-  border-radius: 12px;
+  border-bottom: 1px solid var(--outline-variant);
+  background: var(--bg);
   text-align: left;
 }
 
@@ -641,11 +591,10 @@
 
 .set-number {
   position: relative;
-  padding: 4px 8px;
-  border-radius: var(--radius-s);
-  background: var(--secondary-container);
-  color: var(--on-secondary-container);
+  min-width: 22px;
+  color: var(--text-muted);
   font-size: 14px;
+  font-weight: 500;
 }
 
 .set-weight {
@@ -664,8 +613,8 @@
   width: 64px;
   text-align: right;
   font-size: 13px;
-  font-weight: 600;
-  color: var(--tertiary);
+  font-weight: 500;
+  color: var(--text-muted);
 }
 
 /* ---------- Swipe to delete ---------- */
@@ -701,17 +650,18 @@
   transition: transform 0.18s var(--ease-out);
 }
 
-.workout-list .swipe {
-  border-radius: var(--radius-l);
+/* List rows: square swipe areas on the page background, so a row reads as a row, not a card */
+.workout-list .swipe,
+.set-groups .swipe {
+  border-radius: 0;
+}
+
+.set-groups .swipe-content {
+  background: var(--bg);
 }
 
 .workout-list .swipe-content {
   background: var(--bg);
-}
-
-.workout-list .swipe-bg {
-  margin-left: 18px;
-  border-radius: var(--radius-l);
 }
 
 /* ---------- Bottom sheet ---------- */
@@ -1520,18 +1470,6 @@ body:has(.rest-timer) .toast {
 }
 
 .skeleton .date-block-front,
-.skeleton .exercise-rail::before {
-  background: var(--surface-highest);
-}
-
-.skeleton .volume-badge {
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
-  align-items: flex-end;
-  background: var(--surface-highest);
-}
-
 .skeleton-set-row {
   display: flex;
   align-items: center;
@@ -1580,15 +1518,23 @@ body:has(.rest-timer) .toast {
   --muscle-color: #ffd43b;
 }
 
+/* The muscle as quiet text after the name; a dot in its color is the only accent */
+.muscle-tag::before {
+  content: '';
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--muscle-color, var(--outline));
+}
+
 .muscle-tag {
-  margin-left: 8px;
-  padding: 2px 7px;
-  border-radius: 6px;
-  vertical-align: 3px;
-  font-size: 11px;
-  font-weight: 600;
-  color: var(--muscle-color, var(--text-muted));
-  background: color-mix(in srgb, var(--muscle-color, var(--outline)) 16%, transparent);
+  display: inline-flex;
+  flex: none;
+  align-items: center;
+  gap: 6px;
+  color: var(--text-muted);
+  font-size: 13px;
+  font-weight: 500;
 }
 
 /* Pastels wash out on a light background; darker siblings of the same hues keep tags readable */
@@ -2228,9 +2174,7 @@ body:has(.rest-timer) .set-groups {
 }
 
 /* ---------- Sport style: shared panel outline ---------- */
-.exercise-group,
 .stat-tile,
-.food-row,
 .quick-chip,
 .record-row,
 .selector {
@@ -4547,10 +4491,6 @@ a.scoreboard-name {
 
 .routine-template {
   border: 1px solid var(--outline-variant);
-}
-
-.summary-card {
-  position: relative;
 }
 
 .summary-routine-tag {

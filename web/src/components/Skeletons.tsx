@@ -43,7 +43,6 @@ export function SetListSkeleton() {
     <SkeletonFrame>
       {[3, 2].map((rows, i) => (
         <section key={i} className="exercise-group" style={{ animationDelay: `${i * 60}ms` }}>
-          <div className="exercise-rail" aria-hidden />
           <div className="exercise-group-body">
             <Bone width="45%" height={18} style={{ margin: '4px 0 12px' }} />
             {Array.from({ length: rows }, (_, row) => (
@@ -64,18 +63,10 @@ export function DetailSkeleton() {
   return (
     <>
       <div className="summary skeleton">
-        <div className="summary-card">
-          <Bone width={140} />
-          <Bone width="60%" height={30} style={{ margin: '10px 0 18px' }} />
-          <div className="summary-stats">
-            <Bone width={40} height={34} />
-            <Bone width={40} height={34} />
-          </div>
-        </div>
-        <div className="volume-badge">
-          <Bone width={70} height={12} />
-          <Bone width={90} height={22} />
-        </div>
+        <Bone width={140} />
+        <Bone width="60%" height={28} style={{ margin: '8px 0 12px' }} />
+        <Bone width={150} height={48} />
+        <Bone width={110} style={{ marginTop: 8 }} />
       </div>
       <SetListSkeleton />
     </>
