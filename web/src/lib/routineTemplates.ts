@@ -5,8 +5,8 @@ import { clampRoutineSets, clampTargetReps, ROUTINE_MAX_EXERCISES, ROUTINE_NAME_
 // Ready-made routines. Exercises are listed by their exact built-in (English) names, not ids: ids differ
 // between databases, so a template is resolved against the user's own GET /exercises when it is used.
 
-export type TemplateId = 'push' | 'pull' | 'legs' | 'fullBodyA' | 'fullBodyB' | 'upper' | 'lower' | 'machineStarter' | 'calisthenics'
-export type TemplateFocus = 'ppl' | 'fullBody' | 'upperLower' | 'machines' | 'bodyweight'
+export type TemplateId = 'upperA' | 'lowerA' | 'upperB' | 'lowerB'
+export type TemplateFocus = 'chestShoulders' | 'squat' | 'backPress' | 'deadlift'
 
 export interface TemplateExercise {
   /** Exact built-in name, as seeded by the Flyway migrations */
@@ -26,119 +26,61 @@ export interface RoutineTemplate {
 
 const ex = (name: string, sets: number, targetReps: number, short?: string): TemplateExercise => ({ name, short, sets, targetReps })
 
+// Behlül's 12-week block (October 2026), done in this order: Upper A → Lower A → Upper B → Lower B. A rep range
+// like 6–10 is stored as its top: with double progression that is the number to reach before adding weight.
 export const ROUTINE_TEMPLATES: readonly RoutineTemplate[] = [
   {
-    id: 'push',
-    focus: 'ppl',
+    id: 'upperA',
+    focus: 'chestShoulders',
     beginner: false,
     exercises: [
-      ex('Bench Press', 4, 8, 'Bench'),
-      ex('Overhead Press', 3, 8, 'OHP'),
       ex('Incline Dumbbell Press', 3, 10, 'Incline DB'),
-      ex('Lateral Raise', 3, 12, 'Lateral'),
+      ex('Bench Press', 3, 5, 'Bench'),
+      ex('Dumbbell Row', 3, 12, 'DB Row'),
+      ex('Lateral Raise', 3, 15, 'Lateral'),
+      ex('Face Pull', 3, 15),
       ex('Triceps Pushdown', 3, 12, 'Pushdown'),
     ],
   },
   {
-    id: 'pull',
-    focus: 'ppl',
+    id: 'lowerA',
+    focus: 'squat',
     beginner: false,
     exercises: [
-      ex('Deadlift', 3, 5),
-      ex('Lat Pulldown', 3, 10, 'Pulldown'),
-      ex('Seated Cable Row', 3, 10, 'Cable Row'),
-      ex('Face Pull', 3, 15),
-      ex('Barbell Curl', 3, 10, 'Curl'),
-    ],
-  },
-  {
-    id: 'legs',
-    focus: 'ppl',
-    beginner: false,
-    exercises: [
-      ex('Squat', 4, 6),
-      ex('Romanian Deadlift', 3, 8, 'RDL'),
-      ex('Leg Press', 3, 10),
-      ex('Leg Extension', 3, 12, 'Leg Ext'),
-      ex('Seated Leg Curl', 3, 12, 'Leg Curl'),
-      ex('Standing Calf Raise Machine', 3, 15, 'Calf Raise'),
-    ],
-  },
-  {
-    id: 'fullBodyA',
-    focus: 'fullBody',
-    beginner: true,
-    exercises: [
-      ex('Squat', 3, 8),
-      ex('Bench Press', 3, 8, 'Bench'),
-      ex('Barbell Row', 3, 8, 'Row'),
-      ex('Lateral Raise', 2, 12, 'Lateral'),
-      ex('Dumbbell Curl', 2, 12, 'DB Curl'),
-    ],
-  },
-  {
-    id: 'fullBodyB',
-    focus: 'fullBody',
-    beginner: true,
-    exercises: [
-      ex('Deadlift', 3, 5),
-      ex('Overhead Press', 3, 8, 'OHP'),
-      ex('Lat Pulldown', 3, 10, 'Pulldown'),
-      ex('Goblet Squat', 3, 10, 'Goblet'),
-      ex('Triceps Pushdown', 2, 12, 'Pushdown'),
-    ],
-  },
-  {
-    id: 'upper',
-    focus: 'upperLower',
-    beginner: false,
-    exercises: [
-      ex('Bench Press', 4, 6, 'Bench'),
-      ex('Barbell Row', 4, 8, 'Row'),
-      ex('Dumbbell Shoulder Press', 3, 10, 'DB Press'),
-      ex('Lat Pulldown', 3, 10, 'Pulldown'),
-      ex('Barbell Curl', 2, 12, 'Curl'),
-      ex('Triceps Pushdown', 2, 12, 'Pushdown'),
-    ],
-  },
-  {
-    id: 'lower',
-    focus: 'upperLower',
-    beginner: false,
-    exercises: [
-      ex('Squat', 4, 6),
-      ex('Romanian Deadlift', 3, 8, 'RDL'),
-      ex('Bulgarian Split Squat', 3, 10, 'Split Squat'),
-      ex('Lying Leg Curl', 3, 12, 'Leg Curl'),
-      ex('Seated Calf Raise', 3, 15, 'Calf Raise'),
-      ex('Hanging Leg Raise', 3, 12, 'Leg Raise'),
-    ],
-  },
-  {
-    id: 'machineStarter',
-    focus: 'machines',
-    beginner: true,
-    exercises: [
-      ex('Chest Press Machine', 3, 12, 'Chest Press'),
-      ex('Seated Row Machine', 3, 12, 'Seated Row'),
-      ex('Shoulder Press Machine', 3, 12, 'Shoulder Press'),
+      ex('Smith Machine Squat', 3, 8, 'Smith Squat'),
+      ex('Romanian Deadlift', 3, 10, 'RDL'),
       ex('Leg Press', 3, 12),
-      ex('Leg Extension', 3, 12, 'Leg Ext'),
-      ex('Seated Leg Curl', 3, 12, 'Leg Curl'),
-      ex('Ab Crunch Machine', 3, 15, 'Ab Crunch'),
+      ex('Lying Leg Curl', 3, 12, 'Leg Curl'),
+      ex('Standing Calf Raise Machine', 4, 15, 'Calf Raise'),
+      ex('Cable Crunch', 3, 15),
     ],
   },
   {
-    id: 'calisthenics',
-    focus: 'bodyweight',
+    id: 'upperB',
+    focus: 'backPress',
     beginner: false,
     exercises: [
-      ex('Pull-up', 4, 6),
-      ex('Push-up', 4, 15),
-      ex('Dip', 3, 10),
-      ex('Inverted Row', 3, 12),
-      ex('Pistol Squat', 3, 6, 'Pistol'),
-      ex('Hanging Leg Raise', 3, 12, 'Leg Raise'),
+      ex('Pull-up', 4, 8),
+      ex('Dumbbell Shoulder Press', 3, 10, 'DB Press'),
+      ex('Close-Grip Lat Pulldown', 3, 10, 'Pulldown'),
+      ex('Low-to-High Cable Fly', 3, 15, 'Cable Fly'),
+      ex('Lateral Raise', 3, 15, 'Lateral'),
+      ex('Cable Rear Delt Fly', 3, 15, 'Reverse Fly'),
+      ex('Incline Dumbbell Curl', 3, 12, 'Incline Curl'),
+    ],
+  },
+  {
+    id: 'lowerB',
+    focus: 'deadlift',
+    beginner: false,
+    exercises: [
+      ex('Deadlift', 3, 5),
+      ex('Dumbbell Bulgarian Split Squat', 3, 10, 'Bulgarian'),
+      ex('Seated Leg Curl', 3, 15, 'Leg Curl'),
+      ex('Leg Extension', 2, 15, 'Leg Ext'),
+      ex('Seated Calf Raise', 4, 15, 'Calf Raise'),
+      ex('Hammer Curl', 2, 12),
+      ex('Overhead Dumbbell Triceps Extension', 2, 12, 'Overhead Ext'),
     ],
   },
 ]

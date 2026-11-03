@@ -26,6 +26,7 @@ import { SetEditorSheet, type SetEditorProps } from './SetEditorSheet'
 import { WorkoutMode } from './WorkoutMode'
 import { WorkoutRecapSheet } from './WorkoutRecapSheet'
 import { CheckIcon, CloudUploadIcon, DumbbellIcon } from '../components/Icons'
+import { goBackOrHome } from '../lib/navigation'
 
 /** `exercise`: adding starts on it, as if it had been picked (from the muscle map's suggestions) */
 type Editor = { mode: 'add'; exercise?: Exercise } | { mode: 'edit'; set: WorkoutSet }
@@ -335,7 +336,7 @@ export function WorkoutDetailPage() {
         )
       ) : !workout ? (
         // A failed refetch keeps the loaded workout on screen (offline in the gym); only a first load shows the error
-        <ErrorState error={query.error} onRetry={() => query.refetch()} />
+        <ErrorState error={query.error} onRetry={() => query.refetch()} onBack={() => goBackOrHome(navigate)} />
       ) : (
         <>
           <Summary

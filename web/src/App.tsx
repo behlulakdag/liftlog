@@ -5,6 +5,7 @@ import { AppError } from './api/client'
 import { ConfirmProvider } from './components/Confirm'
 import { Layout } from './components/Layout'
 import { RestTimerProvider } from './components/RestTimer'
+import { RouteError } from './components/RouteError'
 import { ToastProvider } from './components/Toast'
 import { prefetchRoutePages } from './routing/pageLoaders'
 import { pageRoutes } from './routing/pageRoutes'
@@ -21,7 +22,10 @@ const queryClient = new QueryClient({
   },
 })
 
-const router = createBrowserRouter([{ element: <Layout />, children: pageRoutes }])
+// The inner error boundary keeps the bottom nav around a broken page; the outer one catches the layout itself
+const router = createBrowserRouter([
+  { element: <Layout />, errorElement: <RouteError />, children: [{ errorElement: <RouteError />, children: pageRoutes }] },
+])
 
 // Safari has no requestIdleCallback; a short delay still lets the first screen and its API calls go first
 const whenIdle = (callback: () => void) =>

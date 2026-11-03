@@ -36,6 +36,7 @@ import { rankLabel, seasonWinRate, timeAgo } from '../lib/lol'
 import { peakAboveCurrent } from '../lib/lolLive'
 import { inQueue, matchPath, PLAYER_TABS, playerTab, QUEUE_CHIPS, statsQueue, statsWindow, tzOffsetMinutes, WINDOW_CHIPS, type PlayerTab } from '../lib/lolDeep'
 import { currentStreak } from '../lib/lolStats'
+import { goBackOrHome } from '../lib/navigation'
 
 export function LolPlayerPage() {
   const puuid = useParams().puuid ?? ''
@@ -86,7 +87,7 @@ export function LolPlayerPage() {
       {query.isPending ? (
         <SetListSkeleton />
       ) : query.isError ? (
-        <ErrorState error={query.error} onRetry={() => query.refetch()} />
+        <ErrorState error={query.error} onRetry={() => query.refetch()} onBack={() => goBackOrHome(navigate)} />
       ) : (
         <PlayerContent puuid={puuid} data={data!} rankHistory={rankHistory.data} version={version} />
       )}

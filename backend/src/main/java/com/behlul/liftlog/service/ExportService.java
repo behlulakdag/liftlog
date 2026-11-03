@@ -7,6 +7,8 @@ import com.behlul.liftlog.repository.ExportRepository;
 import com.behlul.liftlog.repository.ExportedFoodEntry;
 import com.behlul.liftlog.repository.ExportedSet;
 import com.behlul.liftlog.repository.UserRepository;
+import com.behlul.liftlog.repository.WaterDayRepository;
+import com.behlul.liftlog.repository.WeightEntryRepository;
 import com.behlul.liftlog.security.CurrentUserProvider;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -29,16 +31,23 @@ public class ExportService {
 
     public static final String WORKOUTS_ENTRY = "antrenman.csv";
     public static final String NUTRITION_ENTRY = "beslenme.csv";
+    public static final String WEIGHT_ENTRY = "kilo.csv";
+    public static final String WATER_ENTRY = "su.csv";
     public static final String PROFILE_ENTRY = "profile.json";
 
     private final ExportRepository exportRepository;
+    private final WeightEntryRepository weightRepository;
+    private final WaterDayRepository waterRepository;
     private final UserRepository userRepository;
     private final CurrentUserProvider currentUser;
     private final JsonMapper jsonMapper;
 
-    public ExportService(ExportRepository exportRepository, UserRepository userRepository,
+    public ExportService(ExportRepository exportRepository, WeightEntryRepository weightRepository,
+                         WaterDayRepository waterRepository, UserRepository userRepository,
                          CurrentUserProvider currentUser, JsonMapper jsonMapper) {
         this.exportRepository = exportRepository;
+        this.weightRepository = weightRepository;
+        this.waterRepository = waterRepository;
         this.userRepository = userRepository;
         this.currentUser = currentUser;
         this.jsonMapper = jsonMapper;
@@ -55,7 +64,7 @@ public class ExportService {
         writeNutrition(loadUser().getId(), out);
     }
 
-    /** Both CSVs and the profile in one ZIP, read in one transaction so they describe the same moment. */
+    /** Every CSV and the profile in one ZIP, read in one transaction so they describe the same moment. */
     @Transactional(readOnly = true)
     public void writeAllZip(OutputStream out) throws IOException {
         User user = loadUser();
@@ -65,6 +74,19 @@ public class ExportService {
         zip.closeEntry();
         zip.putNextEntry(new ZipEntry(NUTRITION_ENTRY));
         writeNutrition(user.getId(), zip);
+        zip.closeEntry();
+        // At most one row per day each, so a plain list is small enough; no streaming needed
+        zip.putNextEntry(new ZipEntry(WEIGHT_ENTRY));
+        CsvWriter weights = CsvWriter.start(zip, "Tarih", "Kilo (kg)");
+        weightRepository.findByUserIdOrderByEntryDateAsc(user.getId())
+                .forEach(entry -> weights.row(entry.getEntryDate(), entry.getWeightKg()));
+        weights.flush();
+        zip.closeEntry();
+        zip.putNextEntry(new ZipEntry(WATER_ENTRY));
+        CsvWriter water = CsvWriter.start(zip, "Tarih", "Su (ml)");
+        waterRepository.findByUserIdOrderByEntryDateAsc(user.getId())
+                .forEach(day -> water.row(day.getEntryDate(), day.getWaterMl()));
+        water.flush();
         zip.closeEntry();
         zip.putNextEntry(new ZipEntry(PROFILE_ENTRY));
         zip.write(jsonMapper.writerWithDefaultPrettyPrinter().writeValueAsBytes(ExportedProfile.from(user)));

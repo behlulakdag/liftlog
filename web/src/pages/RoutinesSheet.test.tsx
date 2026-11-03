@@ -184,7 +184,7 @@ describe('RoutinesSheet', () => {
   })
   it('adds a ready-made template with the user’s ids, skipping exercises the catalog does not have', async () => {
     const { calls, toast, user } = renderSheet([])
-    await user.click(await screen.findByRole('button', { name: t.templateNames.push }))
+    await user.click(await screen.findByRole('button', { name: t.templateNames.upperA }))
 
     // Incline Dumbbell Press is not in this catalog: shown struck out and reported, not sent
     expect(await screen.findByRole('status')).toHaveTextContent(t.templateMissing('Incline Dumbbell Press'))
@@ -195,23 +195,22 @@ describe('RoutinesSheet', () => {
       method: 'POST',
       path: '/api/v1/routines',
       body: {
-        name: t.templateNames.push,
+        name: t.templateNames.upperA,
         exercises: [
-          { exerciseId: 1, sets: 4, targetReps: 8 },
-          { exerciseId: 4, sets: 3, targetReps: 8 },
-          { exerciseId: 7, sets: 3, targetReps: 12 },
+          { exerciseId: 1, sets: 3, targetReps: 5 },
+          { exerciseId: 7, sets: 3, targetReps: 15 },
           { exerciseId: 8, sets: 3, targetReps: 12 },
         ],
       },
     })
-    await waitFor(() => expect(toast).toHaveBeenCalledWith({ message: t.templateAdded(t.templateNames.push) }))
+    await waitFor(() => expect(toast).toHaveBeenCalledWith({ message: t.templateAdded(t.templateNames.upperA) }))
     // Back on the list afterwards
     expect(await screen.findByTestId('new-routine')).toBeInTheDocument()
   })
 
   it('adds a template and starts it on the phone’s date in one tap', async () => {
     const { calls, onClose, user } = renderSheet([])
-    await user.click(await screen.findByRole('button', { name: t.templateNames.push }))
+    await user.click(await screen.findByRole('button', { name: t.templateNames.upperA }))
     await user.click(await screen.findByTestId('template-add-start'))
 
     expect(await screen.findByText('opened workout 42')).toBeInTheDocument()
@@ -222,7 +221,7 @@ describe('RoutinesSheet', () => {
 
   it('cannot add a template when none of its exercises exist', async () => {
     const { calls, user } = renderSheet([])
-    await user.click(await screen.findByRole('button', { name: t.templateNames.machineStarter }))
+    await user.click(await screen.findByRole('button', { name: t.templateNames.lowerA }))
     expect(await screen.findByText(t.templateNothingResolved)).toBeInTheDocument()
     expect(screen.getByTestId('template-add')).toBeDisabled()
     expect(screen.getByTestId('template-add-start')).toBeDisabled()

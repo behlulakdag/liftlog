@@ -21,6 +21,7 @@ import { isStandalone } from '../lib/platform'
 import { passkeysSupported } from '../lib/webauthn'
 import { bmi, sanitizeDecimal, validateProfile, type ProfileField } from '../lib/validation'
 import { CameraIcon, PencilIcon } from '../components/Icons'
+import { LanguageCard } from '../components/LanguageCard'
 
 export function ProfilePage() {
   const queryClient = useQueryClient()
@@ -141,6 +142,7 @@ export function ProfilePage() {
       )}
 
       <ExportCard />
+      <LanguageCard />
 
       <div className="info-card">
         <div className="info-row">

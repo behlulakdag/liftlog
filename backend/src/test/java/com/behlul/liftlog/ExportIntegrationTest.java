@@ -104,7 +104,7 @@ class ExportIntegrationTest {
     }
 
     @Test
-    void zipHasBothCsvsAndAProfileWithoutSecrets() throws Exception {
+    void zipHasEveryCsvAndAProfileWithoutSecrets() throws Exception {
         String email = randomEmail();
         String token = register(email, "Behlül");
         seedWorkouts(token);
@@ -112,6 +112,11 @@ class ExportIntegrationTest {
         addFood(token, "2026-03-02", "Shake", 120, "24", null, null);
         authed(put("/api/v1/nutrition/goals"), token, "{\"calorieGoalKcal\":2500,\"proteinGoalG\":160}")
                 .andExpect(status().isOk());
+        authed(put("/api/v1/weight/2026-03-01"), token, "{\"weightKg\":80.5}").andExpect(status().isOk());
+        authed(put("/api/v1/water/days/2026-03-02/settings"), token, "{\"goalMl\":2500,\"glassMl\":330}")
+                .andExpect(status().isOk());
+        authed(post("/api/v1/water/days/2026-03-02/add"), token, "{\"deltaMl\":330}").andExpect(status().isOk());
+        authed(post("/api/v1/water/days/2026-03-02/add"), token, "{\"deltaMl\":330}").andExpect(status().isOk());
 
         MvcResult result = mockMvc.perform(get("/api/v1/export/all.zip").header(HttpHeaders.AUTHORIZATION, bearer(token)))
                 .andExpect(status().isOk())
@@ -121,7 +126,9 @@ class ExportIntegrationTest {
                 .andReturn();
 
         Map<String, String> entries = unzip(result.getResponse().getContentAsByteArray());
-        assertThat(entries).containsOnlyKeys("antrenman.csv", "beslenme.csv", "profile.json");
+        assertThat(entries).containsOnlyKeys("antrenman.csv", "beslenme.csv", "kilo.csv", "su.csv", "profile.json");
+        assertThat(entries.get("kilo.csv")).startsWith(BOM + "Tarih;Kilo (kg)\r\n").contains("2026-03-01;80,5\r\n");
+        assertThat(entries.get("su.csv")).isEqualTo(BOM + "Tarih;Su (ml)\r\n2026-03-02;660\r\n");
         assertThat(entries.get("antrenman.csv")).startsWith(BOM + "Tarih;Antrenman notu;").contains("Pull-up;2;10;6");
         // Same writer as nutrition.csv: the grams column with a value, and empty when unknown
         assertThat(entries.get("beslenme.csv")).startsWith(BOM + "Tarih;Yemek;Miktar (g);")
@@ -134,8 +141,10 @@ class ExportIntegrationTest {
         assertThat(profile.get("bodyWeightKg").decimalValue()).isEqualByComparingTo("80");
         assertThat(profile.get("calorieGoalKcal").asInt()).isEqualTo(2500);
         assertThat(profile.get("proteinGoalG").asInt()).isEqualTo(160);
+        assertThat(profile.get("waterGoalMl").asInt()).isEqualTo(2500);
+        assertThat(profile.get("glassMl").asInt()).isEqualTo(330);
         assertThat(profile.propertyNames()).containsExactlyInAnyOrder(
-                "displayName", "heightCm", "bodyWeightKg", "calorieGoalKcal", "proteinGoalG");
+                "displayName", "heightCm", "bodyWeightKg", "calorieGoalKcal", "proteinGoalG", "waterGoalMl", "glassMl");
         String raw = entries.get("profile.json").toLowerCase();
         assertThat(raw).doesNotContain(email.toLowerCase()).doesNotContain("password").doesNotContain("token");
     }
@@ -150,6 +159,8 @@ class ExportIntegrationTest {
         Map<String, String> entries = unzip(result.getResponse().getContentAsByteArray());
         assertThat(entries.get("antrenman.csv")).hasLineCount(1);
         assertThat(entries.get("beslenme.csv")).hasLineCount(1);
+        assertThat(entries.get("kilo.csv")).hasLineCount(1);
+        assertThat(entries.get("su.csv")).hasLineCount(1);
         assertThat(jsonMapper.readTree(entries.get("profile.json")).get("displayName").isNull()).isTrue();
     }
 

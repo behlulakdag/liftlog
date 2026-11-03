@@ -8123,3 +8123,32 @@ body:has(.rest-timer) .finish-btn {
   margin-top: 8px;
   padding: 0;
 }
+
+.route-error-actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 10px;
+}
+
+.route-error-actions .btn {
+  text-decoration: none;
+}
+
+.language-card .info-row {
+  align-items: center;
+  gap: 12px;
+}
+
+.language-options {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: 6px;
+}
+
+.language-options .filter-chip {
+  height: 32px;
+  padding: 0 10px;
+  font-size: 13px;
+}

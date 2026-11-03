@@ -5,41 +5,33 @@ import { ROUTINE_TEMPLATES, resolveTemplate, templateName, templateRoutineInput,
 
 const builtIn = (id: number, name: string, bodyweight = false): Exercise => ({ id, name, muscleGroup: null, custom: false, bodyweight })
 
-const push = ROUTINE_TEMPLATES.find((template) => template.id === 'push')!
+const upperA = ROUTINE_TEMPLATES.find((template) => template.id === 'upperA')!
 
-// Every built-in name the templates use, copied from the V2, V5 and V16 seed migrations
+// Every built-in name the templates use, copied from the seed migrations (V2, V5, V16, V25)
 const SEEDED = new Set([
-  'Ab Crunch Machine',
-  'Barbell Curl',
-  'Barbell Row',
   'Bench Press',
-  'Bulgarian Split Squat',
-  'Chest Press Machine',
+  'Cable Crunch',
+  'Cable Rear Delt Fly',
+  'Close-Grip Lat Pulldown',
   'Deadlift',
-  'Dip',
-  'Dumbbell Curl',
+  'Dumbbell Bulgarian Split Squat',
+  'Dumbbell Row',
   'Dumbbell Shoulder Press',
   'Face Pull',
-  'Goblet Squat',
-  'Hanging Leg Raise',
+  'Hammer Curl',
+  'Incline Dumbbell Curl',
   'Incline Dumbbell Press',
-  'Inverted Row',
-  'Lat Pulldown',
   'Lateral Raise',
   'Leg Extension',
   'Leg Press',
+  'Low-to-High Cable Fly',
   'Lying Leg Curl',
-  'Overhead Press',
-  'Pistol Squat',
+  'Overhead Dumbbell Triceps Extension',
   'Pull-up',
-  'Push-up',
   'Romanian Deadlift',
-  'Seated Cable Row',
   'Seated Calf Raise',
   'Seated Leg Curl',
-  'Seated Row Machine',
-  'Shoulder Press Machine',
-  'Squat',
+  'Smith Machine Squat',
   'Standing Calf Raise Machine',
   'Triceps Pushdown',
 ])
@@ -57,26 +49,30 @@ describe('routine templates', () => {
     }
   })
 
+  it('are the four program days in the order they are trained', () => {
+    expect(ROUTINE_TEMPLATES.map((template) => template.id)).toEqual(['upperA', 'lowerA', 'upperB', 'lowerB'])
+  })
+
   it('summarise with gym shorthand', () => {
-    expect(templateSummary(push)).toBe('Bench 4×8 · OHP 3×8 · Incline DB 3×10 · Lateral 3×12 · Pushdown 3×12')
+    expect(templateSummary(upperA)).toBe('Incline DB 3×10 · Bench 3×5 · DB Row 3×12 · Lateral 3×15 · Face Pull 3×15 · Pushdown 3×12')
   })
 
   it('map names to the user’s ids and skip the ones that are missing', () => {
-    const catalog = [builtIn(11, 'Bench Press'), builtIn(12, 'Overhead Press'), builtIn(14, 'Lateral Raise'), builtIn(15, 'Triceps Pushdown')]
-    const resolved = resolveTemplate(push, catalog)
-    expect(resolved.missing).toEqual(['Incline Dumbbell Press'])
+    const catalog = [builtIn(11, 'Bench Press'), builtIn(12, 'Dumbbell Row'), builtIn(14, 'Lateral Raise'), builtIn(15, 'Triceps Pushdown')]
+    const resolved = resolveTemplate(upperA, catalog)
+    expect(resolved.missing).toEqual(['Incline Dumbbell Press', 'Face Pull'])
     expect(resolved.exercises).toEqual([
-      { exerciseId: 11, name: 'Bench Press', bodyweight: false, sets: 4, targetReps: 8 },
-      { exerciseId: 12, name: 'Overhead Press', bodyweight: false, sets: 3, targetReps: 8 },
-      { exerciseId: 14, name: 'Lateral Raise', bodyweight: false, sets: 3, targetReps: 12 },
+      { exerciseId: 11, name: 'Bench Press', bodyweight: false, sets: 3, targetReps: 5 },
+      { exerciseId: 12, name: 'Dumbbell Row', bodyweight: false, sets: 3, targetReps: 12 },
+      { exerciseId: 14, name: 'Lateral Raise', bodyweight: false, sets: 3, targetReps: 15 },
       { exerciseId: 15, name: 'Triceps Pushdown', bodyweight: false, sets: 3, targetReps: 12 },
     ])
-    expect(templateRoutineInput(push, resolved)).toEqual({
-      name: templateName(push),
+    expect(templateRoutineInput(upperA, resolved)).toEqual({
+      name: templateName(upperA),
       exercises: [
-        { exerciseId: 11, sets: 4, targetReps: 8 },
-        { exerciseId: 12, sets: 3, targetReps: 8 },
-        { exerciseId: 14, sets: 3, targetReps: 12 },
+        { exerciseId: 11, sets: 3, targetReps: 5 },
+        { exerciseId: 12, sets: 3, targetReps: 12 },
+        { exerciseId: 14, sets: 3, targetReps: 15 },
         { exerciseId: 15, sets: 3, targetReps: 12 },
       ],
     })
@@ -84,8 +80,8 @@ describe('routine templates', () => {
 
   it('prefer a built-in over a custom exercise of the same name, and fall back to a case-insensitive match', () => {
     const template: RoutineTemplate = {
-      id: 'calisthenics',
-      focus: 'bodyweight',
+      id: 'upperB',
+      focus: 'backPress',
       beginner: false,
       exercises: [
         { name: 'Pull-up', sets: 3, targetReps: 5 },
@@ -105,8 +101,8 @@ describe('routine templates', () => {
 
   it('never list the same id twice and give no body when nothing resolves', () => {
     const template: RoutineTemplate = {
-      id: 'push',
-      focus: 'ppl',
+      id: 'upperA',
+      focus: 'chestShoulders',
       beginner: false,
       exercises: [
         { name: 'Bench Press', sets: 3, targetReps: 8 },
@@ -115,8 +111,8 @@ describe('routine templates', () => {
     }
     expect(resolveTemplate(template, [builtIn(1, 'Bench Press')]).exercises).toHaveLength(1)
 
-    const empty = resolveTemplate(push, [])
-    expect(empty.missing).toHaveLength(5)
-    expect(templateRoutineInput(push, empty)).toBeNull()
+    const empty = resolveTemplate(upperA, [])
+    expect(empty.missing).toHaveLength(6)
+    expect(templateRoutineInput(upperA, empty)).toBeNull()
   })
 })

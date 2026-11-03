@@ -27,6 +27,15 @@ const en = {
   save: 'Save',
   delete: 'Delete',
   retry: 'Retry',
+  language: 'Language',
+  languageDevice: 'Phone',
+  goBack: 'Go back',
+  goHome: 'Home',
+  reload: 'Reload',
+  pageNotFoundTitle: 'This page does not exist',
+  pageNotFoundBody: 'The link may be old or mistyped.',
+  appCrashedTitle: 'Something broke on this screen',
+  appCrashedBody: 'Your data is safe. Reloading usually fixes it; if not, go back to the home page.',
   back: 'Back',
   undo: 'Undo',
   workout: 'Workout',
@@ -127,7 +136,7 @@ const en = {
   exportWorkouts: 'Workouts',
   exportNutrition: 'Nutrition',
   exportAll: 'Everything',
-  exportAllHint: 'Both files and your profile',
+  exportAllHint: 'Workouts, food, weight, water and your profile',
   exportLabel: (what: string, format: string) => `${what} ${format}`,
   exportStarted: 'Download started',
   exportReady: (filename: string) => `${filename} is ready`,
@@ -679,8 +688,8 @@ const en = {
     `${weeks === 1 ? '1 week' : `${weeks} weeks`} in a row with a workout, ${thisWeek === 1 ? '1 workout' : `${thisWeek} workouts`} this week`,
   streakThisWeek: (n: number) => `${n}× this week`,
   prBadge: 'PR',
-  readyTemplates: 'Ready-made templates',
-  readyTemplatesBody: 'Pick one to add it to your routines; you can change it later.',
+  readyTemplates: 'My program',
+  readyTemplatesBody: 'The four days of the 12-week program. Pick one to add it to your routines; you can change it later.',
   noRoutinesYet: 'No routines yet: start from a template',
   templateTag: 'Template',
   beginnerTag: 'Beginner',
@@ -691,22 +700,16 @@ const en = {
   templateNothingResolved: 'None of these exercises are in your exercise list.',
   templatePreview: (name: string) => `Template: ${name}`,
   templateNames: {
-    push: 'Push',
-    pull: 'Pull',
-    legs: 'Legs',
-    fullBodyA: 'Full body A',
-    fullBodyB: 'Full body B',
-    upper: 'Upper body',
-    lower: 'Lower body',
-    machineStarter: 'Machine starter',
-    calisthenics: 'Calisthenics',
+    upperA: 'Day 1 · Upper A',
+    lowerA: 'Day 2 · Lower A',
+    upperB: 'Day 3 · Upper B',
+    lowerB: 'Day 4 · Lower B',
   } as Record<string, string>,
   templateFocus: {
-    ppl: 'Push · Pull · Legs',
-    fullBody: 'Full body',
-    upperLower: 'Upper / Lower',
-    machines: 'Machines only',
-    bodyweight: 'Bodyweight',
+    chestShoulders: 'Chest & shoulders',
+    squat: 'Squat focus',
+    backPress: 'Back & shoulder press',
+    deadlift: 'Posterior chain',
   } as Record<string, string>,
   close: 'Close',
   confirmDeleteTitle: 'Delete this?',
@@ -791,6 +794,15 @@ const tr: Strings = {
   save: 'Kaydet',
   delete: 'Sil',
   retry: 'Tekrar dene',
+  language: 'Dil',
+  languageDevice: 'Telefon',
+  goBack: 'Geri dön',
+  goHome: 'Ana sayfa',
+  reload: 'Yenile',
+  pageNotFoundTitle: 'Böyle bir sayfa yok',
+  pageNotFoundBody: 'Bağlantı eski ya da yanlış yazılmış olabilir.',
+  appCrashedTitle: 'Bu ekranda bir şey bozuldu',
+  appCrashedBody: 'Verilerin güvende. Yenilemek genelde düzeltir; düzelmezse ana sayfaya dön.',
   back: 'Geri',
   undo: 'Geri al',
   workout: 'Antrenman',
@@ -891,7 +903,7 @@ const tr: Strings = {
   exportWorkouts: 'Antrenmanlar',
   exportNutrition: 'Beslenme',
   exportAll: 'Hepsi',
-  exportAllHint: 'İki dosya ve profilin',
+  exportAllHint: 'Antrenman, beslenme, kilo, su ve profilin',
   exportLabel: (what, format) => `${what} ${format}`,
   exportStarted: 'İndirme başladı',
   exportReady: (filename) => `${filename} hazır`,
@@ -1440,8 +1452,8 @@ const tr: Strings = {
   streakAria: (weeks, thisWeek) => `${weeks} haftadır her hafta antrenman, bu hafta ${thisWeek} antrenman`,
   streakThisWeek: (n) => `bu hafta ${n}×`,
   prBadge: 'PR',
-  readyTemplates: 'Hazır şablonlar',
-  readyTemplatesBody: 'Birini seçip rutinlerine ekle; sonra istediğin gibi düzenleyebilirsin.',
+  readyTemplates: 'Programım',
+  readyTemplatesBody: '12 haftalık programın dört günü. Birini seçip rutinlerine ekle; sonra istediğin gibi düzenleyebilirsin.',
   noRoutinesYet: 'Henüz rutin yok: bir şablonla başla',
   templateTag: 'Şablon',
   beginnerTag: 'Başlangıç',
@@ -1452,22 +1464,16 @@ const tr: Strings = {
   templateNothingResolved: 'Bu hareketlerin hiçbiri hareket listende yok.',
   templatePreview: (name) => `Şablon: ${name}`,
   templateNames: {
-    push: 'İtiş (Push)',
-    pull: 'Çekiş (Pull)',
-    legs: 'Bacak',
-    fullBodyA: 'Tüm vücut A',
-    fullBodyB: 'Tüm vücut B',
-    upper: 'Üst vücut',
-    lower: 'Alt vücut',
-    machineStarter: 'Makineyle başlangıç',
-    calisthenics: 'Kalistenik',
+    upperA: 'Gün 1 · Üst A',
+    lowerA: 'Gün 2 · Alt A',
+    upperB: 'Gün 3 · Üst B',
+    lowerB: 'Gün 4 · Alt B',
   },
   templateFocus: {
-    ppl: 'İtiş · Çekiş · Bacak',
-    fullBody: 'Tüm vücut',
-    upperLower: 'Üst / Alt',
-    machines: 'Sadece makine',
-    bodyweight: 'Vücut ağırlığı',
+    chestShoulders: 'Göğüs ve omuz',
+    squat: 'Squat ağırlıklı',
+    backPress: 'Sırt ve omuz press',
+    deadlift: 'Arka zincir',
   },
   close: 'Kapat',
   confirmDeleteTitle: 'Silmek istiyor musun?',
@@ -1523,7 +1529,33 @@ const tr: Strings = {
   muscleGroups: { Legs: 'Bacak', Back: 'Sırt', Chest: 'Göğüs', Shoulders: 'Omuz', Arms: 'Kol', Core: 'Karın', Other: 'Diğer' },
 }
 
-export const locale = navigator.language || 'en'
+/** "device" follows the phone's language; the other two are a choice made on the Profile page. */
+export type LanguageChoice = 'device' | 'tr' | 'en'
+const LANGUAGE_KEY = 'liftlog.language'
+
+/** Read once at start: every string below is picked at import time, so a change takes a reload. */
+export function storedLanguage(): LanguageChoice {
+  try {
+    const value = globalThis.localStorage?.getItem(LANGUAGE_KEY)
+    return value === 'tr' || value === 'en' ? value : 'device'
+  } catch {
+    // Private mode or blocked storage: the device language still works
+    return 'device'
+  }
+}
+
+export function saveLanguage(choice: LanguageChoice) {
+  try {
+    if (choice === 'device') globalThis.localStorage?.removeItem(LANGUAGE_KEY)
+    else globalThis.localStorage?.setItem(LANGUAGE_KEY, choice)
+  } catch {
+    // Nothing to keep it in; the reload falls back to the device language
+  }
+}
+
+export const languageChoice = storedLanguage()
+// Numbers and dates follow the chosen language too, so an English page writes 1.5, not 1,5
+export const locale = languageChoice === 'tr' ? 'tr-TR' : languageChoice === 'en' ? 'en-US' : navigator.language || 'en'
 const isTurkish = locale.toLowerCase().startsWith('tr')
 export const t: Strings = isTurkish ? tr : en
 // text-transform: uppercase uses the page language: with lang="en" a Turkish "i" became "I" instead of "İ"

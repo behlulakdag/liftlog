@@ -14,11 +14,12 @@ public final class ExportDtos {
      * version and passkey handle must never leave the server, even if User gains new fields later.
      */
     public record ExportedProfile(String displayName, BigDecimal heightCm, BigDecimal bodyWeightKg,
-                                  Integer calorieGoalKcal, Integer proteinGoalG) {
+                                  Integer calorieGoalKcal, Integer proteinGoalG, Integer waterGoalMl,
+                                  int glassMl) {
 
         public static ExportedProfile from(User user) {
             return new ExportedProfile(user.getDisplayName(), user.getHeightCm(), user.getBodyWeightKg(),
-                    user.getCalorieGoalKcal(), user.getProteinGoalG());
+                    user.getCalorieGoalKcal(), user.getProteinGoalG(), user.getWaterGoalMl(), user.getGlassMl());
         }
     }
 }
