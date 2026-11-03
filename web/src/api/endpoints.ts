@@ -1,6 +1,6 @@
 import type { CreationOptionsJson, CredentialJson, RequestOptionsJson } from '../lib/webauthn'
 import { request, requestFile } from './client'
-import type { AuthResponse, GroupTraining, LolDeepStats, LolGroup, LolGroupDuo, LolGroupLive, LolLiveGame, LolMastery, LolMatchDetail, LolPlayer, LolPlayerDetail, LolRankPoint, LolRankQueue, LolStatsQueue, LolStatsWindow, LolTimeline, CatalogFood, MuscleStats, Exercise, FoodEntry, FoodInput, FrequentFood, NutritionDay, NutritionGoals, Page, Passkey, PasskeyCeremony, PersonalRecord, PlanItem, Profile, ProgressPoint, Routine, RoutineInput, SetInput, Streak, WeeklyVolume, WeightEntry, WeightHistory, WorkoutDetail, WorkoutRecap, WorkoutSet, WaterDay, WorkoutSummary } from './types'
+import type { AuthResponse, GroupTraining, LolDeepStats, LolGroup, LolGroupDuo, LolGroupLive, LolLiveGame, LolMastery, LolMatchDetail, LolPlayer, LolPlayerDetail, LolRankPoint, LolRankQueue, LolStatsQueue, LolStatsWindow, LolTimeline, CatalogFood, MuscleStats, Exercise, FoodEntry, FoodInput, FrequentFood, NutritionDay, NutritionGoals, Page, Passkey, PasskeyCeremony, PersonalRecord, PlanItem, Profile, Program, ProgressPoint, Routine, RoutineInput, SetInput, Streak, WeeklyVolume, WeightEntry, WeightHistory, WorkoutDetail, WorkoutRecap, WorkoutSet, WaterDay, WorkoutSummary } from './types'
 
 export const api = {
   register: (email: string, password: string) =>
@@ -53,6 +53,16 @@ export const api = {
   frequentFoods: () => request<FrequentFood[]>('/api/v1/nutrition/frequent'),
   // The response is cached for a day; the app version in the URL makes each release fetch the list anew
   foods: () => request<CatalogFood[]>(`/api/v1/foods?v=${__APP_VERSION__}`),
+  program: (today: string) => request<Program>(`/api/v1/program?today=${today}`),
+  setBlock: (today: string, startDate: string, weeks: number) =>
+    request<Program>(`/api/v1/program/block?today=${today}`, { method: 'PUT', body: { startDate, weeks } }),
+  clearBlock: () => request<void>('/api/v1/program/block', { method: 'DELETE', responseType: 'none' }),
+  setLiftGoal: (today: string, exerciseId: number, targetKg: number) =>
+    request<Program>(`/api/v1/program/goals/${exerciseId}?today=${today}`, { method: 'PUT', body: { targetKg } }),
+  deleteLiftGoal: (exerciseId: number) => request<void>(`/api/v1/program/goals/${exerciseId}`, { method: 'DELETE', responseType: 'none' }),
+  setWeightGoal: (today: string, targetKg: number) =>
+    request<Program>(`/api/v1/program/weight-goal?today=${today}`, { method: 'PUT', body: { targetKg } }),
+  clearWeightGoal: () => request<void>('/api/v1/program/weight-goal', { method: 'DELETE', responseType: 'none' }),
   waterDay: (date: string) => request<WaterDay>(`/api/v1/water/days/${date}`),
   addWater: (date: string, deltaMl: number) => request<WaterDay>(`/api/v1/water/days/${date}/add`, { method: 'POST', body: { deltaMl } }),
   updateWaterSettings: (date: string, settings: { goalMl: number | null; glassMl: number }) =>

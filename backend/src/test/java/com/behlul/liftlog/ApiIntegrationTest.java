@@ -1085,6 +1085,79 @@ class ApiIntegrationTest {
     }
 
     @Test
+    void trainingBlockCountsWeeksAndGoalsTrackTheBestSetFromWhereTheyStarted() throws Exception {
+        String token = register(randomEmail(), "s3cret-pass", null);
+        long bench = exerciseId(token, "Bench Press");
+        long pullUp = exerciseId(token, "Pull-up");
+        String program = "/api/v1/program?today=2026-11-03";
+        authed(put("/api/v1/profile"), token, "{\"bodyWeightKg\":78}").andExpect(status().isOk());
+        long first = createWorkout(token, "2026-10-20", null);
+        addSet(token, first, bench, 5, "70");
+        addSet(token, first, pullUp, 8, "0");
+
+        // Nothing set yet
+        mockMvc.perform(get(program).header(HttpHeaders.AUTHORIZATION, "Bearer " + token))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.blockStart").doesNotExist())
+                .andExpect(jsonPath("$.currentWeek").doesNotExist())
+                .andExpect(jsonPath("$.goals.length()").value(0))
+                .andExpect(jsonPath("$.weightGoal").doesNotExist());
+
+        // 18 October to 3 November is 16 days: the third week
+        authed(put("/api/v1/program/block?today=2026-11-03"), token, "{\"startDate\":\"2026-10-18\",\"weeks\":12}")
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.blockWeeks").value(12))
+                .andExpect(jsonPath("$.currentWeek").value(3));
+        authed(put("/api/v1/program/block?today=2026-11-03"), token, "{\"startDate\":\"2026-10-18\",\"weeks\":60}")
+                .andExpect(status().isBadRequest());
+
+        // A goal starts from today's best set; for a bodyweight lift that is the added load
+        authed(put("/api/v1/program/goals/" + bench + "?today=2026-11-03"), token, "{\"targetKg\":95}")
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.goals[0].exerciseName").value("Bench Press"))
+                .andExpect(jsonPath("$.goals[0].startKg").value(70.0))
+                .andExpect(jsonPath("$.goals[0].targetKg").value(95.0))
+                .andExpect(jsonPath("$.goals[0].currentKg").value(70.0));
+        authed(put("/api/v1/program/goals/" + pullUp + "?today=2026-11-03"), token, "{\"targetKg\":10}")
+                .andExpect(jsonPath("$.goals[1].bodyweight").value(true))
+                .andExpect(jsonPath("$.goals[1].startKg").value(0))
+                .andExpect(jsonPath("$.goals[1].currentKg").value(0));
+
+        // A heavier set moves the current value; a new target keeps the start
+        long second = createWorkout(token, "2026-11-02", null);
+        addSet(token, second, bench, 5, "72.5");
+        addSet(token, second, pullUp, 6, "5");
+        authed(put("/api/v1/program/goals/" + bench + "?today=2026-11-03"), token, "{\"targetKg\":97.5}")
+                .andExpect(jsonPath("$.goals[0].startKg").value(70.0))
+                .andExpect(jsonPath("$.goals[0].targetKg").value(97.5))
+                .andExpect(jsonPath("$.goals[0].currentKg").value(72.5))
+                .andExpect(jsonPath("$.goals[1].currentKg").value(5.0));
+
+        // The weight goal starts from the current weight
+        authed(put("/api/v1/program/weight-goal?today=2026-11-03"), token, "{\"targetKg\":80.5}")
+                .andExpect(jsonPath("$.weightGoal.startKg").value(78.0))
+                .andExpect(jsonPath("$.weightGoal.targetKg").value(80.5));
+
+        // Another user sees none of it and cannot delete it
+        String stranger = register(randomEmail(), "s3cret-pass", null);
+        mockMvc.perform(get(program).header(HttpHeaders.AUTHORIZATION, "Bearer " + stranger))
+                .andExpect(jsonPath("$.goals.length()").value(0))
+                .andExpect(jsonPath("$.blockStart").doesNotExist());
+        mockMvc.perform(delete("/api/v1/program/goals/" + bench).header(HttpHeaders.AUTHORIZATION, "Bearer " + stranger))
+                .andExpect(status().isNotFound());
+
+        mockMvc.perform(delete("/api/v1/program/goals/" + bench).header(HttpHeaders.AUTHORIZATION, "Bearer " + token))
+                .andExpect(status().isNoContent());
+        mockMvc.perform(delete("/api/v1/program/block").header(HttpHeaders.AUTHORIZATION, "Bearer " + token))
+                .andExpect(status().isNoContent());
+        mockMvc.perform(get(program).header(HttpHeaders.AUTHORIZATION, "Bearer " + token))
+                .andExpect(jsonPath("$.goals.length()").value(1))
+                .andExpect(jsonPath("$.goals[0].exerciseName").value("Pull-up"))
+                .andExpect(jsonPath("$.currentWeek").doesNotExist());
+        mockMvc.perform(get(program)).andExpect(status().isUnauthorized());
+    }
+
+    @Test
     void copyingADayDuplicatesItsEntriesForTheCallerOnly() throws Exception {
         String token = register(randomEmail(), "s3cret-pass", null);
         String today = LocalDate.now(ZoneOffset.UTC).toString();

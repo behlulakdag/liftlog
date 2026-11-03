@@ -4,6 +4,7 @@ import { Link, useViewTransitionState } from 'react-router'
 import { api } from '../api/endpoints'
 import { queryKeys } from '../api/queryKeys'
 import type { Routine, WeeklyVolume, WorkoutSummary } from '../api/types'
+import { BlockLine, GoalsSection, ProgramSheet } from '../components/ProgramGoals'
 import { RecoveryNudge } from '../components/RecoveryNudge'
 import { WorkoutListSkeleton } from '../components/Skeletons'
 import { ErrorState, MessageState } from '../components/StateViews'
@@ -36,6 +37,9 @@ export function WorkoutsPage() {
   const routines = useQuery({ queryKey: queryKeys.routines, queryFn: api.routines, retry: false })
   // Same for the streak and the weekly volume: no hero line on a server without them
   const streak = useQuery({ queryKey: queryKeys.streak, queryFn: api.streak, retry: false })
+  const today = todayIso()
+  const program = useQuery({ queryKey: queryKeys.program(today), queryFn: () => api.program(today), retry: false })
+  const [editingProgram, setEditingProgram] = useState(false)
   const volume = useQuery({ queryKey: [...queryKeys.stats, 'volume', VOLUME_WEEKS], queryFn: () => api.weeklyVolume(VOLUME_WEEKS), retry: false })
   // Hidden while their undo window is open; the server delete happens when the toast expires
   const [pendingDelete, setPendingDelete] = useState<Set<number>>(new Set())
@@ -88,7 +92,10 @@ export function WorkoutsPage() {
       <header className="home-header">
         {/* The tab already says where we are, so the page title is for screen readers and the date shows instead */}
         <h1 className="visually-hidden">{t.workoutsTitle}</h1>
-        <span className="home-date">{formatLongDate(todayIso())}</span>
+        <div className="home-date-block">
+          <span className="home-date">{formatLongDate(today)}</span>
+          {program.data && <BlockLine program={program.data} onEdit={() => setEditingProgram(true)} />}
+        </div>
         <div className="home-header-actions">
           {routines.isSuccess && (
             <button className="btn btn-text" onClick={() => setManagingRoutines(true)} data-testid="manage-routines">
@@ -107,6 +114,8 @@ export function WorkoutsPage() {
 
       {routines.data &&
         (routines.data.length > 0 ? <ProgramSection routines={routines.data} workouts={workouts} /> : <TemplateStrip onSelect={setPreviewTemplate} />)}
+
+      {program.data && <GoalsSection program={program.data} onEdit={() => setEditingProgram(true)} />}
 
       {query.isPending ? (
         <WorkoutListSkeleton />
@@ -135,6 +144,7 @@ export function WorkoutsPage() {
         </>
       )}
 
+      {editingProgram && program.data && <ProgramSheet program={program.data} onClose={() => setEditingProgram(false)} />}
       {creating && <NewWorkoutSheet routines={routines.data ?? []} offerTemplates={routines.isSuccess} onClose={() => setCreating(false)} />}
       {(managingRoutines || previewTemplate) && (
         <RoutinesSheet

@@ -706,6 +706,24 @@ yüzünden her yeni istek limiter'dan geçiyor ve sonuçlar saklanıp tembelce y
 2. Blok ve hedefler özelliği (blok başlangıcı, hafta sayısı, hareket başına hedef kg).
 3. Aynı tasarım dilini diğer sayfalara taşı (antrenman detayı, Beslenme, İlerleme, Profil).
 
+## 2026-11-03 — Antrenman bloğu ve hedefler (`feature/block-goals`)
+
+- Backend: V27; kullanıcıda blok başlangıcı + hafta sayısı ve kilo hedefi (başlangıç kilosuyla), `lift_goals`
+  tablosu (hareket, başlangıç kg, hedef kg; en fazla 6). `GET /api/v1/program?today=` haftayı telefonun tarihinden
+  hesaplar; her hedefin şu anki değeri en ağır setten gelir (vücut ağırlığı hareketlerinde eklenen ağırlık).
+  Uçlar: `PUT/DELETE /program/block`, `PUT/DELETE /program/goals/{exerciseId}`, `PUT/DELETE /program/weight-goal`.
+  Test: `trainingBlockCountsWeeksAndGoalsTrackTheBestSetFromWhereTheyStarted`.
+- Web: tarihin altında "Blok · hafta 3 / 12" (yoksa "Antrenman bloğu ekle"); Sıradaki kartının altında
+  "12. hafta hedefleri" (ince çubuklar); "Blok ve hedefler" penceresi (hedef silerken onay soruyor).
+  `lib/program.ts` + 5 test, `ProgramGoals.test.tsx` 5 test.
+- Doğrulama: backend `mvnw verify` (46/46); web 541 test, tsc, lint, build; yerelde 18 Eki + 12 hafta → "hafta 3 / 12",
+  Bench 95, Deadlift 170, Pull-up +10, Kilo 80 eklendi ve ana sayfada göründü.
+- Bilinçli eksik: hedefler henüz dışa aktarma ZIP'ine girmiyor.
+
+**Sıradaki adımlar:**
+1. PR'ı birleştir; telefonda kendi blok tarihini (18 Ekim, 12 hafta) ve hedeflerini gir.
+2. Yeni tasarım dilini antrenman detayı, Beslenme, İlerleme ve Profil'e taşı.
+
 ## 2026-11-03 — Diğer sayfalar yeni tasarımda (`feature/calm-pages`, yalnızca web)
 
 - Antrenman detayı: büyük hacim rakamı + "6 set · 2 hareket"; hareketler düz bölüm, kas adı renkli noktayla,
