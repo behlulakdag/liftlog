@@ -44,6 +44,8 @@ export interface WorkoutSummary {
   setCount: number
   exerciseCount: number
   totalVolumeKg: number
+  /** The routine it was started from; missing from older servers */
+  routineId?: number | null
 }
 
 export interface WorkoutSet {
