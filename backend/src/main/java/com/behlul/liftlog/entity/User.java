@@ -8,6 +8,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @Entity
@@ -52,6 +53,19 @@ public class User {
     /** What one tap on "a glass" adds to the day's water. */
     @Column(name = "glass_ml", nullable = false)
     private int glassMl = 250;
+
+    @Column(name = "block_start_date")
+    private LocalDate blockStartDate;
+
+    @Column(name = "block_weeks")
+    private Integer blockWeeks;
+
+    @Column(name = "weight_goal_kg", precision = 5, scale = 2)
+    private BigDecimal weightGoalKg;
+
+    /** The weight when the goal was set, so the goal's progress has a baseline */
+    @Column(name = "weight_goal_start_kg", precision = 5, scale = 2)
+    private BigDecimal weightGoalStartKg;
 
     /** The WebAuthn user handle inside every passkey of this account; null until the first passkey. */
     @Column(name = "passkey_handle", unique = true)
@@ -143,6 +157,33 @@ public class User {
     public void setWaterSettings(Integer waterGoalMl, int glassMl) {
         this.waterGoalMl = waterGoalMl;
         this.glassMl = glassMl;
+    }
+
+    public LocalDate getBlockStartDate() {
+        return blockStartDate;
+    }
+
+    public Integer getBlockWeeks() {
+        return blockWeeks;
+    }
+
+    /** Both null clears the block */
+    public void setBlock(LocalDate startDate, Integer weeks) {
+        this.blockStartDate = startDate;
+        this.blockWeeks = weeks;
+    }
+
+    public BigDecimal getWeightGoalKg() {
+        return weightGoalKg;
+    }
+
+    public BigDecimal getWeightGoalStartKg() {
+        return weightGoalStartKg;
+    }
+
+    public void setWeightGoal(BigDecimal targetKg, BigDecimal startKg) {
+        this.weightGoalKg = targetKg;
+        this.weightGoalStartKg = startKg;
     }
 
     public LocalDateTime getCreatedAt() {
