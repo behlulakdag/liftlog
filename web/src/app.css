@@ -521,6 +521,11 @@
   font-weight: 600;
 }
 
+/* The workout's volume is the number a list scan looks for, so it reads a size up from the chips */
+.workout-card .accent {
+  font-size: 19px;
+}
+
 /* The date as a calendar tile inside the card's left side */
 .date-block {
   position: absolute;
@@ -589,7 +594,8 @@
 }
 
 .stat-value {
-  font-size: 26px;
+  font-size: 30px;
+  letter-spacing: -0.3px;
   line-height: 1;
 }
 
@@ -854,7 +860,6 @@
   margin-bottom: 14px;
 }
 
-/* Icon tile with a second, offset frame behind it so the corner reads as two stacked plates */
 .confirm-badge {
   position: relative;
   flex: none;
@@ -1944,7 +1949,8 @@ body:has(.rest-timer) .set-groups {
 
 .ring-label strong {
   font-family: var(--font-display);
-  font-size: 36px;
+  font-size: 40px;
+  letter-spacing: -0.5px;
   font-weight: 600;
 }
 
@@ -2308,7 +2314,8 @@ body:has(.rest-timer) .set-groups {
 .stat-tile strong,
 .record-row-side .accent {
   font-family: var(--font-display);
-  font-size: 22px;
+  font-size: 28px;
+  letter-spacing: -0.3px;
   font-weight: 600;
 }
 
@@ -2705,7 +2712,6 @@ body:has(.rest-timer) .set-groups {
   color: var(--error);
 }
 
-/* The code box sits on an offset plate, with a lime strip on its left edge */
 .recovery-code-wrap {
   position: relative;
   margin: 14px 0 18px;
@@ -2788,7 +2794,6 @@ body:has(.rest-timer) .set-groups {
 }
 
 /* ---------- Data export ---------- */
-/* Card on an offset plate with a tag over its top edge; each format chip overlaps its tile's corner */
 .export-card {
   position: relative;
   margin: 10px 0 22px;
@@ -2859,7 +2864,6 @@ body:has(.rest-timer) .set-groups {
   opacity: 0.6;
 }
 
-/* The ZIP tile spans the row in lime, lifted off a darker plate */
 .export-tile.all {
   grid-column: 1 / -1;
   flex-direction: row;
@@ -2937,7 +2941,6 @@ body:has(.rest-timer) .set-groups {
 }
 
 /* ---------- Passkey backup ---------- */
-/* Card on an offset plate with a lime strip down its left edge and a "Passkey" tag overlapping the top */
 .backup-card {
   position: relative;
   margin: 10px 0 22px;
@@ -2989,7 +2992,6 @@ body:has(.rest-timer) .set-groups {
   font-size: 14px;
 }
 
-/* Check badge: lime disc with a dark ring offset behind it */
 .backup-check {
   flex: none;
   display: grid;
@@ -3080,14 +3082,12 @@ body:has(.rest-timer) .set-groups {
   margin-bottom: 14px;
 }
 
-/* The card sits on an offset plate (like the recovery code), so the group reads as a stacked object */
 .lol-group-wrap {
   position: relative;
   isolation: isolate;
   margin: 4px 0 34px;
 }
 
-/* A lime strip down the left edge; the invite chip straddles the bottom edge on the right */
 .lol-group-card {
   position: relative;
   z-index: 1;
@@ -3134,10 +3134,8 @@ body:has(.rest-timer) .set-groups {
   height: 38px;
   padding: 0 12px 0 14px;
   border-radius: 19px;
-  background: var(--primary);
-  color: var(--on-primary);
-  /* a second, darker edge under the chip so it lifts off the card instead of lying flat on it */
-  box-shadow: none;
+  background: var(--primary-container);
+  color: var(--on-primary-container);
   align-self: flex-start;
 }
 
@@ -3188,7 +3186,6 @@ body:has(.rest-timer) .set-groups {
   text-underline-offset: 3px;
 }
 
-/* Your own row: a lime edge and a small tag overlapping its top-right corner */
 .lol-row.you {
   position: relative;
   border-color: color-mix(in srgb, var(--primary) 45%, var(--outline-variant));
@@ -3413,7 +3410,6 @@ body:has(.rest-timer) .set-groups {
   font-size: 13px;
 }
 
-/* Eight averages, four to a row; each tile sits on an offset plate with a lime notch on its top edge */
 .lol-tiles {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
@@ -3460,7 +3456,6 @@ body:has(.rest-timer) .set-groups {
   color: var(--text-muted);
 }
 
-/* Roles and queues: games as the bar length, the lime part of it the wins */
 .lol-bars {
   display: flex;
   flex-direction: column;
@@ -3532,7 +3527,6 @@ body:has(.rest-timer) .set-groups {
   color: var(--error);
 }
 
-/* Sortable tables: the card rests on an offset plate; only the inside scrolls sideways */
 .data-table-card {
   position: relative;
   isolation: isolate;
@@ -3596,7 +3590,6 @@ body:has(.rest-timer) .set-groups {
   font-size: 8px;
 }
 
-/* First column stays while the numbers scroll under it; the lime rule marks where they slide in */
 .data-table tr > :first-child {
   position: sticky;
   left: 0;
@@ -3704,7 +3697,6 @@ body:has(.rest-timer) .set-groups {
   box-shadow: none;
 }
 
-/* Records: a lime rule per line, the value set large on the right */
 .lol-records {
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -3901,7 +3893,6 @@ a.lol-match:active {
 
 /* ---------- League deep stats: tabbed player page ---------- */
 
-/* Tabs and filter stay on top while the page scrolls; a lime stub on the bottom rule marks the bar's edge */
 .lol-sticky {
   position: sticky;
   top: 0;
@@ -3930,7 +3921,6 @@ a.lol-match:active {
   color: var(--text-muted);
 }
 
-/* The open tab is a raised card with a lime underline, offset onto a darker plate */
 .lol-tab.selected {
   border-color: var(--outline-variant);
   background: var(--surface);
@@ -3983,7 +3973,6 @@ a.lol-match:active {
   opacity: 0.55;
 }
 
-/* Stat groups: each card sits on an offset plate, its name a colored tab hanging over the top edge */
 .lol-stat-groups {
   display: flex;
   flex-direction: column;
@@ -4140,7 +4129,6 @@ a.lol-match:active {
   color: var(--text-muted);
 }
 
-/* Average objectives: small stacked plates, the number set large */
 .lol-objective-strip {
   display: flex;
   flex-wrap: wrap;
@@ -4291,7 +4279,7 @@ a.lol-match:active {
   margin: 4px 0 22px;
   padding: 14px 16px;
   border: 1px solid var(--outline-variant);
-  border-left: 4px solid var(--tone);
+  border-left: none;
   border-radius: var(--radius-xl);
   background: var(--surface);
   box-shadow: none;
@@ -4339,7 +4327,7 @@ a.lol-match:active {
   border: 1px solid var(--outline-variant);
   border-radius: var(--radius-xl);
   background: var(--surface);
-  box-shadow: inset 4px 0 0 var(--tertiary), inset -4px 0 0 var(--error);
+  box-shadow: none;
 }
 
 .team-strip-head {
@@ -4491,7 +4479,6 @@ a.lol-match:active {
   color: var(--error);
 }
 
-/* Each team's table rests on a plate tinted with the team color */
 .scoreboard.blue .data-table-card::after {
   background: color-mix(in srgb, var(--tertiary) 28%, var(--surface-highest));
 }
@@ -4619,17 +4606,17 @@ a.scoreboard-name {
 
 /* ---------- Routines and workout mode ---------- */
 
-/* "Routines" sits at the header's bottom-right, beside the short subtitle: an outlined tab with a lime strip on its left edge */
+/* Level with the page title, at the header's right */
 .routines-btn {
   position: absolute;
   right: 4px;
-  bottom: 8px;
-  height: 32px;
-  padding: 0 12px 0 14px;
-  border: 1px solid var(--outline);
-  border-radius: var(--radius-s);
-  background: var(--surface);
-  font-size: 13px;
+  top: 26px;
+  height: 34px;
+  padding: 0 14px;
+  border-radius: 17px;
+  background: var(--surface-high);
+  color: var(--text);
+  font-size: 14px;
   font-weight: 600;
 }
 
@@ -4640,24 +4627,21 @@ a.scoreboard-name {
 .routine-strip-title {
   margin: 0 4px 8px;
   color: var(--text-muted);
-  font-size: 11px;
-  font-weight: 600;
+  font-size: 13px;
+  font-weight: 500;
 }
 
 .routine-chips {
   display: flex;
-  gap: 12px;
+  gap: 10px;
   overflow-x: auto;
-  /* room for the offset plate under each chip */
-  padding: 0 8px 8px 0;
+  padding-bottom: 4px;
   scrollbar-width: none;
 }
 
-/* Each chip: a dark tile lifted off a lime plate offset to the bottom-right, like the date block */
 .routine-chip {
   position: relative;
   flex: none;
-  padding: 0 6px 6px 0;
   text-align: left;
 }
 
@@ -4671,13 +4655,13 @@ a.scoreboard-name {
   padding: 10px 14px;
   border: 1px solid var(--outline-variant);
   border-radius: var(--radius-m);
-  background: var(--surface-highest);
+  background: var(--surface-high);
   transition: transform 0.2s var(--ease-spring);
 }
 
 .routine-chip-front strong {
   font-family: var(--font-display);
-  font-size: 19px;
+  font-size: 16px;
   font-weight: 600;
   white-space: nowrap;
   overflow: hidden;
@@ -4686,11 +4670,11 @@ a.scoreboard-name {
 
 .routine-chip-front small {
   color: var(--text-muted);
-  font-size: 12px;
-  font-weight: 650;
+  font-size: 13px;
+  font-weight: 400;
 }
 
-/* Pressing pushes the tile down onto its plate */
+
 .routine-chip:active:not(:disabled) .routine-chip-front,
 .routine-chip.starting .routine-chip-front {
   transform: scale(0.98);
@@ -4704,7 +4688,6 @@ a.scoreboard-name {
   border: 1px solid var(--outline-variant);
 }
 
-/* "Routine" label straddling the summary card's top edge */
 .summary-card {
   position: relative;
 }
@@ -4838,7 +4821,6 @@ a.scoreboard-name {
   background: var(--surface-high);
 }
 
-/* ✓: lime square on a darker offset plate; pressing sinks it onto the plate */
 .tick-btn {
   flex: none;
   display: grid;
@@ -4947,7 +4929,6 @@ a.scoreboard-name {
   list-style: none;
 }
 
-/* Each exercise card with its number on a lime tab overlapping the left edge */
 .routine-exercise {
   position: relative;
   display: flex;
@@ -5031,7 +5012,6 @@ a.scoreboard-name {
 
 /* ---------- Barcode scanner ---------- */
 
-/* Entry point in the food search: a lime edge strip and an offset plate behind, so it reads as a tool */
 .scan-entry {
   position: relative;
   display: flex;
@@ -5047,17 +5027,6 @@ a.scoreboard-name {
   transition: transform 0.45s var(--ease-spring), box-shadow 0.45s var(--ease-spring);
 }
 
-.scan-entry::after {
-  content: '';
-  position: absolute;
-  left: 0;
-  top: 8px;
-  bottom: 8px;
-  width: 4px;
-  border-radius: 0 2px 2px 0;
-  background: var(--primary);
-}
-
 .scan-entry:active {
   transform: scale(0.98);
   box-shadow: none;
@@ -5070,9 +5039,8 @@ a.scoreboard-name {
   width: 36px;
   height: 36px;
   border-radius: var(--radius-s);
-  background: var(--primary);
-  color: var(--on-primary);
-  transform: rotate(-4deg);
+  background: var(--primary-container);
+  color: var(--primary);
 }
 
 .scan-entry strong {
@@ -5092,7 +5060,6 @@ a.scoreboard-name {
   margin: 0 0 8px;
   border-radius: var(--radius-l);
   background: #050506;
-  /* Offset lime plate behind the viewfinder */
   box-shadow: none;
 }
 
@@ -5248,25 +5215,14 @@ a.scoreboard-name {
   box-shadow: none;
 }
 
-.scanned-product::after {
-  content: '';
-  position: absolute;
-  left: 0;
-  top: 10px;
-  bottom: 10px;
-  width: 4px;
-  border-radius: 0 2px 2px 0;
-  background: var(--primary);
-}
-
 .scanned-product-code {
   position: absolute;
-  right: 10px;
-  top: -10px;
+  right: 12px;
+  top: 12px;
   padding: 2px 8px;
   border-radius: var(--radius-s);
-  background: var(--primary);
-  color: var(--on-primary);
+  background: var(--surface-highest);
+  color: var(--text-muted);
   font-size: 11px;
   font-weight: 600;
 }
@@ -5292,17 +5248,6 @@ a.scoreboard-name {
   box-shadow: none;
 }
 
-.manual-notice::before {
-  content: '';
-  position: absolute;
-  left: 0;
-  top: 8px;
-  bottom: 8px;
-  width: 4px;
-  border-radius: 0 2px 2px 0;
-  background: var(--primary);
-}
-
 /* ---------- Copy the previous day ---------- */
 /* Overflow menu in the top-right corner of the page header */
 .day-actions {
@@ -5316,7 +5261,6 @@ a.scoreboard-name {
   top: 44px;
 }
 
-/* Call to action under the empty state: lime slab on an offset dark plate, with a "tag" over its edge */
 .copy-day-cta {
   position: relative;
   display: flex;
@@ -5367,68 +5311,54 @@ a.scoreboard-name {
 
 /* ---------- Weekly streak and workout recap ---------- */
 
-/* Streak chip: dark tile lifted off a lime plate offset to the bottom-right, a lime strip down its left
-   edge, and the "2× this week" tag overlapping its bottom-right corner */
+/* One quiet line: flame, the streak, then this week's count after a divider */
 .week-streak {
-  position: relative;
-  display: inline-block;
-  padding: 0 5px 5px 0;
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
 }
 
 .week-streak-front {
-  position: relative;
-  display: grid;
-  grid-template-columns: auto auto;
-  grid-template-rows: auto auto;
-  column-gap: 8px;
+  display: inline-flex;
   align-items: center;
-  padding: 6px 12px 6px 8px;
-  border: 1px solid var(--outline-variant);
-  border-radius: var(--radius-m);
-  background: var(--surface-highest);
+  gap: 8px;
 }
 
 .week-streak-icon {
-  grid-row: span 2;
   display: grid;
   place-items: center;
-  width: 30px;
-  height: 30px;
-  border-radius: var(--radius-s);
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
   background: var(--primary-container);
   color: var(--primary);
 }
 
 .week-streak-front strong {
   font-family: var(--font-display);
-  font-size: 22px;
+  font-size: 17px;
   font-weight: 600;
-  line-height: 0.95;
 }
 
 .week-streak-front small {
-  grid-column: 2;
   color: var(--text-muted);
-  font-size: 10px;
-  font-weight: 600;
-  line-height: 1.1;
+  font-size: 14px;
   white-space: nowrap;
 }
 
 .week-streak-tag {
+  padding-left: 10px;
+  border-left: 1px solid var(--outline);
   color: var(--text-muted);
-  font-size: 12px;
-  font-weight: 500;
+  font-size: 14px;
   white-space: nowrap;
-  align-self: flex-start;
 }
 
-/* On the Workouts header the chip gets its own row under the subtitle, left of the Routines button */
+/* On the Workouts header the streak gets its own line under the subtitle */
 .header-streak {
-  margin-top: 14px;
+  margin-top: 12px;
 }
 
-/* "Finish workout": a wide lime-edged tile on an offset lime plate, after the last set */
 .set-groups:has(+ .finish-btn) {
   padding-bottom: 12px;
 }
@@ -5438,19 +5368,10 @@ a.scoreboard-name {
   display: block;
   width: 100%;
   margin: 4px 0 104px;
-  padding: 0 6px 6px 0;
 }
 
 body:has(.rest-timer) .finish-btn {
   margin-bottom: 184px;
-}
-
-.finish-btn::before {
-  content: '';
-  position: absolute;
-  inset: 6px 0 0 6px;
-  border-radius: var(--radius-l);
-  background: var(--primary);
 }
 
 .finish-btn-front {
@@ -5460,12 +5381,11 @@ body:has(.rest-timer) .finish-btn {
   justify-content: center;
   gap: 8px;
   min-height: 52px;
-  border: 1px solid var(--primary);
   border-radius: var(--radius-l);
-  background: var(--surface-highest);
-  color: var(--primary);
+  background: var(--primary-container);
+  color: var(--on-primary-container);
   font-family: var(--font-display);
-  font-size: 20px;
+  font-size: 17px;
   font-weight: 600;
   transition: transform 0.2s var(--ease-spring);
 }
@@ -5486,7 +5406,6 @@ body:has(.rest-timer) .finish-btn {
   gap: 22px;
 }
 
-/* Hero: dark plate with a lime edge strip, lifted off a lime plate; the comparison tag hangs off its bottom */
 .recap-hero {
   position: relative;
   margin: 4px 0 6px;
@@ -5515,9 +5434,8 @@ body:has(.rest-timer) .finish-btn {
 }
 
 .recap-delta {
-  position: absolute;
-  left: 18px;
-  bottom: -12px;
+  display: inline-block;
+  margin-top: 12px;
   padding: 4px 10px;
   border-radius: var(--radius-s);
   font-size: 12px;
@@ -5549,7 +5467,6 @@ body:has(.rest-timer) .finish-btn {
   gap: 10px;
 }
 
-/* Stat tiles: number on top, label underneath, a short lime tab on the top edge */
 .recap-stat {
   position: relative;
   display: flex;
@@ -5650,7 +5567,6 @@ body:has(.rest-timer) .finish-btn {
   min-height: 52px;
 }
 
-/* ---------- Ready-made routine templates ---------- */
 
 .templates-title {
   margin: 10px 0 0;
@@ -5665,12 +5581,10 @@ body:has(.rest-timer) .finish-btn {
 .template-cards {
   display: flex;
   flex-direction: column;
-  /* extra room above each card for the tags that straddle its top edge */
   gap: 20px;
   padding: 10px 6px 6px 0;
 }
 
-/* A card on a lime plate offset to the bottom-right; tags overlap the top edge, the count sits in the corner */
 .template-card {
   position: relative;
   display: block;
@@ -5821,7 +5735,6 @@ body:has(.rest-timer) .finish-btn {
   font-size: 13px;
 }
 
-/* Preview: a hero block on an offset lime plate, then numbered lines with the set scheme in lime */
 .template-hero {
   position: relative;
   margin: 10px 0 8px;
@@ -5870,7 +5783,6 @@ body:has(.rest-timer) .finish-btn {
   overflow: hidden;
 }
 
-/* The index sits on a lime edge block cut into the line's left side */
 .template-line-index {
   flex: none;
   align-self: stretch;
@@ -5995,7 +5907,6 @@ body:has(.rest-timer) .finish-btn {
   stroke-width: 2.2;
 }
 
-/* Progress card: dark plate with a lime edge strip, lifted off a lime plate offset to the bottom-right */
 .muscle-card {
   position: relative;
   margin: 0 0 24px;
@@ -6007,7 +5918,6 @@ body:has(.rest-timer) .finish-btn {
   border: 1px solid var(--outline-variant);
   border-radius: var(--radius-xl);
   background: var(--surface);
-  /* Separators between muscles are cut in the plate's own colour */
   --map-sep: var(--surface);
 }
 
@@ -6229,7 +6139,6 @@ body:has(.rest-timer) .finish-btn {
   color: var(--on-primary);
 }
 
-/* Same build as the Progress card: a surface plate with a lime edge, lifted off a lime plate behind it */
 .picker-map {
   position: relative;
   margin: 0 0 6px;
@@ -6385,7 +6294,6 @@ body:has(.rest-timer) .finish-btn {
   text-align: center;
 }
 
-/* One workout's panel: "In this workout" on an inner plate lifted off the panel, the suggestions under it */
 .muscle-detail-workout {
   margin-top: 10px;
   padding: 8px 10px 6px;
@@ -6453,15 +6361,14 @@ body:has(.rest-timer) .finish-btn {
 
 /* ---------- Offline: sync banner and waiting sets ---------- */
 
-/* Banner: a lime icon tile overlapping a dark card that has a second card peeking out behind it,
-   so the queue reads as "stacked up, waiting" */
 .sync-status {
   position: sticky;
   top: calc(var(--safe-top) + 8px);
   z-index: 25;
   display: flex;
   align-items: center;
-  margin: 8px 20px 4px 16px;
+  gap: 10px;
+  margin: 8px 0 4px;
   animation: sync-status-in 0.25s var(--ease-out);
 }
 
@@ -6480,12 +6387,9 @@ body:has(.rest-timer) .finish-btn {
   flex: none;
   width: 36px;
   height: 36px;
-  margin-right: -10px;
-  border-radius: var(--radius-m);
-  background: var(--primary);
-  color: var(--on-primary);
-  transform: rotate(-4deg);
-  box-shadow: none;
+  border-radius: 50%;
+  background: var(--primary-container);
+  color: var(--primary);
 }
 
 .sync-status-card {
@@ -6544,7 +6448,6 @@ body:has(.rest-timer) .finish-btn {
   white-space: nowrap;
 }
 
-/* New workout sheet while offline: a lime-edged note with its icon */
 .new-workout-offline {
   display: flex;
   gap: 10px;
@@ -6563,7 +6466,6 @@ body:has(.rest-timer) .finish-btn {
 }
 
 /* ---------- Weight log ---------- */
-/* Card with the signal rule on top and an offset plate behind its lower right, like a stacked weight plate */
 .weight-card {
   position: relative;
   padding: 20px;
@@ -6592,7 +6494,6 @@ body:has(.rest-timer) .finish-btn {
   font-size: 13px;
 }
 
-/* Lime slab on a darker offset plate, with the date tag hanging over its top edge */
 .weight-latest {
   position: relative;
   flex: none;
@@ -6753,7 +6654,6 @@ body:has(.rest-timer) .finish-btn {
   font-size: 14px;
 }
 
-/* Nutrition header: current weight as a tag; the lime label overlaps its left edge */
 .weight-link-chip {
   display: inline-flex;
   align-items: baseline;
@@ -6798,7 +6698,6 @@ body:has(.rest-timer) .finish-btn {
 }
 
 /* ---------- Group training comparison ---------- */
-/* League / Training switch under the group card: a track on an offset plate, the chosen half a lime block */
 .group-mode {
   position: relative;
   isolation: isolate;
@@ -6842,7 +6741,6 @@ body:has(.rest-timer) .finish-btn {
   padding: 16px 4px;
 }
 
-/* The column leader: lime number with a lime bar under it, so it reads without color too */
 .data-table td.leader {
   color: var(--primary);
   font-weight: 600;
@@ -6887,7 +6785,6 @@ body:has(.rest-timer) .finish-btn {
   font-weight: 600;
 }
 
-/* Opt-in card: stacked on a plate with a lime strip, the switch on a tab straddling the lower edge */
 .share-card-wrap {
   position: relative;
   isolation: isolate;
@@ -6934,7 +6831,6 @@ body:has(.rest-timer) .finish-btn {
   font-weight: 650;
 }
 
-/* A lime check drawn from two borders */
 .share-card-items li::before {
   content: '';
   position: absolute;
@@ -7031,7 +6927,6 @@ body:has(.rest-timer) .finish-btn {
   opacity: 0.5;
 }
 
-/* Profile row: text on the left, the switch on the right, with a lime edge like the other cards */
 .share-toggle {
   display: flex;
   align-items: center;
@@ -7064,7 +6959,6 @@ body:has(.rest-timer) .finish-btn {
   gap: 6px;
 }
 
-/* The queue name is a dark plate the tier badge leans on, so solo and flex read as two tabs, not one strip */
 .queue-rank {
   display: inline-flex;
   align-items: stretch;
@@ -7217,7 +7111,6 @@ body:has(.rest-timer) .finish-btn {
   color: var(--text);
 }
 
-/* Each team is a card with its side color as a thick edge and a raised plate under it */
 .live-team {
   --side: #4a90ff;
   border: 1px solid var(--outline-variant);
@@ -7403,7 +7296,6 @@ body:has(.rest-timer) .finish-btn {
   font-weight: 400;
 }
 
-/* Water: a card with an offset tertiary plate behind it, a row of filling glasses and a chunky add button */
 .water-card {
   position: relative;
   margin: 4px 0 20px;

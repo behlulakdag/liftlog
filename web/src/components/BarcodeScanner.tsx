@@ -117,7 +117,7 @@ export function BarcodeScanner({ onDetected, onBack }: { onDetected: (code: stri
   return (
     <div className="scanner stack">
       <div className={`scanner-stage ${camera}`} data-testid="scanner-stage">
-        {/* Clips the dimmed surround; the plate and the tag outside it may overhang the edges */}
+        {/* Clips the dimmed surround */}
         <div className="scanner-viewport">
           <video ref={videoRef} className="scanner-video" playsInline muted autoPlay aria-hidden />
           {!blocked && (

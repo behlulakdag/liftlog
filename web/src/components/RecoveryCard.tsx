@@ -145,7 +145,6 @@ export function RecoveryCodeCard({ collapsible = false }: { collapsible?: boolea
         // back), so it is not offered for saving until New code settles which one is real
         <p className="recovery-pending">{t.pendingCode}</p>
       ) : (
-        /* Code box with a lime edge and an offset plate behind it, so it reads as a physical card */
         <div className="recovery-code-wrap">
           <button
             className={revealed ? 'recovery-code revealed' : 'recovery-code'}

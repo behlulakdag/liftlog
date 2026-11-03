@@ -55,7 +55,7 @@ export function GroupTrainingView() {
   )
 }
 
-/** Header taps sort; the top value of every column is lit lime. */
+/** Header taps sort; the top value of every column is highlighted. */
 export function TrainingTable({ rows }: { rows: TrainingRow[] }) {
   const leaderOf = (value: (row: TrainingRow) => number | null) => {
     const leaders = columnLeaders(rows, value)

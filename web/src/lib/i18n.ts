@@ -683,7 +683,7 @@ const en = {
   recapShareText: (kg: string, sets: number, exercises: number) => `Today I lifted ${kg} kg on LiftLog: ${sets} sets, ${exercises} exercises.`,
   recapShareRecords: (names: string) => `New PRs: ${names}.`,
   recapShareStreak: (weeks: number) => (weeks === 1 ? '1 week streak.' : `${weeks} week streak.`),
-  streakLabel: 'Week streak',
+  streakLabel: 'week streak',
   streakAria: (weeks: number, thisWeek: number) =>
     `${weeks === 1 ? '1 week' : `${weeks} weeks`} in a row with a workout, ${thisWeek === 1 ? '1 workout' : `${thisWeek} workouts`} this week`,
   streakThisWeek: (n: number) => `${n}× this week`,
@@ -1448,7 +1448,7 @@ const tr: Strings = {
   recapShareText: (kg, sets, exercises) => `LiftLog'da bugün ${kg} kg kaldırdım: ${sets} set, ${exercises} hareket.`,
   recapShareRecords: (names) => `Yeni rekorlar: ${names}.`,
   recapShareStreak: (weeks) => `${weeks} haftalık seri.`,
-  streakLabel: 'Hafta seri',
+  streakLabel: 'haftalık seri',
   streakAria: (weeks, thisWeek) => `${weeks} haftadır her hafta antrenman, bu hafta ${thisWeek} antrenman`,
   streakThisWeek: (n) => `bu hafta ${n}×`,
   prBadge: 'PR',

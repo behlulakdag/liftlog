@@ -138,7 +138,7 @@ export function WorkoutsPage() {
   )
 }
 
-/** "Start a routine": one chip per routine, each a tile with a lime plate offset behind it. */
+/** "Start a routine": one chip per routine. */
 function RoutineStrip({ routines }: { routines: Routine[] }) {
   const { start, startingId } = useStartRoutine()
   return (

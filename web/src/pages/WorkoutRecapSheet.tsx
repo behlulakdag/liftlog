@@ -64,7 +64,7 @@ function RecapCard({ recap, onDone }: { recap: WorkoutRecap; onDone: () => void 
 
   return (
     <div className="recap" data-testid="workout-recap">
-      {/* Hero: the day's volume on a dark plate lifted off a lime one, the comparison tag straddling its bottom edge */}
+      {/* Hero: the day's volume, with the comparison to last time under it */}
       <div className="recap-hero">
         <div className="recap-hero-front">
           <small className="recap-date">{formatLongDate(recap.workoutDate)}</small>
