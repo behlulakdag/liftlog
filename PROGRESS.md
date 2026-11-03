@@ -642,3 +642,24 @@ yüzünden her yeni istek limiter'dan geçiyor ve sonuçlar saklanıp tembelce y
 **Sıradaki adımlar:**
 1. PR'ı birleştir, canlıda V26'yı kontrol et.
 2. İstenirse: su geçmişi (haftalık grafik), dışa aktarmaya su, Android'e su kartı.
+
+## 2026-11-03 — Cila (`feature/polish`)
+
+- Kendi hata sayfamız (`RouteError`): bilinmeyen adres alttaki menüyle "Böyle bir sayfa yok" + Ana sayfa; çöken
+  ekran "Bu ekranda bir şey bozuldu" + Yenile / Ana sayfa. React Router'ın İngilizce geliştirici sayfası artık hiç
+  çıkmıyor (arkadaşın telefonunda görülen ekran buydu).
+- Silinmiş antrenman / oyuncu / maç: "Tekrar dene" yerine "Geri dön" (`goBackOrHome`: geçmiş yoksa ana sayfa).
+- Dışa aktarma ZIP'ine `kilo.csv` ve `su.csv`; `profile.json`'da su hedefi ve bardak boyu. (Kilo geçmişi daha önce
+  ZIP'te yoktu.)
+- Profilde dil seçici: Telefon / Türkçe / English. Seçim cihazda (`liftlog.language`) duruyor, uygulama o dilde
+  yeniden yükleniyor; sayılar ve tarihler de o dile uyuyor.
+- Hazır şablonlar kaldırıldı, yerine Behlül'ün 12 haftalık programının 4 günü geldi ("Programım"): Gün 1 Üst A,
+  Gün 2 Alt A, Gün 3 Üst B, Gün 4 Alt B. Tekrar aralığı üst ucuyla saklanıyor (3×6–10 → 3×10). Daha önce şablondan
+  eklenmiş rutinler (ör. "İtiş (Push)") kullanıcının kendi rutinleri; otomatik silinmiyor.
+- Eski agent worktree'leri (#39, #40; temiz ve birleşmiş) ve yerel dalları kaldırıldı.
+- Doğrulama: backend `mvnw verify` geçti; web 524 test, tsc, lint, build; yerelde 375 px'te: 404 sayfası, 4 günün
+  hareketlerinin hepsi gerçek katalogda bulundu, Gün 1 rutin olarak eklendi, English'e geçip geri dönüldü.
+
+**Sıradaki adımlar:**
+1. PR'ı birleştir, canlıda kontrol et.
+2. Android'de aynı şablonlar ve dil seçici (Android kullanılmıyor, gerekirse).
