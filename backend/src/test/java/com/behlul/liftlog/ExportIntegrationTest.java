@@ -127,12 +127,8 @@ class ExportIntegrationTest {
 
         Map<String, String> entries = unzip(result.getResponse().getContentAsByteArray());
         assertThat(entries).containsOnlyKeys("antrenman.csv", "beslenme.csv", "kilo.csv", "su.csv", "profile.json");
-        assertThat(entries.get("kilo.csv")).startsWith(BOM + "Tarih;Kilo (kg)
-").contains("2026-03-01;80,5
-");
-        assertThat(entries.get("su.csv")).isEqualTo(BOM + "Tarih;Su (ml)
-2026-03-02;660
-");
+        assertThat(entries.get("kilo.csv")).startsWith(BOM + "Tarih;Kilo (kg)\r\n").contains("2026-03-01;80,5\r\n");
+        assertThat(entries.get("su.csv")).isEqualTo(BOM + "Tarih;Su (ml)\r\n2026-03-02;660\r\n");
         assertThat(entries.get("antrenman.csv")).startsWith(BOM + "Tarih;Antrenman notu;").contains("Pull-up;2;10;6");
         // Same writer as nutrition.csv: the grams column with a value, and empty when unknown
         assertThat(entries.get("beslenme.csv")).startsWith(BOM + "Tarih;Yemek;Miktar (g);")
