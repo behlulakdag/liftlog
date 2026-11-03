@@ -29,33 +29,21 @@
   padding: 24px 4px 12px;
 }
 
-/* Short signal-colored rule above the title, offset left of the text like a section marker */
-.page-header::before {
-  content: '';
-  display: block;
-  width: 28px;
-  height: 3px;
-  margin-bottom: 10px;
-  background: var(--primary);
-}
-
+/* A large-title header like iOS: bold, tight, and the subtitle a quiet line under it */
 .page-title {
   margin: 0;
   font-family: var(--font-display);
-  font-size: 44px;
-  font-weight: 800;
-  letter-spacing: 0.5px;
-  line-height: 0.95;
-  text-transform: uppercase;
+  font-size: 32px;
+  font-weight: 700;
+  line-height: 1.1;
+  letter-spacing: -0.4px;
 }
 
 .page-subtitle {
-  margin: 6px 0 0;
+  margin: 4px 0 0;
   color: var(--text-muted);
-  font-size: 13px;
-  font-weight: 600;
-  letter-spacing: 1.2px;
-  text-transform: uppercase;
+  font-size: 14px;
+  font-weight: 400;
 }
 
 .top-bar {
@@ -70,9 +58,7 @@
   flex: 1;
   font-family: var(--font-display);
   font-size: 24px;
-  font-weight: 800;
-  letter-spacing: 0.5px;
-  text-transform: uppercase;
+  font-weight: 600;
 }
 
 .icon-btn {
@@ -133,8 +119,6 @@
 }
 
 .nav-item {
-  text-transform: uppercase;
-  letter-spacing: 0.6px;
   font-size: 11px;
 }
 
@@ -299,9 +283,7 @@
   color: var(--on-primary);
   font-family: var(--font-display);
   font-size: 18px;
-  font-weight: 700;
-  letter-spacing: 0.8px;
-  text-transform: uppercase;
+  font-weight: 600;
 }
 
 .btn-tonal {
@@ -331,18 +313,16 @@
   z-index: 15;
   height: 52px;
   padding: 0 18px;
-  border-radius: var(--radius-m);
+  border-radius: 26px;
   background: var(--primary);
   color: var(--on-primary);
-  font-family: var(--font-display);
-  font-size: 18px;
-  font-weight: 700;
-  letter-spacing: 0.8px;
-  text-transform: uppercase;
+  font-size: 16px;
+  font-weight: 600;
   display: flex;
   align-items: center;
-  gap: 10px;
-  box-shadow: 0 4px 0 color-mix(in srgb, var(--primary) 35%, var(--bg));
+  gap: 8px;
+  /* A soft lift so it floats over the list; the only real shadow in the app */
+  box-shadow: 0 6px 20px rgb(0 0 0 / 30%);
   transition: transform 0.15s;
 }
 
@@ -351,7 +331,7 @@
 }
 
 .fab-plus {
-  font-size: 26px;
+  font-size: 22px;
   line-height: 1;
 }
 
@@ -433,9 +413,7 @@
   margin: 8px 0 0;
   font-family: var(--font-display);
   font-size: 22px;
-  font-weight: 700;
-  letter-spacing: 0.5px;
-  text-transform: uppercase;
+  font-weight: 600;
 }
 
 .state-body,
@@ -465,51 +443,22 @@
   }
 }
 
-.layered-tile {
-  position: relative;
-  width: 104px;
-  height: 104px;
-}
-
-.layered-tile-back,
-.layered-tile-front {
-  position: absolute;
-  width: 72px;
-  height: 72px;
-  border-radius: var(--radius-m);
-}
-
-.layered-tile-back {
-  left: 30px;
-  top: 6px;
-  border: 2px solid var(--primary);
-}
-
-.layered-tile-front {
-  left: 8px;
-  top: 24px;
-  background: var(--surface-highest);
+/* Empty and error states: the icon in one soft circle */
+.state-icon {
   display: grid;
   place-items: center;
-  font-size: 32px;
+  width: 72px;
+  height: 72px;
+  border-radius: 50%;
+  background: var(--surface-high);
   color: var(--primary);
-}
-
-.layered-tile-dot {
-  position: absolute;
-  left: 76px;
-  top: 84px;
-  width: 10px;
-  height: 10px;
-  background: var(--primary);
 }
 
 /* ---------- Workout list ---------- */
 .workout-list {
   display: flex;
   flex-direction: column;
-  gap: 14px;
-  padding-bottom: 72px;
+  padding-bottom: 24px;
 }
 
 .workout-card {
@@ -527,32 +476,6 @@
   }
 }
 
-.workout-card-body {
-  margin-left: 18px;
-  min-height: 112px;
-  padding: 16px 16px 16px 76px;
-  border: 1px solid var(--outline-variant);
-  border-radius: var(--radius-l);
-  background: var(--surface);
-  transition: background 0.15s;
-}
-
-.workout-card:active .workout-card-body {
-  background: var(--surface-high);
-}
-
-.workout-card-title {
-  margin: 0;
-  font-family: var(--font-display);
-  font-size: 22px;
-  font-weight: 700;
-  letter-spacing: 0.3px;
-  text-transform: uppercase;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-
 .chips {
   display: flex;
   gap: 6px;
@@ -562,10 +485,8 @@
 
 .chip {
   font-size: 12px;
-  font-weight: 700;
-  letter-spacing: 0.4px;
-  text-transform: uppercase;
-  padding: 3px 7px;
+  font-weight: 600;
+  padding: 3px 8px;
   border-radius: var(--radius-s);
   background: var(--secondary-container);
   color: var(--on-secondary-container);
@@ -573,65 +494,19 @@
 
 .accent {
   color: var(--primary);
-  font-weight: 700;
+  font-weight: 600;
 }
 
-/* Date block overhanging the card's left edge: a flat tile with a lime strip offset behind it */
-.date-block {
-  position: absolute;
-  left: 0;
-  top: 14px;
-  width: 70px;
-  height: 84px;
-}
-
-.date-block::before {
-  content: '';
-  position: absolute;
-  left: 6px;
-  top: 8px;
-  width: 64px;
-  height: 76px;
-  border-radius: var(--radius-m);
-  background: var(--primary);
-}
-
-.date-block-front {
-  position: absolute;
-  inset: 0 6px 8px 0;
-  border-radius: var(--radius-m);
-  background: var(--surface-highest);
-  color: var(--text);
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  line-height: 1.05;
-}
-
-.date-block-front small {
-  font-size: 11px;
-  font-weight: 700;
-  letter-spacing: 1px;
-  opacity: 0.8;
-}
-
-.date-block-front strong {
-  font-family: var(--font-display);
-  font-size: 32px;
-  font-weight: 800;
-  font-variant-numeric: tabular-nums;
-}
-
+/* The workout's volume is the number a list scan looks for, so it reads a size up from the chips */
+/* The date as a calendar tile inside the card's left side */
 /* ---------- Workout detail ---------- */
 .summary {
   position: relative;
-  margin-bottom: 26px;
+  margin-bottom: 16px;
 }
 
 .summary-card {
-  margin-right: 28px;
-  padding: 20px 20px 36px;
+  padding: 18px 20px;
   border: 1px solid var(--outline-variant);
   border-radius: var(--radius-xl);
   background: var(--surface);
@@ -639,20 +514,16 @@
 
 .summary-date {
   color: var(--primary);
-  font-weight: 700;
+  font-weight: 600;
   font-size: 12px;
-  letter-spacing: 1.2px;
-  text-transform: uppercase;
 }
 
 .summary-title {
   margin: 4px 0 16px;
   font-family: var(--font-display);
-  font-size: 34px;
-  font-weight: 800;
-  letter-spacing: 0.3px;
+  font-size: 26px;
+  font-weight: 600;
   line-height: 1;
-  text-transform: uppercase;
 }
 
 .summary-stats {
@@ -662,40 +533,39 @@
 
 .stat-value {
   font-size: 30px;
+  letter-spacing: -0.3px;
   line-height: 1;
 }
 
 .stat-label {
   font-size: 11px;
-  font-weight: 700;
-  letter-spacing: 1px;
-  text-transform: uppercase;
+  font-weight: 600;
   color: var(--text-muted);
 }
 
+/* Total volume in the card's lower right, on a tinted panel rather than hanging off the edge */
 .volume-badge {
   position: absolute;
-  right: 0;
-  bottom: -14px;
-  padding: 10px 16px;
+  right: 16px;
+  bottom: 16px;
+  padding: 8px 12px;
   border-radius: var(--radius-m);
-  background: var(--primary);
-  color: var(--on-primary);
+  background: var(--primary-container);
+  color: var(--on-primary-container);
   text-align: right;
 }
 
 .volume-badge small {
   display: block;
   font-size: 11px;
-  font-weight: 700;
-  letter-spacing: 1px;
+  font-weight: 600;
   opacity: 0.8;
 }
 
 .volume-badge strong {
   font-family: var(--font-display);
-  font-size: 28px;
-  font-weight: 800;
+  font-size: 22px;
+  font-weight: 600;
   font-variant-numeric: tabular-nums;
 }
 
@@ -928,7 +798,6 @@
   margin-bottom: 14px;
 }
 
-/* Icon tile with a second, offset frame behind it so the corner reads as two stacked plates */
 .confirm-badge {
   position: relative;
   flex: none;
@@ -947,7 +816,7 @@
   inset: 0;
   border: 1px solid color-mix(in srgb, var(--error) 45%, transparent);
   border-radius: var(--radius-m);
-  transform: translate(4px, 4px);
+  transform: scale(0.98);
 }
 
 .confirm-neutral .confirm-badge {
@@ -963,8 +832,7 @@
   margin: 0;
   font-family: var(--font-display);
   font-size: 24px;
-  font-weight: 700;
-  letter-spacing: 0.3px;
+  font-weight: 600;
   line-height: 1.15;
 }
 
@@ -1010,9 +878,7 @@
   color: var(--on-error);
   font-family: var(--font-display);
   font-size: 18px;
-  font-weight: 700;
-  letter-spacing: 0.6px;
-  text-transform: uppercase;
+  font-weight: 600;
 }
 
 .confirm-neutral .confirm-ok {
@@ -1090,7 +956,7 @@
 
 .badge {
   font-size: 11px;
-  font-weight: 700;
+  font-weight: 600;
   padding: 2px 6px;
   border-radius: 6px;
   background: var(--primary-container);
@@ -1122,9 +988,7 @@
   background: var(--surface-low);
   color: var(--text-muted);
   font-size: 12px;
-  font-weight: 700;
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
+  font-weight: 600;
 }
 
 .exercise-section-title::before {
@@ -1138,7 +1002,6 @@
 .field-hint {
   margin: -4px 0 0;
   padding: 8px 12px;
-  border-left: 3px solid var(--tertiary);
   border-radius: 0 var(--radius-s) var(--radius-s) 0;
   background: color-mix(in srgb, var(--tertiary) 10%, transparent);
   font-size: 13px;
@@ -1196,7 +1059,6 @@
   gap: 12px;
   padding: 14px 16px;
   border: 1px solid var(--outline);
-  border-left: 3px solid var(--primary);
   border-radius: var(--radius-m);
   background: var(--surface-highest);
   color: var(--text);
@@ -1217,9 +1079,7 @@
 
 .toast-action {
   color: var(--primary);
-  font-weight: 700;
-  letter-spacing: 0.5px;
-  text-transform: uppercase;
+  font-weight: 600;
 }
 
 /* ---------- Rest timer ---------- */
@@ -1289,7 +1149,7 @@
 }
 
 .rest-label {
-  font-weight: 700;
+  font-weight: 600;
 }
 
 .rest-actions {
@@ -1303,7 +1163,7 @@
   padding: 0 10px;
   border-radius: 18px;
   background: var(--surface);
-  font-weight: 700;
+  font-weight: 600;
   font-size: 14px;
 }
 
@@ -1378,14 +1238,14 @@
 
 .stat-tile {
   flex: 1;
-  padding: 22px 16px 16px;
+  padding: 16px;
   border-radius: var(--radius-l);
   background: var(--surface-high);
 }
 
 .stat-tile.emphasized {
-  background: var(--primary);
-  color: var(--on-primary);
+  background: var(--primary-container);
+  color: var(--on-primary-container);
 }
 
 .stat-tile small {
@@ -1407,36 +1267,12 @@
   opacity: 0.7;
 }
 
-.trophy {
-  position: absolute;
-  left: -6px;
-  top: 0;
-  width: 34px;
-  height: 34px;
-  border-radius: var(--radius-m);
-  display: grid;
-  place-items: center;
-  background: var(--primary);
-  color: var(--on-primary);
-  font-size: 18px;
-}
-
 .chart-card {
   padding: 20px;
   border: 1px solid var(--outline-variant);
   border-radius: var(--radius-xl);
   background: var(--surface);
   margin-bottom: 16px;
-}
-
-.chart-card::before {
-  content: '';
-  display: block;
-  width: 28px;
-  height: 6px;
-  border-radius: 3px;
-  background: var(--primary);
-  margin-bottom: 10px;
 }
 
 .chart-card h2 {
@@ -1459,14 +1295,6 @@
   background: var(--surface-low);
 }
 
-.record-row::before {
-  content: '';
-  width: 4px;
-  height: 32px;
-  border-radius: 2px;
-  background: var(--primary);
-}
-
 .record-row-main {
   flex: 1;
 }
@@ -1478,10 +1306,9 @@
 .section-title {
   margin: 8px 4px 12px;
   font-family: var(--font-display);
-  font-size: 22px;
-  font-weight: 700;
-  letter-spacing: 0.5px;
-  text-transform: uppercase;
+  font-size: 19px;
+  font-weight: 650;
+  letter-spacing: -0.2px;
 }
 
 /* ---------- Profile ---------- */
@@ -1490,11 +1317,11 @@
   margin-top: 8px;
   /* padding, not the card's margin: a child's top margin would collapse through this box and
      push the absolutely positioned avatar down onto the name */
-  padding-top: 56px;
+  padding-top: 0;
 }
 
 .profile-card {
-  padding: 76px 20px 16px;
+  padding: 120px 20px 16px;
   border-radius: var(--radius-xl);
   background: var(--surface-high);
 }
@@ -1502,30 +1329,30 @@
 .profile-name {
   margin: 0 0 8px;
   font-size: 28px;
-  font-weight: 800;
+  font-weight: 600;
 }
 
+/* Round avatar inside the card's top, with the camera badge on its lower right */
 .avatar {
   position: absolute;
   left: 20px;
-  top: 0;
-  width: 124px;
-  height: 124px;
+  top: 20px;
+  width: 88px;
+  height: 88px;
 }
 
 .avatar-circle {
-  width: 112px;
-  height: 112px;
-  border-radius: var(--radius-xl);
+  width: 84px;
+  height: 84px;
+  border-radius: 50%;
   overflow: hidden;
-  border: 4px solid var(--bg);
-  background: var(--primary);
-  color: var(--on-primary);
+  background: var(--primary-container);
+  color: var(--on-primary-container);
   display: grid;
   place-items: center;
   font-family: var(--font-display);
-  font-size: 46px;
-  font-weight: 800;
+  font-size: 34px;
+  font-weight: 600;
   position: relative;
 }
 
@@ -1545,14 +1372,14 @@
 
 .avatar-badge {
   position: absolute;
-  left: 80px;
-  top: 78px;
-  width: 38px;
-  height: 38px;
-  border-radius: var(--radius-m);
-  border: 4px solid var(--bg);
-  background: var(--primary);
-  color: var(--on-primary);
+  left: 58px;
+  top: 58px;
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  border: 2px solid var(--surface-high);
+  background: var(--surface-highest);
+  color: var(--text);
   display: grid;
   place-items: center;
   font-size: 15px;
@@ -1759,7 +1586,7 @@ body:has(.rest-timer) .toast {
   border-radius: 6px;
   vertical-align: 3px;
   font-size: 11px;
-  font-weight: 700;
+  font-weight: 600;
   color: var(--muscle-color, var(--text-muted));
   background: color-mix(in srgb, var(--muscle-color, var(--outline)) 16%, transparent);
 }
@@ -1794,12 +1621,6 @@ body:has(.rest-timer) .toast {
 .filter-chip,
 .set-row,
 .exercise-item,
-.workout-card-body {
-  transition-property: transform, background, filter, border-color;
-  transition-duration: 0.45s;
-  transition-timing-function: var(--ease-spring);
-}
-
 .btn:active,
 .fab:active,
 .icon-btn:active,
@@ -1811,12 +1632,6 @@ body:has(.rest-timer) .toast {
 
 .set-row:active,
 .exercise-item:active,
-.workout-card:active .workout-card-body {
-  transform: scale(0.985);
-  transition-duration: 0.08s;
-  transition-timing-function: ease-out;
-}
-
 .fab-plus {
   display: inline-block;
   transition: transform 0.45s var(--ease-spring);
@@ -1836,8 +1651,7 @@ body:has(.rest-timer) .toast {
   padding: 1px 5px;
   border-radius: 6px;
   font-size: 10px;
-  font-weight: 800;
-  letter-spacing: 0.04em;
+  font-weight: 600;
   color: var(--on-primary);
   background: var(--primary);
   box-shadow: 0 0 0 0 color-mix(in srgb, var(--primary) 50%, transparent);
@@ -1937,7 +1751,7 @@ body:has(.rest-timer) .set-groups {
   background: var(--secondary-container);
   color: var(--on-secondary-container);
   font-size: 22px;
-  font-weight: 700;
+  font-weight: 600;
   transition: transform 0.45s var(--ease-spring);
 }
 
@@ -1999,7 +1813,7 @@ body:has(.rest-timer) .set-groups {
   position: relative;
   display: block;
   width: 100%;
-  height: 236px;
+  height: 220px;
   margin: 4px 0 8px;
   text-align: center;
 }
@@ -2017,18 +1831,15 @@ body:has(.rest-timer) .set-groups {
   transform: rotate(-90deg);
 }
 
+/* Side by side, calories the larger one; both vertically centred on the same line */
 .ring-calories {
-  left: calc(50% - 128px);
-  top: 0;
-  background: var(--surface);
+  left: calc(50% - 156px);
+  top: 8px;
 }
 
-/* Raised above the calorie ring with a ring of page background, so the overlap reads as a cutout */
 .ring-protein {
-  left: calc(50% + 12px);
-  top: 92px;
-  background: var(--surface-high);
-  box-shadow: 0 0 0 6px var(--bg);
+  left: calc(50% + 40px);
+  top: 40px;
   --ring-color: var(--tertiary);
 }
 
@@ -2058,16 +1869,15 @@ body:has(.rest-timer) .set-groups {
 
 .ring-label small {
   font-size: 11px;
-  font-weight: 700;
-  letter-spacing: 0.05em;
-  text-transform: uppercase;
+  font-weight: 600;
   color: var(--text-muted);
 }
 
 .ring-label strong {
   font-family: var(--font-display);
   font-size: 40px;
-  font-weight: 800;
+  letter-spacing: -0.5px;
+  font-weight: 600;
 }
 
 .ring-protein .ring-label strong {
@@ -2102,7 +1912,6 @@ body:has(.rest-timer) .set-groups {
 .skeleton-rings .ring-protein {
   width: 112px;
   height: 112px;
-  box-shadow: 0 0 0 6px var(--bg);
 }
 
 .quick-add .section-title {
@@ -2123,17 +1932,6 @@ body:has(.rest-timer) .set-groups {
   background: var(--surface-high);
   text-align: left;
   transition: transform 0.45s var(--ease-spring);
-}
-
-.quick-chip::before {
-  content: '';
-  position: absolute;
-  left: 0;
-  top: 10px;
-  width: 4px;
-  height: 18px;
-  border-radius: 0 3px 3px 0;
-  background: var(--tertiary);
 }
 
 .quick-chip:active:not(:disabled) {
@@ -2194,7 +1992,7 @@ body:has(.rest-timer) .set-groups {
 .food-kcal {
   min-width: 72px;
   text-align: right;
-  font-weight: 700;
+  font-weight: 600;
   color: var(--primary);
 }
 
@@ -2341,7 +2139,7 @@ body:has(.rest-timer) .set-groups {
   background: var(--surface-highest);
   color: var(--text);
   font-size: 12px;
-  font-weight: 700;
+  font-weight: 600;
 }
 
 /* ---------- Macros ---------- */
@@ -2382,14 +2180,15 @@ body:has(.rest-timer) .set-groups {
   background: var(--tertiary);
 }
 
+/* Muted, clearly different hues: protein keeps the water blue, carbs a soft amber, fat a dusty rose */
 .macro-bar .macro-carbs,
 .macro-legend .macro-carbs::before {
-  background: #fcc419;
+  background: #d9b468;
 }
 
 .macro-bar .macro-fat,
 .macro-legend .macro-fat::before {
-  background: #74c0fc;
+  background: #d98e8e;
 }
 
 .macro-legend span::before {
@@ -2441,16 +2240,15 @@ body:has(.rest-timer) .set-groups {
 .stat-tile strong,
 .record-row-side .accent {
   font-family: var(--font-display);
-  font-size: 26px;
-  font-weight: 800;
+  font-size: 28px;
+  letter-spacing: -0.3px;
+  font-weight: 600;
 }
 
 .exercise-group-title,
 .sheet-title {
   font-family: var(--font-display);
-  font-weight: 700;
-  letter-spacing: 0.4px;
-  text-transform: uppercase;
+  font-weight: 600;
 }
 
 .sheet-title {
@@ -2466,17 +2264,13 @@ body:has(.rest-timer) .set-groups {
 .field label,
 .field-label,
 .selector-label {
-  letter-spacing: 0.8px;
-  text-transform: uppercase;
   font-size: 11px;
-  font-weight: 700;
+  font-weight: 600;
 }
 
 .filter-chip {
   border-radius: var(--radius-s);
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 0.4px;
+  font-weight: 600;
   font-size: 13px;
 }
 
@@ -2524,7 +2318,7 @@ body:has(.rest-timer) .set-groups {
   width: 22px;
   font-family: var(--font-display);
   font-size: 24px;
-  font-weight: 800;
+  font-weight: 600;
   text-align: center;
   color: var(--text-muted);
 }
@@ -2547,7 +2341,7 @@ body:has(.rest-timer) .set-groups {
   border-radius: var(--radius-m);
   background: var(--surface-highest);
   font-family: var(--font-display);
-  font-weight: 800;
+  font-weight: 600;
   color: var(--text-muted);
 }
 
@@ -2572,7 +2366,7 @@ body:has(.rest-timer) .set-groups {
   text-overflow: ellipsis;
   font-family: var(--font-display);
   font-size: 19px;
-  font-weight: 700;
+  font-weight: 600;
 }
 
 .lol-name small,
@@ -2611,9 +2405,7 @@ body:has(.rest-timer) .set-groups {
   padding: 2px 7px;
   border-radius: var(--radius-s);
   font-size: 12px;
-  font-weight: 700;
-  letter-spacing: 0.3px;
-  text-transform: uppercase;
+  font-weight: 600;
   color: var(--tier, var(--text-muted));
   background: color-mix(in srgb, var(--tier, var(--outline)) 16%, transparent);
 }
@@ -2637,7 +2429,6 @@ body:has(.rest-timer) .set-groups {
   margin: 4px 0 16px;
   padding: 16px;
   border: 1px solid var(--outline-variant);
-  border-left: 3px solid var(--primary);
   border-radius: var(--radius-xl);
   background: var(--surface);
 }
@@ -2652,7 +2443,7 @@ body:has(.rest-timer) .set-groups {
 .lol-hero-name {
   font-family: var(--font-display);
   font-size: 28px;
-  font-weight: 800;
+  font-weight: 600;
   line-height: 1;
 }
 
@@ -2676,7 +2467,7 @@ body:has(.rest-timer) .set-groups {
   border-radius: var(--radius-s);
   font-family: var(--font-display);
   font-size: 13px;
-  font-weight: 800;
+  font-weight: 600;
 }
 
 .lol-form .win {
@@ -2702,7 +2493,6 @@ body:has(.rest-timer) .set-groups {
   display: flex;
   flex-direction: column;
   border: 1px solid var(--outline-variant);
-  border-left: 4px solid var(--primary);
   border-radius: var(--radius-m);
   background: var(--surface);
   animation: card-in 0.55s var(--ease-spring) backwards;
@@ -2800,7 +2590,6 @@ body:has(.rest-timer) .set-groups {
 .restore-confirm-title {
   font-family: var(--font-display);
   font-size: 22px;
-  text-transform: uppercase;
 }
 
 .recovery-card {
@@ -2822,7 +2611,6 @@ body:has(.rest-timer) .set-groups {
   margin: 0;
   font-family: var(--font-display);
   font-size: 22px;
-  text-transform: uppercase;
 }
 
 /* Icon on a small tile with a second tile peeking out behind it */
@@ -2835,7 +2623,7 @@ body:has(.rest-timer) .set-groups {
   border-radius: var(--radius-m);
   background: var(--primary);
   color: var(--on-primary);
-  box-shadow: 4px 4px 0 var(--primary-container);
+  box-shadow: none;
 }
 
 .recovery-text {
@@ -2850,19 +2638,9 @@ body:has(.rest-timer) .set-groups {
   color: var(--error);
 }
 
-/* The code box sits on an offset plate, with a lime strip on its left edge */
 .recovery-code-wrap {
   position: relative;
-  margin: 14px 8px 18px 0;
-}
-
-.recovery-code-wrap::after {
-  content: '';
-  position: absolute;
-  inset: 8px -8px -8px 8px;
-  z-index: 0;
-  border-radius: var(--radius-m);
-  background: var(--surface-highest);
+  margin: 14px 0 18px;
 }
 
 .recovery-code {
@@ -2872,11 +2650,9 @@ body:has(.rest-timer) .set-groups {
   width: 100%;
   padding: 14px 14px 14px 18px;
   border: 1px solid var(--outline);
-  border-left: 4px solid var(--primary);
   border-radius: var(--radius-m);
   background: var(--surface-high);
   font: 15px/1.5 ui-monospace, 'SF Mono', Menlo, monospace;
-  letter-spacing: 1px;
   text-align: left;
   word-break: break-all;
   user-select: all;
@@ -2885,7 +2661,6 @@ body:has(.rest-timer) .set-groups {
 
 .recovery-code:not(.revealed) {
   color: var(--text-muted);
-  letter-spacing: 4px;
 }
 
 .recovery-buttons {
@@ -2918,7 +2693,6 @@ body:has(.rest-timer) .set-groups {
   margin: 0 0 14px;
   padding: 12px 14px;
   border: 1px solid var(--outline-variant);
-  border-left: 3px solid var(--primary);
   border-radius: var(--radius-l);
   background: var(--surface);
 }
@@ -2940,28 +2714,23 @@ body:has(.rest-timer) .set-groups {
 .recovery-pending {
   margin: 14px 0;
   padding: 12px 14px;
-  border-left: 3px solid var(--primary);
   border-radius: 0 var(--radius-m) var(--radius-m) 0;
   background: var(--surface-high);
   font-size: 14px;
 }
 
 /* ---------- Data export ---------- */
-/* Card on an offset plate with a tag over its top edge; each format chip overlaps its tile's corner */
 .export-card {
   position: relative;
-  margin: 10px 8px 22px 0;
+  margin: 10px 0 22px;
   padding: 18px 16px 16px;
   border: 1px solid var(--outline-variant);
   border-radius: var(--radius-xl);
   background: var(--surface);
-  box-shadow: 8px 8px 0 var(--surface-high);
+  box-shadow: none;
 }
 
 .export-tag {
-  position: absolute;
-  top: -10px;
-  right: 14px;
   padding: 2px 8px;
   border: 1px solid var(--primary);
   border-radius: var(--radius-s);
@@ -2969,9 +2738,8 @@ body:has(.rest-timer) .set-groups {
   color: var(--primary);
   font-family: var(--font-display);
   font-size: 12px;
-  font-weight: 700;
-  letter-spacing: 1px;
-  text-transform: uppercase;
+  font-weight: 600;
+  align-self: flex-start;
 }
 
 .export-text {
@@ -3007,7 +2775,6 @@ body:has(.rest-timer) .set-groups {
   font-family: var(--font-display);
   font-size: 20px;
   line-height: 1.1;
-  text-transform: uppercase;
 }
 
 .export-tile small {
@@ -3016,14 +2783,13 @@ body:has(.rest-timer) .set-groups {
 }
 
 .export-tile:active:not(:disabled) {
-  transform: translate(2px, 2px);
+  transform: scale(0.98);
 }
 
 .export-tile:disabled {
   opacity: 0.6;
 }
 
-/* The ZIP tile spans the row in lime, lifted off a darker plate */
 .export-tile.all {
   grid-column: 1 / -1;
   flex-direction: row;
@@ -3033,7 +2799,7 @@ body:has(.rest-timer) .set-groups {
   border-color: var(--primary);
   background: var(--primary);
   color: var(--on-primary);
-  box-shadow: 4px 4px 0 var(--primary-container);
+  box-shadow: none;
 }
 
 .export-tile.all small {
@@ -3042,21 +2808,18 @@ body:has(.rest-timer) .set-groups {
 }
 
 .export-tile.all:active:not(:disabled) {
-  box-shadow: 2px 2px 0 var(--primary-container);
+  box-shadow: none;
 }
 
 .export-format {
-  position: absolute;
-  top: -8px;
-  right: 10px;
   padding: 1px 6px;
   border-radius: var(--radius-s);
   background: var(--primary);
   color: var(--on-primary);
   font-family: var(--font-display);
   font-size: 11px;
-  font-weight: 700;
-  letter-spacing: 1px;
+  font-weight: 600;
+  align-self: flex-start;
 }
 
 .export-tile.all .export-format {
@@ -3087,7 +2850,6 @@ body:has(.rest-timer) .set-groups {
   gap: 10px;
   margin-top: 14px;
   padding: 10px 12px;
-  border-left: 4px solid var(--primary);
   border-radius: var(--radius-m);
   background: var(--primary-container);
   color: var(--on-primary-container);
@@ -3105,32 +2867,17 @@ body:has(.rest-timer) .set-groups {
 }
 
 /* ---------- Passkey backup ---------- */
-/* Card on an offset plate with a lime strip down its left edge and a "Passkey" tag overlapping the top */
 .backup-card {
   position: relative;
-  margin: 10px 8px 22px 0;
+  margin: 10px 0 22px;
   padding: 18px 16px 16px 20px;
   border: 1px solid var(--outline-variant);
   border-radius: var(--radius-xl);
   background: var(--surface);
-  box-shadow: 8px 8px 0 var(--surface-high);
-}
-
-.backup-card::before {
-  content: '';
-  position: absolute;
-  top: 14px;
-  bottom: 14px;
-  left: -1px;
-  width: 4px;
-  border-radius: 0 var(--radius-s) var(--radius-s) 0;
-  background: var(--primary);
+  box-shadow: none;
 }
 
 .backup-tag {
-  position: absolute;
-  top: -10px;
-  right: 14px;
   padding: 2px 8px;
   border: 1px solid var(--primary);
   border-radius: var(--radius-s);
@@ -3138,9 +2885,8 @@ body:has(.rest-timer) .set-groups {
   color: var(--primary);
   font-family: var(--font-display);
   font-size: 12px;
-  font-weight: 700;
-  letter-spacing: 1px;
-  text-transform: uppercase;
+  font-weight: 600;
+  align-self: flex-start;
 }
 
 .backup-button {
@@ -3158,7 +2904,6 @@ body:has(.rest-timer) .set-groups {
 .backup-done strong {
   font-family: var(--font-display);
   font-size: 20px;
-  text-transform: uppercase;
 }
 
 .backup-done p {
@@ -3173,7 +2918,6 @@ body:has(.rest-timer) .set-groups {
   font-size: 14px;
 }
 
-/* Check badge: lime disc with a dark ring offset behind it */
 .backup-check {
   flex: none;
   display: grid;
@@ -3183,7 +2927,7 @@ body:has(.rest-timer) .set-groups {
   border-radius: 50%;
   background: var(--primary);
   color: var(--on-primary);
-  box-shadow: 3px 3px 0 var(--primary-container);
+  box-shadow: none;
 }
 
 /* Folded recovery code: one row with a small key tile and a chevron, still the #recovery anchor */
@@ -3230,7 +2974,7 @@ body:has(.rest-timer) .set-groups {
 .recovery-icon.small {
   width: 28px;
   height: 28px;
-  box-shadow: 3px 3px 0 var(--primary-container);
+  box-shadow: none;
 }
 
 .passkey-restore {
@@ -3264,23 +3008,12 @@ body:has(.rest-timer) .set-groups {
   margin-bottom: 14px;
 }
 
-/* The card sits on an offset plate (like the recovery code), so the group reads as a stacked object */
 .lol-group-wrap {
   position: relative;
   isolation: isolate;
-  margin: 4px 8px 34px 0;
+  margin: 4px 0 34px;
 }
 
-.lol-group-wrap::after {
-  content: '';
-  position: absolute;
-  inset: 8px -8px -8px 8px;
-  z-index: 0;
-  border-radius: var(--radius-xl);
-  background: var(--surface-highest);
-}
-
-/* A lime strip down the left edge; the invite chip straddles the bottom edge on the right */
 .lol-group-card {
   position: relative;
   z-index: 1;
@@ -3288,17 +3021,6 @@ body:has(.rest-timer) .set-groups {
   border: 1px solid var(--outline-variant);
   border-radius: var(--radius-xl);
   background: var(--surface);
-}
-
-.lol-group-card::before {
-  content: '';
-  position: absolute;
-  top: 14px;
-  bottom: 14px;
-  left: -1px;
-  width: 4px;
-  border-radius: 0 3px 3px 0;
-  background: var(--primary);
 }
 
 .lol-group-head {
@@ -3316,15 +3038,14 @@ body:has(.rest-timer) .set-groups {
   text-overflow: ellipsis;
   font-family: var(--font-display);
   font-size: 30px;
-  font-weight: 800;
+  font-weight: 600;
   line-height: 1;
-  text-transform: uppercase;
 }
 
 .lol-group-head .num {
   font-family: var(--font-display);
   font-size: 18px;
-  font-weight: 700;
+  font-weight: 600;
 }
 
 .lol-group-updated {
@@ -3333,34 +3054,27 @@ body:has(.rest-timer) .set-groups {
 }
 
 .invite-chip {
-  position: absolute;
-  right: 14px;
-  bottom: -19px;
   display: flex;
   align-items: center;
   gap: 8px;
   height: 38px;
   padding: 0 12px 0 14px;
   border-radius: 19px;
-  background: var(--primary);
-  color: var(--on-primary);
-  /* a second, darker edge under the chip so it lifts off the card instead of lying flat on it */
-  box-shadow: 0 3px 0 var(--primary-container);
+  background: var(--primary-container);
+  color: var(--on-primary-container);
+  align-self: flex-start;
 }
 
 .invite-chip small {
   font-size: 10px;
-  font-weight: 700;
-  letter-spacing: 1px;
-  text-transform: uppercase;
+  font-weight: 600;
   opacity: 0.7;
 }
 
 /* Body font, not the condensed one: condensed glyphs blur S/5 and B/8 */
 .invite-code {
   font-size: 15px;
-  font-weight: 800;
-  letter-spacing: 1.5px;
+  font-weight: 600;
   font-variant-numeric: tabular-nums;
 }
 
@@ -3398,11 +3112,9 @@ body:has(.rest-timer) .set-groups {
   text-underline-offset: 3px;
 }
 
-/* Your own row: a lime edge and a small tag overlapping its top-right corner */
 .lol-row.you {
   position: relative;
   border-color: color-mix(in srgb, var(--primary) 45%, var(--outline-variant));
-  box-shadow: inset 3px 0 0 var(--primary);
 }
 
 .group-board {
@@ -3410,18 +3122,14 @@ body:has(.rest-timer) .set-groups {
 }
 
 .you-tag {
-  position: absolute;
-  top: -8px;
-  right: 12px;
   padding: 1px 7px;
   border-radius: var(--radius-s);
   background: var(--primary);
   color: var(--on-primary);
   font-family: var(--font-display);
   font-size: 12px;
-  font-weight: 800;
-  letter-spacing: 0.8px;
-  text-transform: uppercase;
+  font-weight: 600;
+  align-self: flex-start;
 }
 
 .lol-member-name {
@@ -3455,17 +3163,14 @@ body:has(.rest-timer) .set-groups {
 .invite-input {
   resize: none;
   font-size: 16px;
-  letter-spacing: 1px;
 }
 
 .join-preview {
   margin: 0;
   padding: 8px 12px;
-  border-left: 3px solid var(--primary);
   border-radius: 0 var(--radius-m) var(--radius-m) 0;
   background: var(--surface-high);
-  font-weight: 800;
-  letter-spacing: 1px;
+  font-weight: 600;
 }
 
 .owner-tools {
@@ -3512,16 +3217,16 @@ body:has(.rest-timer) .set-groups {
   height: 36px;
   border-radius: var(--radius-m);
   background: var(--surface-highest);
-  box-shadow: 3px 3px 0 var(--surface-high);
+  box-shadow: none;
   font-family: var(--font-display);
-  font-weight: 800;
+  font-weight: 600;
   color: var(--text-muted);
 }
 
 .member-item.you .member-initials {
   background: var(--primary);
   color: var(--on-primary);
-  box-shadow: 3px 3px 0 var(--primary-container);
+  box-shadow: none;
 }
 
 .member-main {
@@ -3543,7 +3248,7 @@ body:has(.rest-timer) .set-groups {
   display: flex;
   align-items: center;
   gap: 6px;
-  font-weight: 700;
+  font-weight: 600;
 }
 
 .member-tag {
@@ -3552,9 +3257,7 @@ body:has(.rest-timer) .set-groups {
   background: var(--surface-highest);
   font-family: var(--font-display);
   font-size: 11px;
-  font-weight: 800;
-  letter-spacing: 0.8px;
-  text-transform: uppercase;
+  font-weight: 600;
   color: var(--text-muted);
 }
 
@@ -3572,21 +3275,17 @@ body:has(.rest-timer) .set-groups {
 
 /* The streak sits as a tag over the hero card's top-right corner */
 .streak-chip {
-  position: absolute;
-  top: -10px;
-  right: 14px;
   display: flex;
   align-items: baseline;
   gap: 5px;
   padding: 2px 9px 2px 4px;
   border-radius: var(--radius-s);
   font-size: 12px;
-  font-weight: 700;
-  letter-spacing: 0.3px;
-  text-transform: uppercase;
+  font-weight: 600;
   background: var(--primary);
   color: var(--on-primary);
-  box-shadow: 0 3px 0 var(--primary-container);
+  box-shadow: none;
+  align-self: flex-start;
 }
 
 .streak-chip .num {
@@ -3596,13 +3295,13 @@ body:has(.rest-timer) .set-groups {
   color: var(--primary);
   font-family: var(--font-display);
   font-size: 14px;
-  font-weight: 800;
+  font-weight: 600;
 }
 
 .streak-chip.loss {
   background: var(--error);
   color: #fff;
-  box-shadow: 0 3px 0 color-mix(in srgb, var(--error) 35%, var(--bg));
+  box-shadow: none;
 }
 
 .streak-chip.loss .num {
@@ -3622,7 +3321,6 @@ body:has(.rest-timer) .set-groups {
   margin: 4px 4px 0 0;
   padding: 16px;
   border: 1px dashed var(--outline-variant);
-  border-left: 3px solid var(--primary);
   border-radius: var(--radius-m);
   background: var(--surface-low);
   text-align: center;
@@ -3633,18 +3331,16 @@ body:has(.rest-timer) .set-groups {
   flex-direction: column;
   gap: 2px;
   padding: 8px 10px;
-  border-left: 3px solid var(--primary);
   border-radius: var(--radius-m);
   background: var(--surface-highest);
   font-size: 13px;
 }
 
-/* Eight averages, four to a row; each tile sits on an offset plate with a lime notch on its top edge */
 .lol-tiles {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   gap: 10px 8px;
-  margin: 0 4px 16px 0;
+  margin: 0 0 16px;
 }
 
 .lol-tiles.four {
@@ -3661,34 +3357,21 @@ body:has(.rest-timer) .set-groups {
   border: 1px solid var(--outline-variant);
   border-radius: var(--radius-l);
   background: var(--surface);
-  box-shadow: 4px 4px 0 var(--surface-highest);
-}
-
-.lol-tile::before {
-  content: '';
-  position: absolute;
-  top: -1px;
-  left: 8px;
-  width: 18px;
-  height: 3px;
-  border-radius: 0 0 2px 2px;
-  background: var(--primary);
+  box-shadow: none;
 }
 
 .lol-tile small {
   min-height: 2.4em;
   font-size: 10px;
-  font-weight: 700;
+  font-weight: 600;
   line-height: 1.2;
-  letter-spacing: 0.6px;
-  text-transform: uppercase;
   color: var(--text-muted);
 }
 
 .lol-tile strong {
   font-family: var(--font-display);
   font-size: 24px;
-  font-weight: 800;
+  font-weight: 600;
   line-height: 1.05;
   font-variant-numeric: tabular-nums;
   white-space: nowrap;
@@ -3699,7 +3382,6 @@ body:has(.rest-timer) .set-groups {
   color: var(--text-muted);
 }
 
-/* Roles and queues: games as the bar length, the lime part of it the wins */
 .lol-bars {
   display: flex;
   flex-direction: column;
@@ -3708,7 +3390,6 @@ body:has(.rest-timer) .set-groups {
   padding: 10px 12px;
   list-style: none;
   border: 1px solid var(--outline-variant);
-  border-left: 3px solid var(--primary);
   border-radius: var(--radius-l);
   background: var(--surface);
 }
@@ -3725,7 +3406,7 @@ body:has(.rest-timer) .set-groups {
   overflow: hidden;
   white-space: nowrap;
   text-overflow: ellipsis;
-  font-weight: 700;
+  font-weight: 600;
 }
 
 .lol-bar-track {
@@ -3761,7 +3442,7 @@ body:has(.rest-timer) .set-groups {
   text-align: right;
   font-family: var(--font-display);
   font-size: 15px;
-  font-weight: 800;
+  font-weight: 600;
 }
 
 .lol-bar-side .good {
@@ -3772,20 +3453,10 @@ body:has(.rest-timer) .set-groups {
   color: var(--error);
 }
 
-/* Sortable tables: the card rests on an offset plate; only the inside scrolls sideways */
 .data-table-card {
   position: relative;
   isolation: isolate;
-  margin: 0 8px 22px 0;
-}
-
-.data-table-card::after {
-  content: '';
-  position: absolute;
-  inset: 6px -6px -6px 6px;
-  z-index: -1;
-  border-radius: var(--radius-l);
-  background: var(--surface-highest);
+  margin: 0 0 22px;
 }
 
 .data-table-scroll {
@@ -3832,9 +3503,7 @@ body:has(.rest-timer) .set-groups {
   min-height: 38px;
   padding: 0 10px;
   font-size: 11px;
-  font-weight: 700;
-  letter-spacing: 0.6px;
-  text-transform: uppercase;
+  font-weight: 600;
   color: var(--text-muted);
 }
 
@@ -3847,7 +3516,6 @@ body:has(.rest-timer) .set-groups {
   font-size: 8px;
 }
 
-/* First column stays while the numbers scroll under it; the lime rule marks where they slide in */
 .data-table tr > :first-child {
   position: sticky;
   left: 0;
@@ -3875,7 +3543,7 @@ body:has(.rest-timer) .set-groups {
 }
 
 .data-table tr.you > :first-child {
-  box-shadow: inset 3px 0 0 var(--primary), inset -2px 0 0 color-mix(in srgb, var(--primary) 40%, var(--outline-variant));
+  box-shadow: inset -2px 0 0 color-mix(in srgb, var(--primary) 40%, var(--outline-variant));
 }
 
 .data-table .rank-badge {
@@ -3909,7 +3577,7 @@ body:has(.rest-timer) .set-groups {
   overflow: hidden;
   font-family: var(--font-display);
   font-size: 16px;
-  font-weight: 700;
+  font-weight: 600;
 }
 
 .table-player small {
@@ -3927,9 +3595,7 @@ body:has(.rest-timer) .set-groups {
   background: var(--primary);
   color: var(--on-primary);
   font-size: 10px;
-  font-weight: 800;
-  letter-spacing: 0.6px;
-  text-transform: uppercase;
+  font-weight: 600;
 }
 
 /* Small Board/Table switch, right above the board */
@@ -3946,9 +3612,7 @@ body:has(.rest-timer) .set-groups {
   border: 1px solid var(--outline);
   border-radius: var(--radius-s);
   font-size: 12px;
-  font-weight: 700;
-  letter-spacing: 0.6px;
-  text-transform: uppercase;
+  font-weight: 600;
   color: var(--text-muted);
 }
 
@@ -3956,10 +3620,9 @@ body:has(.rest-timer) .set-groups {
   border-color: transparent;
   background: var(--primary);
   color: var(--on-primary);
-  box-shadow: 0 2px 0 var(--primary-container);
+  box-shadow: none;
 }
 
-/* Records: a lime rule per line, the value set large on the right */
 .lol-records {
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -4006,16 +3669,14 @@ button.lol-record:active {
   white-space: nowrap;
   text-overflow: ellipsis;
   font-size: 10px;
-  font-weight: 700;
-  letter-spacing: 0.6px;
-  text-transform: uppercase;
+  font-weight: 600;
   color: var(--text-muted);
 }
 
 .lol-record-value {
   font-family: var(--font-display);
   font-size: 20px;
-  font-weight: 800;
+  font-weight: 600;
   line-height: 1.1;
 }
 
@@ -4045,7 +3706,7 @@ button.lol-record:active {
   border-radius: var(--radius-s);
   background: var(--surface-highest);
   font-size: 10px;
-  font-weight: 800;
+  font-weight: 600;
   text-align: center;
 }
 
@@ -4114,9 +3775,7 @@ button.lol-record:active {
 
 .lol-match-numbers small {
   font-size: 10px;
-  font-weight: 700;
-  letter-spacing: 0.5px;
-  text-transform: uppercase;
+  font-weight: 600;
   color: var(--text-muted);
 }
 
@@ -4132,8 +3791,7 @@ button.lol-record:active {
   border: 1px solid color-mix(in srgb, var(--primary) 50%, transparent);
   font-family: var(--font-display);
   font-size: 12px;
-  font-weight: 800;
-  letter-spacing: 0.8px;
+  font-weight: 600;
 }
 
 .multikill-badge.quadra,
@@ -4141,7 +3799,7 @@ button.lol-record:active {
   background: var(--primary);
   color: var(--on-primary);
   border-color: transparent;
-  box-shadow: 0 2px 0 var(--primary-container);
+  box-shadow: none;
 }
 
 .lol-matches {
@@ -4161,7 +3819,6 @@ a.lol-match:active {
 
 /* ---------- League deep stats: tabbed player page ---------- */
 
-/* Tabs and filter stay on top while the page scrolls; a lime stub on the bottom rule marks the bar's edge */
 .lol-sticky {
   position: sticky;
   top: 0;
@@ -4171,17 +3828,6 @@ a.lol-match:active {
   border-bottom: 1px solid var(--outline-variant);
   background: color-mix(in srgb, var(--bg) 94%, transparent);
   backdrop-filter: blur(10px);
-}
-
-.lol-sticky::after {
-  content: '';
-  position: absolute;
-  left: 16px;
-  bottom: -2px;
-  width: 36px;
-  height: 3px;
-  border-radius: 2px;
-  background: var(--primary);
 }
 
 .lol-tabs {
@@ -4197,18 +3843,15 @@ a.lol-match:active {
   border-radius: var(--radius-m) var(--radius-m) var(--radius-s) var(--radius-s);
   font-family: var(--font-display);
   font-size: 16px;
-  font-weight: 700;
-  letter-spacing: 0.5px;
-  text-transform: uppercase;
+  font-weight: 600;
   color: var(--text-muted);
 }
 
-/* The open tab is a raised card with a lime underline, offset onto a darker plate */
 .lol-tab.selected {
   border-color: var(--outline-variant);
   background: var(--surface);
   color: var(--text);
-  box-shadow: 3px 3px 0 var(--surface-highest), inset 0 -3px 0 var(--primary);
+  box-shadow: inset 0 -3px 0 var(--primary);
 }
 
 .lol-filter {
@@ -4236,9 +3879,7 @@ a.lol-match:active {
   padding: 0 9px;
   border-radius: var(--radius-s);
   font-size: 12px;
-  font-weight: 700;
-  letter-spacing: 0.4px;
-  text-transform: uppercase;
+  font-weight: 600;
   color: var(--text-muted);
   transition: background 0.15s, color 0.15s;
 }
@@ -4246,7 +3887,7 @@ a.lol-match:active {
 .lol-filter-group button.selected {
   background: var(--primary);
   color: var(--on-primary);
-  box-shadow: 0 2px 0 var(--primary-container);
+  box-shadow: none;
 }
 
 /* While a new filter loads, the old numbers stay but fade, so it is clear they are about to change */
@@ -4258,12 +3899,11 @@ a.lol-match:active {
   opacity: 0.55;
 }
 
-/* Stat groups: each card sits on an offset plate, its name a colored tab hanging over the top edge */
 .lol-stat-groups {
   display: flex;
   flex-direction: column;
   gap: 22px;
-  margin: 12px 6px 22px 0;
+  margin: 12px 0 22px;
 }
 
 .lol-stat-group {
@@ -4273,7 +3913,7 @@ a.lol-match:active {
   border: 1px solid var(--outline-variant);
   border-radius: var(--radius-xl);
   background: var(--surface-low);
-  box-shadow: 6px 6px 0 var(--surface-high);
+  box-shadow: none;
 }
 
 .lol-stat-group.vision {
@@ -4284,21 +3924,25 @@ a.lol-match:active {
   --group-accent: var(--error);
 }
 
+/* A plain group heading; a small dot in the group's color is the only accent */
 .lol-stat-group h3 {
-  position: absolute;
-  top: -11px;
-  left: 12px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
   margin: 0;
-  padding: 2px 9px;
-  border-radius: var(--radius-s);
-  background: var(--group-accent);
-  color: var(--on-primary);
+  color: var(--text);
   font-family: var(--font-display);
-  font-size: 14px;
-  font-weight: 800;
-  letter-spacing: 0.8px;
-  text-transform: uppercase;
-  box-shadow: 0 3px 0 color-mix(in srgb, var(--group-accent) 35%, var(--bg));
+  font-size: 15px;
+  font-weight: 600;
+  align-self: flex-start;
+}
+
+.lol-stat-group h3::before {
+  content: '';
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--group-accent);
 }
 
 /* Dense, so the double-width K / D / A tile never leaves a hole at the end of a row */
@@ -4335,7 +3979,6 @@ a.lol-match:active {
   margin: 0 0 16px;
   padding: 8px 12px;
   border: 1px dashed var(--outline);
-  border-left: 3px solid var(--tertiary);
   border-radius: var(--radius-m);
   background: var(--surface-low);
   font-size: 12px;
@@ -4357,7 +4000,7 @@ a.lol-match:active {
 .gold-lead-card {
   position: relative;
   padding: 16px 12px 12px 16px;
-  box-shadow: 6px 6px 0 var(--surface-high);
+  box-shadow: none;
   margin-right: 6px;
 }
 
@@ -4380,7 +4023,7 @@ a.lol-match:active {
   border-radius: var(--radius-s);
   background: var(--surface-highest);
   font-size: 12px;
-  font-weight: 700;
+  font-weight: 600;
 }
 
 .lp-tooltip.loss,
@@ -4408,13 +4051,10 @@ a.lol-match:active {
 .lol-split h3 {
   margin: 0 4px 6px;
   font-size: 11px;
-  font-weight: 800;
-  letter-spacing: 0.8px;
-  text-transform: uppercase;
+  font-weight: 600;
   color: var(--text-muted);
 }
 
-/* Average objectives: small stacked plates, the number set large */
 .lol-objective-strip {
   display: flex;
   flex-wrap: wrap;
@@ -4432,21 +4072,19 @@ a.lol-match:active {
   border-top: 3px solid var(--primary);
   border-radius: var(--radius-m);
   background: var(--surface);
-  box-shadow: 3px 3px 0 var(--surface-highest);
+  box-shadow: none;
 }
 
 .lol-objective strong {
   font-family: var(--font-display);
   font-size: 20px;
-  font-weight: 800;
+  font-weight: 600;
   line-height: 1.1;
 }
 
 .lol-objective small {
   font-size: 10px;
-  font-weight: 700;
-  letter-spacing: 0.5px;
-  text-transform: uppercase;
+  font-weight: 600;
   color: var(--text-muted);
 }
 
@@ -4457,23 +4095,23 @@ a.lol-match:active {
 .data-table .wr.good,
 .diff.good {
   color: var(--primary);
-  font-weight: 700;
+  font-weight: 600;
 }
 
 .data-table .wr.bad,
 .diff.bad {
   color: var(--error);
-  font-weight: 700;
+  font-weight: 600;
 }
 
 .diff.blue {
   color: var(--tertiary);
-  font-weight: 700;
+  font-weight: 600;
 }
 
 .diff.red {
   color: var(--error);
-  font-weight: 700;
+  font-weight: 600;
 }
 
 .table-icons {
@@ -4491,7 +4129,7 @@ a.lol-match:active {
 .table-patch {
   font-family: var(--font-display);
   font-size: 16px;
-  font-weight: 700;
+  font-weight: 600;
 }
 
 .duo-cell {
@@ -4507,9 +4145,7 @@ a.lol-match:active {
   background: var(--primary-container);
   color: var(--on-primary-container);
   font-size: 11px;
-  font-weight: 800;
-  letter-spacing: 0.4px;
-  text-transform: uppercase;
+  font-weight: 600;
 }
 
 .duo-follow:disabled {
@@ -4525,7 +4161,7 @@ a.lol-match:active {
 .group-duo-plus {
   color: var(--primary);
   font-family: var(--font-display);
-  font-weight: 800;
+  font-weight: 600;
 }
 
 .rune-icon {
@@ -4536,7 +4172,7 @@ a.lol-match:active {
   border-radius: 50%;
   background: var(--surface-highest);
   font-size: 9px;
-  font-weight: 800;
+  font-weight: 600;
   color: var(--text-muted);
 }
 
@@ -4566,13 +4202,13 @@ a.lol-match:active {
   display: flex;
   align-items: center;
   gap: 14px;
-  margin: 4px 6px 22px 0;
+  margin: 4px 0 22px;
   padding: 14px 16px;
   border: 1px solid var(--outline-variant);
-  border-left: 4px solid var(--tone);
+  border-left: none;
   border-radius: var(--radius-xl);
   background: var(--surface);
-  box-shadow: 6px 6px 0 var(--surface-high);
+  box-shadow: none;
 }
 
 .lol-match-hero.loss,
@@ -4595,24 +4231,19 @@ a.lol-match:active {
 .lol-match-result {
   font-family: var(--font-display);
   font-size: 30px;
-  font-weight: 800;
+  font-weight: 600;
   line-height: 1;
-  letter-spacing: 0.5px;
-  text-transform: uppercase;
   color: var(--tone);
 }
 
 .lol-patch-tag {
-  position: absolute;
-  top: -10px;
-  right: 14px;
   padding: 1px 8px;
   border: 1px solid var(--outline);
   border-radius: var(--radius-s);
   background: var(--surface-highest);
   font-size: 11px;
-  font-weight: 700;
-  letter-spacing: 0.4px;
+  font-weight: 600;
+  align-self: flex-start;
 }
 
 /* Objectives: blue edge on the left, red on the right, the lead side's number in its color */
@@ -4622,7 +4253,7 @@ a.lol-match:active {
   border: 1px solid var(--outline-variant);
   border-radius: var(--radius-xl);
   background: var(--surface);
-  box-shadow: inset 4px 0 0 var(--tertiary), inset -4px 0 0 var(--error);
+  box-shadow: none;
 }
 
 .team-strip-head {
@@ -4634,9 +4265,7 @@ a.lol-match:active {
 .team-name {
   font-family: var(--font-display);
   font-size: 15px;
-  font-weight: 800;
-  letter-spacing: 0.6px;
-  text-transform: uppercase;
+  font-weight: 600;
 }
 
 .team-name.blue {
@@ -4663,16 +4292,14 @@ a.lol-match:active {
 
 .team-strip-rows li > span {
   font-size: 11px;
-  font-weight: 700;
-  letter-spacing: 0.6px;
-  text-transform: uppercase;
+  font-weight: 600;
   color: var(--text-muted);
 }
 
 .team-strip-rows strong {
   font-family: var(--font-display);
   font-size: 19px;
-  font-weight: 800;
+  font-weight: 600;
 }
 
 .team-strip-rows strong:last-child {
@@ -4699,9 +4326,7 @@ a.lol-match:active {
   padding: 2px 7px;
   border-radius: var(--radius-s);
   font-size: 11px;
-  font-weight: 700;
-  letter-spacing: 0.3px;
-  text-transform: uppercase;
+  font-weight: 600;
 }
 
 .first-tag.blue {
@@ -4767,8 +4392,7 @@ a.lol-match:active {
   border-radius: var(--radius-s);
   font-family: inherit;
   font-size: 12px;
-  font-weight: 800;
-  letter-spacing: 0.6px;
+  font-weight: 600;
 }
 
 .scoreboard-result.win {
@@ -4781,7 +4405,6 @@ a.lol-match:active {
   color: var(--error);
 }
 
-/* Each team's table rests on a plate tinted with the team color */
 .scoreboard.blue .data-table-card::after {
   background: color-mix(in srgb, var(--tertiary) 28%, var(--surface-highest));
 }
@@ -4823,7 +4446,7 @@ a.scoreboard-name {
   display: inline-flex;
   flex-direction: column;
   align-items: flex-end;
-  font-weight: 700;
+  font-weight: 600;
 }
 
 .scoreboard-kda .deaths {
@@ -4890,9 +4513,7 @@ a.scoreboard-name {
 
 .lane-cell small {
   font-size: 10px;
-  font-weight: 800;
-  letter-spacing: 0.6px;
-  text-transform: uppercase;
+  font-weight: 600;
   color: var(--text-muted);
 }
 
@@ -4911,23 +4532,7 @@ a.scoreboard-name {
 
 /* ---------- Routines and workout mode ---------- */
 
-/* "Routines" sits at the header's bottom-right, beside the short subtitle: an outlined tab with a lime strip on its left edge */
-.routines-btn {
-  position: absolute;
-  right: 4px;
-  bottom: 8px;
-  height: 32px;
-  padding: 0 12px 0 14px;
-  border: 1px solid var(--outline);
-  border-left: 3px solid var(--primary);
-  border-radius: var(--radius-s);
-  background: var(--surface);
-  font-size: 13px;
-  font-weight: 700;
-  letter-spacing: 0.6px;
-  text-transform: uppercase;
-}
-
+/* Level with the page title, at the header's right */
 .routine-strip {
   margin: 0 0 14px;
 }
@@ -4935,101 +4540,28 @@ a.scoreboard-name {
 .routine-strip-title {
   margin: 0 4px 8px;
   color: var(--text-muted);
-  font-size: 11px;
-  font-weight: 700;
-  letter-spacing: 1.2px;
-  text-transform: uppercase;
+  font-size: 13px;
+  font-weight: 500;
 }
 
-.routine-chips {
-  display: flex;
-  gap: 12px;
-  overflow-x: auto;
-  /* room for the offset plate under each chip */
-  padding: 0 8px 8px 0;
-  scrollbar-width: none;
-}
-
-/* Each chip: a dark tile lifted off a lime plate offset to the bottom-right, like the date block */
-.routine-chip {
-  position: relative;
-  flex: none;
-  padding: 0 6px 6px 0;
-  text-align: left;
-}
-
-.routine-chip::before {
-  content: '';
-  position: absolute;
-  inset: 6px 0 0 6px;
-  border-radius: var(--radius-m);
-  background: var(--primary);
-}
-
-.routine-chip-front {
-  position: relative;
-  display: flex;
-  flex-direction: column;
-  gap: 2px;
-  min-width: 120px;
-  max-width: 200px;
-  padding: 10px 14px;
-  border: 1px solid var(--outline-variant);
-  border-radius: var(--radius-m);
-  background: var(--surface-highest);
-  transition: transform 0.2s var(--ease-spring);
-}
-
-.routine-chip-front strong {
-  font-family: var(--font-display);
-  font-size: 19px;
-  font-weight: 800;
-  letter-spacing: 0.3px;
-  text-transform: uppercase;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-
-.routine-chip-front small {
-  color: var(--text-muted);
-  font-size: 12px;
-  font-weight: 650;
-}
-
-/* Pressing pushes the tile down onto its plate */
-.routine-chip:active:not(:disabled) .routine-chip-front,
-.routine-chip.starting .routine-chip-front {
-  transform: translate(4px, 4px);
-}
-
-.routine-chip:disabled:not(.starting) {
-  opacity: 0.5;
-}
 
 .routine-template {
   border: 1px solid var(--outline-variant);
-  border-left: 3px solid var(--primary);
 }
 
-/* "Routine" label straddling the summary card's top edge */
 .summary-card {
   position: relative;
 }
 
 .summary-routine-tag {
-  position: absolute;
-  top: -10px;
-  right: 18px;
   padding: 3px 10px;
   border-radius: var(--radius-s);
   background: var(--primary);
   color: var(--on-primary);
   font-size: 11px;
-  font-weight: 800;
-  letter-spacing: 1.2px;
-  text-transform: uppercase;
-  box-shadow: 3px 3px 0 var(--primary-container);
+  font-weight: 600;
+  box-shadow: none;
+  align-self: flex-start;
 }
 
 /* Plan cards: the progression tag hangs over the card's top-right corner */
@@ -5048,22 +4580,18 @@ a.scoreboard-name {
 }
 
 .suggestion-tag {
-  position: absolute;
-  top: -10px;
-  right: 12px;
   padding: 3px 9px;
   border-radius: var(--radius-s);
   font-size: 12px;
-  font-weight: 800;
-  letter-spacing: 0.4px;
-  text-transform: uppercase;
+  font-weight: 600;
   white-space: nowrap;
+  align-self: flex-start;
 }
 
 .suggestion-tag.increase {
   background: var(--primary);
   color: var(--on-primary);
-  box-shadow: 3px 3px 0 var(--primary-container);
+  box-shadow: none;
 }
 
 .suggestion-tag.same {
@@ -5089,9 +4617,7 @@ a.scoreboard-name {
 
 .plan-progress {
   color: var(--primary);
-  font-weight: 800;
-  letter-spacing: 0.8px;
-  text-transform: uppercase;
+  font-weight: 600;
 }
 
 /* A planned row: dashed outline (not done yet), large tappable values and a big ✓ */
@@ -5125,7 +4651,7 @@ a.scoreboard-name {
   border-radius: var(--radius-s);
   font-family: var(--font-display);
   font-size: 24px;
-  font-weight: 800;
+  font-weight: 600;
   white-space: nowrap;
   border-bottom: 2px solid var(--outline-variant);
 }
@@ -5156,7 +4682,6 @@ a.scoreboard-name {
   background: var(--surface-high);
 }
 
-/* ✓: lime square on a darker offset plate; pressing sinks it onto the plate */
 .tick-btn {
   flex: none;
   display: grid;
@@ -5168,13 +4693,13 @@ a.scoreboard-name {
   background: var(--primary);
   color: var(--on-primary);
   font-size: 26px;
-  font-weight: 900;
-  box-shadow: 3px 3px 0 var(--primary-container);
+  font-weight: 600;
+  box-shadow: none;
   transition: transform 0.25s var(--ease-spring), box-shadow 0.25s var(--ease-spring);
 }
 
 .tick-btn:active:not(:disabled) {
-  transform: translate(3px, 3px);
+  transform: scale(0.98);
   box-shadow: 0 0 0 var(--primary-container);
   transition-duration: 0.06s;
 }
@@ -5220,7 +4745,6 @@ a.scoreboard-name {
   display: flex;
   align-items: stretch;
   border: 1px solid var(--outline-variant);
-  border-left: 3px solid var(--primary);
   border-radius: var(--radius-m);
   background: var(--surface);
 }
@@ -5238,8 +4762,7 @@ a.scoreboard-name {
 .routine-item-body strong {
   font-family: var(--font-display);
   font-size: 20px;
-  font-weight: 800;
-  text-transform: uppercase;
+  font-weight: 600;
 }
 
 .routine-item-summary {
@@ -5267,7 +4790,6 @@ a.scoreboard-name {
   list-style: none;
 }
 
-/* Each exercise card with its number on a lime tab overlapping the left edge */
 .routine-exercise {
   position: relative;
   display: flex;
@@ -5286,9 +4808,6 @@ a.scoreboard-name {
 }
 
 .routine-exercise-index {
-  position: absolute;
-  left: -10px;
-  top: 10px;
   display: grid;
   place-items: center;
   width: 24px;
@@ -5298,8 +4817,9 @@ a.scoreboard-name {
   color: var(--on-primary);
   font-family: var(--font-display);
   font-size: 16px;
-  font-weight: 800;
-  box-shadow: 2px 2px 0 var(--primary-container);
+  font-weight: 600;
+  box-shadow: none;
+  align-self: flex-start;
 }
 
 .routine-exercise-name {
@@ -5332,9 +4852,7 @@ a.scoreboard-name {
   border: 1px dashed var(--primary);
   border-radius: var(--radius-m);
   color: var(--primary);
-  font-weight: 800;
-  letter-spacing: 0.6px;
-  text-transform: uppercase;
+  font-weight: 600;
 }
 
 .add-exercise-btn.invalid {
@@ -5355,7 +4873,6 @@ a.scoreboard-name {
 
 /* ---------- Barcode scanner ---------- */
 
-/* Entry point in the food search: a lime edge strip and an offset plate behind, so it reads as a tool */
 .scan-entry {
   position: relative;
   display: flex;
@@ -5363,28 +4880,17 @@ a.scoreboard-name {
   gap: 12px;
   min-height: 56px;
   padding: 10px 14px 10px 18px;
-  margin: 0 6px 6px 0;
+  margin: 0 0 6px;
   border-radius: var(--radius-m);
   background: var(--surface-high);
   text-align: left;
-  box-shadow: 6px 6px 0 var(--primary-container);
+  box-shadow: none;
   transition: transform 0.45s var(--ease-spring), box-shadow 0.45s var(--ease-spring);
 }
 
-.scan-entry::after {
-  content: '';
-  position: absolute;
-  left: 0;
-  top: 8px;
-  bottom: 8px;
-  width: 4px;
-  border-radius: 0 2px 2px 0;
-  background: var(--primary);
-}
-
 .scan-entry:active {
-  transform: translate(3px, 3px);
-  box-shadow: 3px 3px 0 var(--primary-container);
+  transform: scale(0.98);
+  box-shadow: none;
   transition-duration: 0.08s;
 }
 
@@ -5394,17 +4900,14 @@ a.scoreboard-name {
   width: 36px;
   height: 36px;
   border-radius: var(--radius-s);
-  background: var(--primary);
-  color: var(--on-primary);
-  transform: rotate(-4deg);
+  background: var(--primary-container);
+  color: var(--primary);
 }
 
 .scan-entry strong {
   display: block;
   font-family: var(--font-display);
   font-size: 18px;
-  letter-spacing: 0.4px;
-  text-transform: uppercase;
 }
 
 .scan-entry small {
@@ -5415,11 +4918,10 @@ a.scoreboard-name {
 .scanner-stage {
   position: relative;
   aspect-ratio: 4 / 3;
-  margin: 0 8px 8px 0;
+  margin: 0 0 8px;
   border-radius: var(--radius-l);
   background: #050506;
-  /* Offset lime plate behind the viewfinder */
-  box-shadow: 8px 8px 0 var(--primary);
+  box-shadow: none;
 }
 
 .scanner-viewport {
@@ -5486,17 +4988,13 @@ a.scoreboard-name {
 
 /* Tag hanging over the top-left edge of the viewfinder */
 .scanner-tag {
-  position: absolute;
-  left: 12px;
-  top: -10px;
   padding: 3px 10px;
   border-radius: var(--radius-s);
   background: var(--primary);
   color: var(--on-primary);
   font-size: 11px;
-  font-weight: 800;
-  letter-spacing: 1px;
-  transform: rotate(-2deg);
+  font-weight: 600;
+  align-self: flex-start;
 }
 
 .scanner-controls {
@@ -5535,7 +5033,6 @@ a.scoreboard-name {
   align-items: flex-start;
   gap: 4px;
   padding: 12px 14px;
-  border-left: 4px solid var(--primary);
   border-radius: var(--radius-m);
   background: var(--surface-highest);
   color: var(--text);
@@ -5567,41 +5064,28 @@ a.scoreboard-name {
   flex: 1;
   min-width: 0;
   font-variant-numeric: tabular-nums;
-  letter-spacing: 1px;
 }
 
 /* Product looked up by barcode: name card with the code tag overlapping its corner */
 .scanned-product {
   position: relative;
   padding: 14px 14px 12px 18px;
-  margin: 8px 6px 4px 0;
+  margin: 8px 0 4px;
   border-radius: var(--radius-m);
   background: var(--surface-high);
-  box-shadow: 6px 6px 0 var(--surface-highest);
-}
-
-.scanned-product::after {
-  content: '';
-  position: absolute;
-  left: 0;
-  top: 10px;
-  bottom: 10px;
-  width: 4px;
-  border-radius: 0 2px 2px 0;
-  background: var(--primary);
+  box-shadow: none;
 }
 
 .scanned-product-code {
   position: absolute;
-  right: 10px;
-  top: -10px;
+  right: 12px;
+  top: 12px;
   padding: 2px 8px;
   border-radius: var(--radius-s);
-  background: var(--primary);
-  color: var(--on-primary);
+  background: var(--surface-highest);
+  color: var(--text-muted);
   font-size: 11px;
-  font-weight: 800;
-  letter-spacing: 0.5px;
+  font-weight: 600;
 }
 
 .lookup-state {
@@ -5615,25 +5099,14 @@ a.scoreboard-name {
 
 .manual-notice {
   position: relative;
-  margin: 4px 4px 4px 0;
+  margin: 4px 0 4px;
   padding: 10px 12px 10px 16px;
   border-radius: var(--radius-m);
   background: var(--primary-container);
   color: var(--on-primary-container);
   font-size: 14px;
   font-weight: 600;
-  box-shadow: 4px 4px 0 var(--surface-highest);
-}
-
-.manual-notice::before {
-  content: '';
-  position: absolute;
-  left: 0;
-  top: 8px;
-  bottom: 8px;
-  width: 4px;
-  border-radius: 0 2px 2px 0;
-  background: var(--primary);
+  box-shadow: none;
 }
 
 /* ---------- Copy the previous day ---------- */
@@ -5649,7 +5122,6 @@ a.scoreboard-name {
   top: 44px;
 }
 
-/* Call to action under the empty state: lime slab on an offset dark plate, with a "tag" over its edge */
 .copy-day-cta {
   position: relative;
   display: flex;
@@ -5657,19 +5129,19 @@ a.scoreboard-name {
   align-items: flex-start;
   gap: 2px;
   width: min(100%, 320px);
-  margin: 4px 8px 8px 0;
+  margin: 4px 0 8px;
   padding: 14px 16px;
   border-radius: var(--radius-m);
   background: var(--primary);
   color: var(--on-primary);
   text-align: left;
-  box-shadow: 8px 8px 0 var(--primary-container);
+  box-shadow: none;
   transition: transform 0.45s var(--ease-spring), box-shadow 0.45s var(--ease-spring);
 }
 
 .copy-day-cta:active {
-  transform: translate(4px, 4px);
-  box-shadow: 4px 4px 0 var(--primary-container);
+  transform: scale(0.98);
+  box-shadow: none;
   transition-duration: 0.08s;
 }
 
@@ -5680,8 +5152,6 @@ a.scoreboard-name {
 .copy-day-cta strong {
   font-family: var(--font-display);
   font-size: 20px;
-  letter-spacing: 0.5px;
-  text-transform: uppercase;
 }
 
 .copy-day-cta small {
@@ -5691,102 +5161,61 @@ a.scoreboard-name {
 }
 
 .copy-day-cta-tag {
-  position: absolute;
-  right: 12px;
-  top: -10px;
   padding: 2px 8px;
   border-radius: var(--radius-s);
   background: var(--surface-highest);
   color: var(--primary);
   font-size: 11px;
-  font-weight: 800;
-  letter-spacing: 0.5px;
-  transform: rotate(2deg);
+  font-weight: 600;
+  align-self: flex-start;
 }
 
 /* ---------- Weekly streak and workout recap ---------- */
 
-/* Streak chip: dark tile lifted off a lime plate offset to the bottom-right, a lime strip down its left
-   edge, and the "2× this week" tag overlapping its bottom-right corner */
+/* One quiet line: flame, the streak, then this week's count after a divider */
 .week-streak {
-  position: relative;
-  display: inline-block;
-  padding: 0 5px 5px 0;
-}
-
-.week-streak::before {
-  content: '';
-  position: absolute;
-  inset: 5px 0 0 5px;
-  border-radius: var(--radius-m);
-  background: var(--primary);
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
 }
 
 .week-streak-front {
-  position: relative;
-  display: grid;
-  grid-template-columns: auto auto;
-  grid-template-rows: auto auto;
-  column-gap: 8px;
+  display: inline-flex;
   align-items: center;
-  padding: 6px 12px 6px 8px;
-  border: 1px solid var(--outline-variant);
-  border-left: 3px solid var(--primary);
-  border-radius: var(--radius-m);
-  background: var(--surface-highest);
+  gap: 8px;
 }
 
 .week-streak-icon {
-  grid-row: span 2;
   display: grid;
   place-items: center;
-  width: 30px;
-  height: 30px;
-  border-radius: var(--radius-s);
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
   background: var(--primary-container);
   color: var(--primary);
 }
 
 .week-streak-front strong {
   font-family: var(--font-display);
-  font-size: 22px;
-  font-weight: 800;
-  line-height: 0.95;
+  font-size: 17px;
+  font-weight: 600;
 }
 
 .week-streak-front small {
-  grid-column: 2;
   color: var(--text-muted);
-  font-size: 10px;
-  font-weight: 800;
-  letter-spacing: 1px;
-  line-height: 1.1;
-  text-transform: uppercase;
+  font-size: 14px;
   white-space: nowrap;
 }
 
 .week-streak-tag {
-  position: absolute;
-  right: -6px;
-  bottom: -9px;
-  padding: 1px 6px;
-  border-radius: var(--radius-s);
-  background: var(--text);
-  color: var(--bg);
-  font-size: 10px;
-  font-weight: 800;
-  letter-spacing: 0.6px;
-  text-transform: uppercase;
+  padding-left: 10px;
+  border-left: 1px solid var(--outline);
+  color: var(--text-muted);
+  font-size: 14px;
   white-space: nowrap;
-  box-shadow: 2px 2px 0 var(--primary-container);
 }
 
-/* On the Workouts header the chip gets its own row under the subtitle, left of the Routines button */
-.header-streak {
-  margin-top: 14px;
-}
-
-/* "Finish workout": a wide lime-edged tile on an offset lime plate, after the last set */
+/* On the Workouts header the streak gets its own line under the subtitle */
 .set-groups:has(+ .finish-btn) {
   padding-bottom: 12px;
 }
@@ -5796,19 +5225,10 @@ a.scoreboard-name {
   display: block;
   width: 100%;
   margin: 4px 0 104px;
-  padding: 0 6px 6px 0;
 }
 
 body:has(.rest-timer) .finish-btn {
   margin-bottom: 184px;
-}
-
-.finish-btn::before {
-  content: '';
-  position: absolute;
-  inset: 6px 0 0 6px;
-  border-radius: var(--radius-l);
-  background: var(--primary);
 }
 
 .finish-btn-front {
@@ -5818,20 +5238,17 @@ body:has(.rest-timer) .finish-btn {
   justify-content: center;
   gap: 8px;
   min-height: 52px;
-  border: 1px solid var(--primary);
   border-radius: var(--radius-l);
-  background: var(--surface-highest);
-  color: var(--primary);
+  background: var(--primary-container);
+  color: var(--on-primary-container);
   font-family: var(--font-display);
-  font-size: 20px;
-  font-weight: 800;
-  letter-spacing: 1px;
-  text-transform: uppercase;
+  font-size: 17px;
+  font-weight: 600;
   transition: transform 0.2s var(--ease-spring);
 }
 
 .finish-btn:active .finish-btn-front {
-  transform: translate(4px, 4px);
+  transform: scale(0.98);
 }
 
 .recap-loading {
@@ -5846,25 +5263,15 @@ body:has(.rest-timer) .finish-btn {
   gap: 22px;
 }
 
-/* Hero: dark plate with a lime edge strip, lifted off a lime plate; the comparison tag hangs off its bottom */
 .recap-hero {
   position: relative;
-  margin: 4px 8px 6px 0;
-}
-
-.recap-hero::before {
-  content: '';
-  position: absolute;
-  inset: 8px -8px -8px 8px;
-  border-radius: var(--radius-xl);
-  background: var(--primary);
+  margin: 4px 0 6px;
 }
 
 .recap-hero-front {
   position: relative;
   padding: 16px 18px 26px;
   border: 1px solid var(--outline-variant);
-  border-left: 4px solid var(--primary);
   border-radius: var(--radius-xl);
   background: var(--surface-highest);
 }
@@ -5872,31 +5279,25 @@ body:has(.rest-timer) .finish-btn {
 .recap-date {
   color: var(--primary);
   font-size: 11px;
-  font-weight: 800;
-  letter-spacing: 1.2px;
-  text-transform: uppercase;
+  font-weight: 600;
 }
 
 .recap-lifted {
   margin: 6px 0 0;
   font-family: var(--font-display);
   font-size: 34px;
-  font-weight: 800;
+  font-weight: 600;
   line-height: 1;
-  text-transform: uppercase;
 }
 
 .recap-delta {
-  position: absolute;
-  left: 18px;
-  bottom: -12px;
+  display: inline-block;
+  margin-top: 12px;
   padding: 4px 10px;
   border-radius: var(--radius-s);
   font-size: 12px;
-  font-weight: 800;
-  letter-spacing: 0.6px;
-  text-transform: uppercase;
-  box-shadow: 3px 3px 0 var(--bg);
+  font-weight: 600;
+  box-shadow: none;
 }
 
 .recap-delta.up {
@@ -5923,7 +5324,6 @@ body:has(.rest-timer) .finish-btn {
   gap: 10px;
 }
 
-/* Stat tiles: number on top, label underneath, a short lime tab on the top edge */
 .recap-stat {
   position: relative;
   display: flex;
@@ -5935,29 +5335,17 @@ body:has(.rest-timer) .finish-btn {
   background: var(--surface);
 }
 
-.recap-stat::before {
-  content: '';
-  position: absolute;
-  top: -1px;
-  left: 12px;
-  width: 18px;
-  height: 3px;
-  background: var(--primary);
-}
-
 .recap-stat strong {
   font-family: var(--font-display);
   font-size: 26px;
-  font-weight: 800;
+  font-weight: 600;
   line-height: 1;
 }
 
 .recap-stat small {
   color: var(--text-muted);
   font-size: 10px;
-  font-weight: 800;
-  letter-spacing: 1px;
-  text-transform: uppercase;
+  font-weight: 600;
 }
 
 .recap-streak {
@@ -5972,9 +5360,7 @@ body:has(.rest-timer) .finish-btn {
   color: var(--primary);
   font-family: var(--font-display);
   font-size: 20px;
-  font-weight: 800;
-  letter-spacing: 0.6px;
-  text-transform: uppercase;
+  font-weight: 600;
 }
 
 .recap-records ul {
@@ -5995,7 +5381,6 @@ body:has(.rest-timer) .finish-btn {
   gap: 12px;
   padding: 12px 14px;
   border: 1px solid var(--outline-variant);
-  border-left: 3px solid var(--primary);
   border-radius: var(--radius-m);
   background: var(--surface);
 }
@@ -6003,7 +5388,7 @@ body:has(.rest-timer) .finish-btn {
 .recap-record-name {
   min-width: 0;
   overflow: hidden;
-  font-weight: 700;
+  font-weight: 600;
   text-overflow: ellipsis;
   white-space: nowrap;
 }
@@ -6012,21 +5397,17 @@ body:has(.rest-timer) .finish-btn {
   flex: none;
   font-family: var(--font-display);
   font-size: 18px;
-  font-weight: 800;
+  font-weight: 600;
 }
 
 .recap-record-kind {
-  position: absolute;
-  top: -8px;
-  right: 10px;
   padding: 1px 6px;
   border-radius: var(--radius-s);
   background: var(--primary);
   color: var(--on-primary);
   font-size: 10px;
-  font-weight: 800;
-  letter-spacing: 0.6px;
-  text-transform: uppercase;
+  font-weight: 600;
+  align-self: flex-start;
 }
 
 .recap-actions {
@@ -6043,7 +5424,6 @@ body:has(.rest-timer) .finish-btn {
   min-height: 52px;
 }
 
-/* ---------- Ready-made routine templates ---------- */
 
 .templates-title {
   margin: 10px 0 0;
@@ -6058,26 +5438,16 @@ body:has(.rest-timer) .finish-btn {
 .template-cards {
   display: flex;
   flex-direction: column;
-  /* extra room above each card for the tags that straddle its top edge */
   gap: 20px;
   padding: 10px 6px 6px 0;
 }
 
-/* A card on a lime plate offset to the bottom-right; tags overlap the top edge, the count sits in the corner */
 .template-card {
   position: relative;
   display: block;
   width: 100%;
   padding: 0 6px 6px 0;
   text-align: left;
-}
-
-.template-card::before {
-  content: '';
-  position: absolute;
-  inset: 6px 0 0 6px;
-  border-radius: var(--radius-m);
-  background: var(--primary);
 }
 
 .template-card-front {
@@ -6087,22 +5457,19 @@ body:has(.rest-timer) .finish-btn {
   gap: 4px;
   padding: 16px 52px 12px 14px;
   border: 1px solid var(--outline-variant);
-  border-left: 3px solid var(--primary);
   border-radius: var(--radius-m);
   background: var(--surface-high);
   transition: transform 0.2s var(--ease-spring);
 }
 
 .template-card:active .template-card-front {
-  transform: translate(4px, 4px);
+  transform: scale(0.98);
 }
 
 .template-card-front strong {
   font-family: var(--font-display);
   font-size: 22px;
-  font-weight: 800;
-  letter-spacing: 0.3px;
-  text-transform: uppercase;
+  font-weight: 600;
 }
 
 .template-card-summary {
@@ -6115,11 +5482,8 @@ body:has(.rest-timer) .finish-btn {
 }
 
 .template-card-tags {
-  position: absolute;
-  top: -10px;
-  left: 14px;
-  z-index: 1;
   display: flex;
+  align-self: flex-start;
 }
 
 .template-card-tag {
@@ -6128,9 +5492,7 @@ body:has(.rest-timer) .finish-btn {
   background: var(--primary);
   color: var(--on-primary);
   font-size: 10px;
-  font-weight: 800;
-  letter-spacing: 0.8px;
-  text-transform: uppercase;
+  font-weight: 600;
 }
 
 /* The second tag tucks under the first a little, like stacked labels */
@@ -6150,7 +5512,7 @@ body:has(.rest-timer) .finish-btn {
   right: 18px;
   font-family: var(--font-display);
   font-size: 34px;
-  font-weight: 800;
+  font-weight: 600;
   line-height: 1;
   color: var(--outline);
 }
@@ -6196,14 +5558,13 @@ body:has(.rest-timer) .finish-btn {
 }
 
 .template-chip:active .template-chip-front {
-  transform: translate(4px, 4px);
+  transform: scale(0.98);
 }
 
 .template-chip-front strong {
   font-family: var(--font-display);
   font-size: 18px;
-  font-weight: 800;
-  text-transform: uppercase;
+  font-weight: 600;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -6216,17 +5577,13 @@ body:has(.rest-timer) .finish-btn {
 }
 
 .template-chip-tag {
-  position: absolute;
-  top: -10px;
-  right: 10px;
   padding: 2px 7px;
   border-radius: var(--radius-s);
   background: var(--primary);
   color: var(--on-primary);
   font-size: 10px;
-  font-weight: 800;
-  letter-spacing: 0.8px;
-  text-transform: uppercase;
+  font-weight: 600;
+  align-self: flex-start;
 }
 
 .template-strip-hint {
@@ -6235,38 +5592,32 @@ body:has(.rest-timer) .finish-btn {
   font-size: 13px;
 }
 
-/* Preview: a hero block on an offset lime plate, then numbered lines with the set scheme in lime */
 .template-hero {
   position: relative;
-  margin: 10px 8px 8px 0;
+  margin: 10px 0 8px;
   padding: 18px 16px 14px;
   border: 1px solid var(--outline-variant);
   border-radius: var(--radius-m);
   background: var(--surface-high);
-  box-shadow: 8px 8px 0 var(--primary);
+  box-shadow: none;
 }
 
 .template-hero-tag {
-  position: absolute;
-  top: -10px;
-  left: 14px;
   padding: 3px 10px;
   border-radius: var(--radius-s);
   background: var(--primary);
   color: var(--on-primary);
   font-size: 11px;
-  font-weight: 800;
-  letter-spacing: 1px;
-  text-transform: uppercase;
+  font-weight: 600;
+  align-self: flex-start;
 }
 
 .template-hero-name {
   margin: 0 0 8px;
   font-family: var(--font-display);
   font-size: 30px;
-  font-weight: 800;
+  font-weight: 600;
   line-height: 1;
-  text-transform: uppercase;
 }
 
 .template-lines {
@@ -6289,7 +5640,6 @@ body:has(.rest-timer) .finish-btn {
   overflow: hidden;
 }
 
-/* The index sits on a lime edge block cut into the line's left side */
 .template-line-index {
   flex: none;
   align-self: stretch;
@@ -6302,7 +5652,7 @@ body:has(.rest-timer) .finish-btn {
   color: var(--primary);
   font-family: var(--font-display);
   font-size: 18px;
-  font-weight: 800;
+  font-weight: 600;
 }
 
 .template-line-name {
@@ -6315,7 +5665,7 @@ body:has(.rest-timer) .finish-btn {
   flex: none;
   font-family: var(--font-display);
   font-size: 20px;
-  font-weight: 800;
+  font-weight: 600;
   color: var(--primary);
 }
 
@@ -6330,7 +5680,6 @@ body:has(.rest-timer) .finish-btn {
 .template-missing {
   margin: 0;
   padding: 8px 12px;
-  border-left: 3px solid var(--tertiary);
   border-radius: var(--radius-s);
   background: var(--surface);
   color: var(--text-muted);
@@ -6338,26 +5687,24 @@ body:has(.rest-timer) .finish-btn {
 }
 
 /* ---------- Muscle map ---------- */
-/* Band colours read on both themes; light mode uses deeper siblings so yellow does not vanish on white */
+/* Warm heat bands, muted to sit with the calm palette; light mode uses deeper siblings so they hold on white */
 :root {
-  --map-body: #2a2a2f;
-  --map-shadow: #2b3610;
-  --map-none: #46464e;
-  --map-sep: #161618;
-  --map-low: #ffd43b;
-  --map-mid: #ff8c1a;
-  --map-high: #ff4136;
+  --map-body: #2b2c31;
+  --map-none: #45464d;
+  --map-sep: var(--surface);
+  --map-low: #d6bd6a;
+  --map-mid: #d9904f;
+  --map-high: #d4614f;
 }
 
 @media (prefers-color-scheme: light) {
   :root {
-    --map-body: #d9d9d2;
-    --map-shadow: #c5cdb0;
-    --map-none: #b3b3ab;
+    --map-body: #dcdcd6;
+    --map-none: #b8b8b1;
     --map-sep: #ffffff;
-    --map-low: #f5b700;
-    --map-mid: #f76b15;
-    --map-high: #e0301e;
+    --map-low: #c9a231;
+    --map-mid: #cf7430;
+    --map-high: #c4463a;
   }
 }
 
@@ -6366,10 +5713,6 @@ body:has(.rest-timer) .finish-btn {
   width: 100%;
   height: auto;
   overflow: visible;
-}
-
-.body-map-shadow path {
-  fill: var(--map-shadow);
 }
 
 .body-map-body path {
@@ -6421,46 +5764,32 @@ body:has(.rest-timer) .finish-btn {
   stroke-width: 2.2;
 }
 
-/* Progress card: dark plate with a lime edge strip, lifted off a lime plate offset to the bottom-right */
 .muscle-card {
   position: relative;
-  margin: 0 8px 24px 0;
-}
-
-.muscle-card::before {
-  content: '';
-  position: absolute;
-  inset: 8px -8px -8px 8px;
-  border-radius: var(--radius-xl);
-  background: var(--primary);
+  margin: 0 0 24px;
 }
 
 .muscle-card-front {
   position: relative;
   padding: 16px 16px 18px;
   border: 1px solid var(--outline-variant);
-  border-left: 4px solid var(--primary);
   border-radius: var(--radius-xl);
   background: var(--surface);
-  /* Separators between muscles are cut in the plate's own colour */
   --map-sep: var(--surface);
 }
 
 .muscle-card-kicker {
   color: var(--primary);
   font-size: 11px;
-  font-weight: 800;
-  letter-spacing: 1.2px;
-  text-transform: uppercase;
+  font-weight: 600;
 }
 
 .muscle-card h2 {
   margin: 2px 0 0;
   font-family: var(--font-display);
   font-size: 26px;
-  font-weight: 800;
+  font-weight: 600;
   line-height: 1;
-  text-transform: uppercase;
 }
 
 .muscle-card-caption {
@@ -6489,9 +5818,7 @@ body:has(.rest-timer) .finish-btn {
   border-radius: var(--radius-s);
   color: var(--text-muted);
   font-size: 13px;
-  font-weight: 800;
-  letter-spacing: 0.6px;
-  text-transform: uppercase;
+  font-weight: 600;
   transition: background 0.2s, color 0.2s;
 }
 
@@ -6518,7 +5845,7 @@ body:has(.rest-timer) .finish-btn {
   padding: 0;
   list-style: none;
   font-size: 12px;
-  font-weight: 700;
+  font-weight: 600;
 }
 
 .muscle-legend li {
@@ -6537,7 +5864,7 @@ body:has(.rest-timer) .finish-btn {
   width: 12px;
   height: 12px;
   border-radius: 3px;
-  box-shadow: 2px 2px 0 var(--outline);
+  box-shadow: none;
 }
 
 .muscle-swatch.low {
@@ -6602,8 +5929,7 @@ body:has(.rest-timer) .finish-btn {
 .muscle-detail-head strong {
   font-family: var(--font-display);
   font-size: 20px;
-  font-weight: 800;
-  text-transform: uppercase;
+  font-weight: 600;
 }
 
 .muscle-detail-head span {
@@ -6670,26 +5996,15 @@ body:has(.rest-timer) .finish-btn {
   color: var(--on-primary);
 }
 
-/* Same build as the Progress card: a surface plate with a lime edge, lifted off a lime plate behind it */
 .picker-map {
   position: relative;
-  margin: 0 6px 6px 0;
-}
-
-.picker-map::before {
-  content: '';
-  position: absolute;
-  inset: 6px -6px -6px 6px;
-  border-radius: var(--radius-xl);
-  background: var(--primary);
-  opacity: 0.85;
+  margin: 0 0 6px;
 }
 
 .picker-map-plate {
   position: relative;
   padding: 10px 10px 4px;
   border: 1px solid var(--outline-variant);
-  border-left: 4px solid var(--primary);
   border-radius: var(--radius-xl);
   background: var(--surface);
   --map-sep: var(--surface);
@@ -6710,10 +6025,8 @@ body:has(.rest-timer) .finish-btn {
   margin-top: 2px;
   color: var(--text-muted);
   font-size: 11px;
-  font-weight: 800;
-  letter-spacing: 1px;
+  font-weight: 600;
   text-align: center;
-  text-transform: uppercase;
 }
 
 /* The picked muscle in the app colour; the rest stay plain since nothing is being measured here */
@@ -6745,7 +6058,6 @@ body:has(.rest-timer) .finish-btn {
   justify-content: space-between;
   gap: 12px;
   padding: 8px 8px 8px 12px;
-  border-left: 3px solid var(--primary);
   border-radius: var(--radius-s);
   background: var(--surface-high);
 }
@@ -6779,9 +6091,7 @@ body:has(.rest-timer) .finish-btn {
   margin: 0 0 6px;
   color: var(--text-muted);
   font-size: 11px;
-  font-weight: 800;
-  letter-spacing: 1px;
-  text-transform: uppercase;
+  font-weight: 600;
 }
 
 .muscle-detail .muscle-suggest-list {
@@ -6796,7 +6106,7 @@ body:has(.rest-timer) .finish-btn {
   border: 0;
   border-radius: var(--radius-s);
   background: var(--surface);
-  box-shadow: 2px 2px 0 var(--outline-variant);
+  box-shadow: none;
   font-size: 13px;
 }
 
@@ -6841,22 +6151,19 @@ body:has(.rest-timer) .finish-btn {
   text-align: center;
 }
 
-/* One workout's panel: "In this workout" on an inner plate lifted off the panel, the suggestions under it */
 .muscle-detail-workout {
   margin-top: 10px;
   padding: 8px 10px 6px;
   border-radius: var(--radius-s);
   background: var(--surface);
-  box-shadow: 3px 3px 0 var(--outline-variant);
+  box-shadow: none;
 }
 
 .muscle-detail-workout h3 {
   margin: 0;
   color: var(--text-muted);
   font-size: 11px;
-  font-weight: 800;
-  letter-spacing: 1px;
-  text-transform: uppercase;
+  font-weight: 600;
 }
 
 .muscle-detail-workout ul {
@@ -6896,7 +6203,7 @@ body:has(.rest-timer) .finish-btn {
   border-radius: 50%;
   background: var(--primary);
   color: var(--on-primary);
-  font-weight: 800;
+  font-weight: 600;
   line-height: 1;
 }
 
@@ -6911,15 +6218,14 @@ body:has(.rest-timer) .finish-btn {
 
 /* ---------- Offline: sync banner and waiting sets ---------- */
 
-/* Banner: a lime icon tile overlapping a dark card that has a second card peeking out behind it,
-   so the queue reads as "stacked up, waiting" */
 .sync-status {
   position: sticky;
   top: calc(var(--safe-top) + 8px);
   z-index: 25;
   display: flex;
   align-items: center;
-  margin: 8px 20px 4px 16px;
+  gap: 10px;
+  margin: 8px 0 4px;
   animation: sync-status-in 0.25s var(--ease-out);
 }
 
@@ -6938,12 +6244,9 @@ body:has(.rest-timer) .finish-btn {
   flex: none;
   width: 36px;
   height: 36px;
-  margin-right: -10px;
-  border-radius: var(--radius-m);
-  background: var(--primary);
-  color: var(--on-primary);
-  transform: rotate(-4deg);
-  box-shadow: 3px 3px 0 var(--primary-container);
+  border-radius: 50%;
+  background: var(--primary-container);
+  color: var(--primary);
 }
 
 .sync-status-card {
@@ -6956,7 +6259,6 @@ body:has(.rest-timer) .finish-btn {
   gap: 2px 10px;
   padding: 8px 12px 8px 20px;
   border: 1px solid var(--outline);
-  border-left: 3px solid var(--primary);
   border-radius: var(--radius-m);
   background: var(--surface-highest);
   font-size: 13px;
@@ -6964,21 +6266,9 @@ body:has(.rest-timer) .finish-btn {
 }
 
 /* The second card of the stack, offset down-right behind the first */
-.sync-status-card::before {
-  content: '';
-  position: absolute;
-  inset: 4px -5px -5px 4px;
-  z-index: -1;
-  border: 1px solid var(--outline-variant);
-  border-radius: var(--radius-m);
-  background: var(--surface);
-}
-
 .sync-status-title {
   font-family: var(--font-display);
   font-size: 15px;
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
   color: var(--primary);
 }
 
@@ -7011,13 +6301,10 @@ body:has(.rest-timer) .finish-btn {
   background: var(--primary-container);
   color: var(--primary);
   font-size: 11px;
-  font-weight: 700;
-  letter-spacing: 0.04em;
-  text-transform: uppercase;
+  font-weight: 600;
   white-space: nowrap;
 }
 
-/* New workout sheet while offline: a lime-edged note with its icon */
 .new-workout-offline {
   display: flex;
   gap: 10px;
@@ -7025,7 +6312,6 @@ body:has(.rest-timer) .finish-btn {
   margin: 0;
   padding: 10px 12px;
   border: 1px solid var(--outline);
-  border-left: 3px solid var(--primary);
   border-radius: var(--radius-m);
   background: var(--surface-high);
   font-size: 14px;
@@ -7037,26 +6323,15 @@ body:has(.rest-timer) .finish-btn {
 }
 
 /* ---------- Weight log ---------- */
-/* Card with the signal rule on top and an offset plate behind its lower right, like a stacked weight plate */
 .weight-card {
   position: relative;
   padding: 20px;
-  margin: 0 6px 22px 0;
+  margin: 0 0 22px;
   border: 1px solid var(--outline-variant);
   border-radius: var(--radius-xl);
   background: var(--surface);
-  box-shadow: 6px 6px 0 var(--surface-low), 6px 6px 0 1px var(--outline-variant);
+  box-shadow: none;
   scroll-margin-top: 16px;
-}
-
-.weight-card::before {
-  content: '';
-  display: block;
-  width: 28px;
-  height: 6px;
-  border-radius: 3px;
-  background: var(--primary);
-  margin-bottom: 10px;
 }
 
 .weight-head {
@@ -7076,7 +6351,6 @@ body:has(.rest-timer) .finish-btn {
   font-size: 13px;
 }
 
-/* Lime slab on a darker offset plate, with the date tag hanging over its top edge */
 .weight-latest {
   position: relative;
   flex: none;
@@ -7084,39 +6358,34 @@ body:has(.rest-timer) .finish-btn {
   align-items: baseline;
   gap: 3px;
   margin-top: 4px;
-  padding: 14px 14px 6px;
+  padding: 10px 12px 6px;
   border-radius: var(--radius-m);
-  background: var(--primary);
-  color: var(--on-primary);
-  box-shadow: 4px 4px 0 var(--primary-container);
+  background: var(--primary-container);
+  color: var(--on-primary-container);
 }
 
 .weight-latest strong {
   font-family: var(--font-display);
   font-size: 34px;
-  font-weight: 800;
+  font-weight: 600;
   line-height: 1;
 }
 
 .weight-latest small {
   font-size: 13px;
-  font-weight: 700;
+  font-weight: 600;
 }
 
 .weight-latest-tag {
-  position: absolute;
-  top: -9px;
-  left: -6px;
   padding: 1px 6px;
   border: 1px solid var(--primary);
   border-radius: 3px;
   background: var(--bg);
   color: var(--primary);
   font-size: 10px;
-  font-weight: 800;
-  letter-spacing: 0.6px;
-  text-transform: uppercase;
+  font-weight: 600;
   white-space: nowrap;
+  align-self: flex-start;
 }
 
 .weight-chips {
@@ -7136,7 +6405,7 @@ body:has(.rest-timer) .finish-btn {
   border-radius: var(--radius-s);
   background: var(--surface-high);
   font-size: 13px;
-  font-weight: 700;
+  font-weight: 600;
 }
 
 .weight-chip.down {
@@ -7166,7 +6435,7 @@ body:has(.rest-timer) .finish-btn {
   padding: 0 4px;
   border-radius: var(--radius-m);
   background: var(--surface-highest);
-  box-shadow: 0 3px 0 var(--primary-container);
+  box-shadow: none;
 }
 
 .weight-stepper.invalid {
@@ -7210,7 +6479,7 @@ body:has(.rest-timer) .finish-btn {
   text-align: center;
   font-family: var(--font-display);
   font-size: 30px;
-  font-weight: 800;
+  font-weight: 600;
 }
 
 .weight-input:focus {
@@ -7242,7 +6511,6 @@ body:has(.rest-timer) .finish-btn {
   font-size: 14px;
 }
 
-/* Nutrition header: current weight as a tag; the lime label overlaps its left edge */
 .weight-link-chip {
   display: inline-flex;
   align-items: baseline;
@@ -7254,13 +6522,13 @@ body:has(.rest-timer) .finish-btn {
   background: var(--surface-high);
   color: var(--text);
   text-decoration: none;
-  box-shadow: 0 3px 0 var(--primary-container);
+  box-shadow: none;
   transition: transform 0.12s;
 }
 
 .weight-link-chip:active {
   transform: translateY(2px);
-  box-shadow: 0 1px 0 var(--primary-container);
+  box-shadow: none;
 }
 
 .weight-link-chip-tag {
@@ -7271,25 +6539,22 @@ body:has(.rest-timer) .finish-btn {
   background: var(--primary);
   color: var(--on-primary);
   font-size: 11px;
-  font-weight: 800;
-  letter-spacing: 0.6px;
-  text-transform: uppercase;
+  font-weight: 600;
 }
 
 .weight-link-chip strong {
   font-family: var(--font-display);
   font-size: 18px;
-  font-weight: 800;
+  font-weight: 600;
 }
 
 .weight-link-chip small {
   color: var(--text-muted);
   font-size: 12px;
-  font-weight: 700;
+  font-weight: 600;
 }
 
 /* ---------- Group training comparison ---------- */
-/* League / Training switch under the group card: a track on an offset plate, the chosen half a lime block */
 .group-mode {
   position: relative;
   isolation: isolate;
@@ -7302,15 +6567,6 @@ body:has(.rest-timer) .finish-btn {
   background: var(--surface);
 }
 
-.group-mode::after {
-  content: '';
-  position: absolute;
-  inset: 4px -4px -4px 4px;
-  z-index: -1;
-  border-radius: var(--radius-m);
-  background: var(--surface-highest);
-}
-
 .group-mode button {
   height: 34px;
   min-width: 86px;
@@ -7318,9 +6574,7 @@ body:has(.rest-timer) .finish-btn {
   border-radius: var(--radius-s);
   font-family: var(--font-display);
   font-size: 16px;
-  font-weight: 800;
-  letter-spacing: 0.8px;
-  text-transform: uppercase;
+  font-weight: 600;
   color: var(--text-muted);
   transition: background 0.2s, color 0.2s;
 }
@@ -7328,7 +6582,7 @@ body:has(.rest-timer) .finish-btn {
 .group-mode button.selected {
   background: var(--primary);
   color: var(--on-primary);
-  box-shadow: 0 2px 0 var(--primary-container);
+  box-shadow: none;
 }
 
 .training-view .board-toggle {
@@ -7344,10 +6598,9 @@ body:has(.rest-timer) .finish-btn {
   padding: 16px 4px;
 }
 
-/* The column leader: lime number with a lime bar under it, so it reads without color too */
 .data-table td.leader {
   color: var(--primary);
-  font-weight: 800;
+  font-weight: 600;
   box-shadow: inset 0 -3px 0 color-mix(in srgb, var(--primary) 70%, transparent);
 }
 
@@ -7386,25 +6639,13 @@ body:has(.rest-timer) .finish-btn {
   border-radius: var(--radius-s);
   background: var(--surface-highest);
   font-size: 10px;
-  font-weight: 800;
-  letter-spacing: 0.6px;
-  text-transform: uppercase;
+  font-weight: 600;
 }
 
-/* Opt-in card: stacked on a plate with a lime strip, the switch on a tab straddling the lower edge */
 .share-card-wrap {
   position: relative;
   isolation: isolate;
-  margin: 0 8px 36px 0;
-}
-
-.share-card-wrap::after {
-  content: '';
-  position: absolute;
-  inset: 8px -8px -8px 8px;
-  z-index: -1;
-  border-radius: var(--radius-xl);
-  background: color-mix(in srgb, var(--primary) 18%, var(--surface-highest));
+  margin: 0 0 36px;
 }
 
 .share-card {
@@ -7415,24 +6656,12 @@ body:has(.rest-timer) .finish-btn {
   background: var(--surface);
 }
 
-.share-card::before {
-  content: '';
-  position: absolute;
-  top: 16px;
-  bottom: 16px;
-  left: -1px;
-  width: 4px;
-  border-radius: 0 3px 3px 0;
-  background: var(--primary);
-}
-
 .share-card h2 {
   margin: 0 0 6px;
   font-family: var(--font-display);
   font-size: 24px;
-  font-weight: 800;
+  font-weight: 600;
   line-height: 1.05;
-  text-transform: uppercase;
 }
 
 .share-card-lead {
@@ -7459,7 +6688,6 @@ body:has(.rest-timer) .finish-btn {
   font-weight: 650;
 }
 
-/* A lime check drawn from two borders */
 .share-card-items li::before {
   content: '';
   position: absolute;
@@ -7488,7 +6716,7 @@ body:has(.rest-timer) .finish-btn {
   border-radius: 22px;
   background: var(--surface-high);
   border: 1px solid var(--outline);
-  box-shadow: 0 3px 0 var(--surface-highest);
+  box-shadow: none;
 }
 
 /* Switch: a real checkbox laid over a drawn track, so it keeps keyboard and screen reader behaviour */
@@ -7503,9 +6731,7 @@ body:has(.rest-timer) .finish-btn {
 .share-switch-label {
   font-family: var(--font-display);
   font-size: 16px;
-  font-weight: 800;
-  letter-spacing: 0.6px;
-  text-transform: uppercase;
+  font-weight: 600;
 }
 
 .share-switch input {
@@ -7558,7 +6784,6 @@ body:has(.rest-timer) .finish-btn {
   opacity: 0.5;
 }
 
-/* Profile row: text on the left, the switch on the right, with a lime edge like the other cards */
 .share-toggle {
   display: flex;
   align-items: center;
@@ -7566,7 +6791,6 @@ body:has(.rest-timer) .finish-btn {
   margin: 0 0 16px;
   padding: 12px 14px;
   border: 1px solid var(--outline-variant);
-  border-left: 3px solid var(--primary);
   border-radius: var(--radius-l);
   background: var(--surface);
 }
@@ -7592,7 +6816,6 @@ body:has(.rest-timer) .finish-btn {
   gap: 6px;
 }
 
-/* The queue name is a dark plate the tier badge leans on, so solo and flex read as two tabs, not one strip */
 .queue-rank {
   display: inline-flex;
   align-items: stretch;
@@ -7606,9 +6829,7 @@ body:has(.rest-timer) .finish-btn {
   background: var(--surface-highest);
   color: var(--text-muted);
   font-size: 10px;
-  font-weight: 800;
-  letter-spacing: 0.6px;
-  text-transform: uppercase;
+  font-weight: 600;
 }
 
 .queue-rank .rank-badge {
@@ -7629,21 +6850,20 @@ body:has(.rest-timer) .finish-btn {
   border-radius: var(--radius-s);
   font-family: var(--font-display);
   font-size: 12px;
-  font-weight: 800;
-  letter-spacing: 0.4px;
+  font-weight: 600;
   font-variant-numeric: tabular-nums;
 }
 
 .lp-chip.up {
   color: var(--on-primary);
   background: var(--primary);
-  box-shadow: 0 2px 0 var(--primary-container);
+  box-shadow: none;
 }
 
 .lp-chip.down {
   color: var(--on-error);
   background: var(--error);
-  box-shadow: 0 2px 0 color-mix(in srgb, var(--error) 45%, black);
+  box-shadow: none;
 }
 
 /* On a match row the chip hangs over the top edge, like the multikill tag on the other corner */
@@ -7678,23 +6898,25 @@ body:has(.rest-timer) .finish-btn {
 }
 
 /* Tag over the hero's top-left corner (the streak takes the right one) */
+/* A row of its own at the top of the profile card while the player is in a game, so it never covers the name */
+.lol-hero:has(.live-badge) {
+  padding-top: 48px;
+}
+
 .live-badge {
   position: absolute;
-  top: -11px;
-  left: 14px;
+  top: 14px;
+  left: 16px;
   display: flex;
   align-items: center;
   gap: 6px;
   padding: 3px 9px;
   border: 0;
-  border-radius: var(--radius-s);
-  background: var(--error);
-  color: var(--on-error);
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--error) 18%, var(--surface));
+  color: var(--error);
   font-size: 12px;
-  font-weight: 800;
-  letter-spacing: 0.5px;
-  text-transform: uppercase;
-  box-shadow: 0 3px 0 color-mix(in srgb, var(--error) 45%, black);
+  font-weight: 600;
   cursor: pointer;
 }
 
@@ -7717,9 +6939,7 @@ body:has(.rest-timer) .finish-btn {
   background: color-mix(in srgb, var(--error) 14%, transparent);
   color: var(--error);
   font-size: 11px;
-  font-weight: 800;
-  letter-spacing: 0.3px;
-  text-transform: uppercase;
+  font-weight: 600;
 }
 
 .in-game-tag .champion-icon {
@@ -7740,7 +6960,7 @@ body:has(.rest-timer) .finish-btn {
   margin: 0;
   color: var(--error);
   font-size: 13px;
-  font-weight: 700;
+  font-weight: 600;
 }
 
 .live-game-meta .num {
@@ -7748,14 +6968,13 @@ body:has(.rest-timer) .finish-btn {
   color: var(--text);
 }
 
-/* Each team is a card with its side color as a thick edge and a raised plate under it */
 .live-team {
   --side: #4a90ff;
   border: 1px solid var(--outline-variant);
   border-left: 4px solid var(--side);
   border-radius: var(--radius-l);
   background: var(--surface);
-  box-shadow: 4px 4px 0 color-mix(in srgb, var(--side) 22%, var(--surface-highest));
+  box-shadow: none;
   overflow: hidden;
 }
 
@@ -7775,8 +6994,6 @@ body:has(.rest-timer) .finish-btn {
 .live-team h3 {
   margin: 0;
   font-size: 13px;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
   color: var(--side);
 }
 
@@ -7806,7 +7023,6 @@ body:has(.rest-timer) .finish-btn {
 
 .live-row.me {
   background: color-mix(in srgb, var(--primary) 10%, transparent);
-  box-shadow: inset 3px 0 0 var(--primary);
 }
 
 .live-row-loadout {
@@ -7826,7 +7042,7 @@ body:has(.rest-timer) .finish-btn {
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
-  font-weight: 700;
+  font-weight: 600;
 }
 
 .live-row-name a {
@@ -7842,7 +7058,7 @@ body:has(.rest-timer) .finish-btn {
 .live-row-rank {
   flex: none;
   font-size: 12px;
-  font-weight: 700;
+  font-weight: 600;
 }
 
 .mastery-totals {
@@ -7878,8 +7094,7 @@ body:has(.rest-timer) .finish-btn {
 }
 
 .mastery-row:first-child {
-  border-left: 3px solid var(--primary);
-  box-shadow: 4px 4px 0 var(--surface-highest);
+  box-shadow: none;
 }
 
 /* The level hangs off the icon's bottom edge, half over it */
@@ -7899,7 +7114,7 @@ body:has(.rest-timer) .finish-btn {
   background: var(--primary);
   color: var(--on-primary);
   font-size: 10px;
-  font-weight: 800;
+  font-weight: 600;
   white-space: nowrap;
 }
 
@@ -7930,7 +7145,7 @@ body:has(.rest-timer) .finish-btn {
   flex-direction: column;
   align-items: flex-end;
   gap: 2px;
-  font-weight: 700;
+  font-weight: 600;
 }
 
 .mastery-side small {
@@ -7938,29 +7153,17 @@ body:has(.rest-timer) .finish-btn {
   font-weight: 400;
 }
 
-/* Water: a card with an offset tertiary plate behind it, a row of filling glasses and a chunky add button */
 .water-card {
   position: relative;
-  margin: 4px 8px 20px 0;
+  margin: 4px 0 20px;
   padding: 12px 14px 14px;
   border-radius: var(--radius-l);
   background: var(--surface);
   border: 1px solid var(--outline-variant);
-  box-shadow: 8px 8px 0 color-mix(in srgb, var(--tertiary) 16%, var(--surface-low));
+  box-shadow: none;
 }
 
 /* A thin cyan edge on the left marks the card as water at a glance */
-.water-card::before {
-  content: '';
-  position: absolute;
-  left: -1px;
-  top: 14px;
-  bottom: 14px;
-  width: 4px;
-  border-radius: 0 3px 3px 0;
-  background: var(--tertiary);
-}
-
 .water-card-loading {
   min-height: 168px;
   opacity: 0.5;
@@ -8000,7 +7203,7 @@ body:has(.rest-timer) .finish-btn {
 
 .water-card.reached .water-status {
   color: var(--tertiary);
-  font-weight: 700;
+  font-weight: 600;
 }
 
 .water-glasses {
@@ -8038,7 +7241,7 @@ body:has(.rest-timer) .finish-btn {
 
 .water-more {
   align-self: center;
-  font-weight: 700;
+  font-weight: 600;
   color: var(--tertiary);
 }
 
@@ -8087,27 +7290,25 @@ body:has(.rest-timer) .finish-btn {
   border-radius: var(--radius-m);
   background: var(--tertiary);
   color: var(--surface-low);
-  box-shadow: 5px 5px 0 color-mix(in srgb, var(--tertiary) 35%, var(--surface-low));
+  box-shadow: none;
   transition: transform 0.45s var(--ease-spring), box-shadow 0.45s var(--ease-spring);
 }
 
 .water-add:active {
-  transform: translate(3px, 3px);
-  box-shadow: 2px 2px 0 color-mix(in srgb, var(--tertiary) 35%, var(--surface-low));
+  transform: scale(0.98);
+  box-shadow: none;
   transition-duration: 0.08s;
 }
 
 .water-add-plus {
   font-size: 24px;
-  font-weight: 700;
+  font-weight: 600;
   line-height: 1;
 }
 
 .water-add strong {
   font-family: var(--font-display);
   font-size: 20px;
-  letter-spacing: 0.5px;
-  text-transform: uppercase;
 }
 
 .water-add-size {
@@ -8116,7 +7317,7 @@ body:has(.rest-timer) .finish-btn {
   border-radius: var(--radius-s);
   background: color-mix(in srgb, var(--surface-low) 18%, transparent);
   font-size: 13px;
-  font-weight: 700;
+  font-weight: 600;
 }
 
 .water-set-goal {
@@ -8151,4 +7352,275 @@ body:has(.rest-timer) .finish-btn {
   height: 32px;
   padding: 0 10px;
   font-size: 13px;
+}
+
+/* ---------- Workouts home ---------- */
+/* Today's date as a quiet title, Routines and a round + on the right */
+.home-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 20px 4px 8px;
+}
+
+.home-date {
+  margin: 0;
+  color: var(--text-muted);
+  font-size: 15px;
+  font-weight: 500;
+}
+
+.home-header-actions {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.home-new {
+  display: grid;
+  place-items: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: var(--surface-high);
+  color: var(--text);
+}
+
+.home-new:active {
+  transform: scale(0.94);
+}
+
+/* The week's volume is the loudest thing on the screen; three bars beside it give the trend */
+.week-hero {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 8px 4px 24px;
+}
+
+.week-hero-text {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 0;
+}
+
+.week-hero-label {
+  color: var(--text-muted);
+  font-size: 15px;
+  font-weight: 600;
+}
+
+.week-hero-value {
+  color: var(--text-muted);
+  font-size: 22px;
+  font-weight: 600;
+}
+
+.week-hero-value strong {
+  color: var(--text);
+  font-size: 58px;
+  font-weight: 700;
+  line-height: 1;
+  letter-spacing: -2px;
+}
+
+.week-hero-meta {
+  color: var(--text-muted);
+  font-size: 14px;
+}
+
+.week-hero-bars {
+  flex: none;
+  display: flex;
+  align-items: flex-end;
+  gap: 6px;
+  height: 64px;
+}
+
+.week-hero-bars span {
+  width: 14px;
+  border-radius: 4px;
+  background: var(--surface-highest);
+}
+
+.week-hero-bars span.current {
+  background: var(--primary);
+}
+
+.home-section-head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 0 4px;
+  font-size: 13px;
+}
+
+.home-section-title {
+  margin: 0 4px 10px;
+  color: var(--text-muted);
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.home-section-head .home-section-title {
+  margin: 0;
+}
+
+/* The program as a track: a bar per day, filled when done, white for the one that is next */
+.cycle {
+  margin-bottom: 18px;
+}
+
+.cycle-steps {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 6px;
+  margin-top: 10px;
+}
+
+.cycle-step {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  min-width: 0;
+  min-height: 44px;
+  padding: 0 0 4px;
+  text-align: left;
+}
+
+.cycle-step:disabled {
+  cursor: default;
+}
+
+.cycle-track {
+  height: 6px;
+  border-radius: 3px;
+  background: var(--surface-highest);
+}
+
+.cycle-step.done .cycle-track {
+  background: var(--primary);
+}
+
+.cycle-step.next .cycle-track {
+  background: var(--text);
+}
+
+.cycle-step strong {
+  overflow: hidden;
+  font-size: 15px;
+  font-weight: 600;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.cycle-step.later strong {
+  color: var(--text-muted);
+}
+
+.cycle-step small {
+  color: var(--text-muted);
+  font-size: 12px;
+}
+
+.cycle-step.next small {
+  color: var(--text);
+}
+
+/* The one card on the screen: what to do next and a big Start */
+.next-up {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  margin-bottom: 28px;
+  padding: 18px;
+  border-radius: var(--radius-xl);
+  background: var(--surface);
+}
+
+.next-up-head {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.next-up-label {
+  color: var(--text-muted);
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.next-up-name {
+  margin: 0;
+  font-size: 24px;
+  font-weight: 700;
+  letter-spacing: -0.4px;
+}
+
+.next-up-exercises {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  font-size: 15px;
+}
+
+.next-up-exercises li {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.next-up .btn-block {
+  min-height: 52px;
+  border-radius: 26px;
+  font-size: 17px;
+}
+
+/* History as plain rows with hairlines: the title and when on the left, the volume on the right */
+.workout-card-body {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 12px 4px;
+  border-bottom: 1px solid var(--outline-variant);
+  background: var(--bg);
+  transition: background 0.15s;
+}
+
+.workout-card:active .workout-card-body {
+  background: var(--surface-low);
+}
+
+.workout-card-text {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+
+.workout-card-title {
+  margin: 0;
+  overflow: hidden;
+  font-size: 16px;
+  font-weight: 600;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.workout-card-meta {
+  color: var(--text-muted);
+  font-size: 13px;
+}
+
+.workout-card-volume {
+  flex: none;
+  font-size: 17px;
 }

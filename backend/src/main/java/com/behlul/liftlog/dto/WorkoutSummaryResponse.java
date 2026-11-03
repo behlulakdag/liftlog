@@ -10,6 +10,8 @@ public record WorkoutSummaryResponse(
         String notes,
         long setCount,
         long exerciseCount,
-        BigDecimal totalVolumeKg
+        BigDecimal totalVolumeKg,
+        /* The routine it was started from; null for a free workout or once that routine is deleted */
+        Long routineId
 ) {
 }

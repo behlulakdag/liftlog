@@ -25,15 +25,11 @@ export function WorkoutListSkeleton() {
         {[0.62, 0.48, 0.7, 0.55].map((titleWidth, i) => (
           <div key={i} className="workout-card" style={{ animationDelay: `${i * 60}ms` }}>
             <div className="workout-card-body">
-              <Bone width={`${titleWidth * 100}%`} height={20} />
-              <div className="chips">
-                <Bone width={52} height={24} />
-                <Bone width={72} height={24} />
+              <div className="workout-card-text" style={{ flex: 1 }}>
+                <Bone width={`${titleWidth * 100}%`} height={18} />
+                <Bone width={120} height={12} />
               </div>
-              <Bone width={96} />
-            </div>
-            <div className="date-block">
-              <div className="date-block-front" />
+              <Bone width={72} height={18} />
             </div>
           </div>
         ))}

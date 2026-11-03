@@ -11,7 +11,7 @@ import { ErrorState, MessageState } from '../components/StateViews'
 import { formatKg, formatRecordSet, formatShortDate } from '../lib/format'
 import { t } from '../lib/i18n'
 import { chooseExercise, yDomain } from '../lib/workoutLogic'
-import { ChartIcon, TrophyIcon } from '../components/Icons'
+import { ChartIcon } from '../components/Icons'
 
 const WEEKS = 8
 
@@ -137,9 +137,6 @@ function RecordHighlight({ record }: { record: PersonalRecord }) {
         </strong>
         <span>{formatShortDate(record.bestEstimated1RmDate)}</span>
       </div>
-      <span className="trophy" aria-hidden>
-        <TrophyIcon size={18} />
-      </span>
     </div>
   )
 }

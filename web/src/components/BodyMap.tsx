@@ -34,9 +34,6 @@ export function BodyMap({ side, muscles, scope, selected = null, onSelect, label
       aria-label={t.muscleMapFigure(side)}
       data-side={side}
     >
-      <g className="body-map-shadow" transform="translate(5 6)" aria-hidden>
-        <Halves paths={SILHOUETTE_SHAPES} />
-      </g>
       <g className="body-map-body" aria-hidden>
         <Halves paths={SILHOUETTE_SHAPES} />
       </g>

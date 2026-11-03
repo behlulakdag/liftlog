@@ -822,6 +822,13 @@ class ApiIntegrationTest {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.previousWorkoutId").value(first))
                 .andExpect(jsonPath("$.previousVolumeKg").value(800.0));
+
+        // The list says which routine each workout came from, so the app can tell where the program stands
+        mockMvc.perform(get("/api/v1/workouts").header(HttpHeaders.AUTHORIZATION, "Bearer " + token))
+                .andExpect(jsonPath("$.content[0].id").value(second))
+                .andExpect(jsonPath("$.content[0].routineId").value(routineId))
+                .andExpect(jsonPath("$.content[2].id").value(source))
+                .andExpect(jsonPath("$.content[2].routineId").doesNotExist());
     }
 
     private long startRoutine(String token, long routineId, String date) throws Exception {

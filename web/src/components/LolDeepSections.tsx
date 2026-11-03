@@ -171,7 +171,7 @@ const axisStyle = { fill: 'var(--text-muted)', fontSize: 11 }
 const trendFormat = (metric: TrendMetric, n: number) =>
   metric === 'kda' || metric === 'visionPerMinute' ? twoDigits(n) : metric === 'csPerMinute' ? oneDigit(n) : metric === 'killParticipation' ? percentFormat(n) : wholeFormat(n)
 
-/** One chart, one metric at a time (chips above it): a dot per game, lime for a win, red for a loss. */
+/** One chart, one metric at a time (chips above it): a dot per game, green for a win, red for a loss. */
 export function TrendChart({ trend }: { trend: LolDeepStats['trend'] }) {
   const [metric, setMetric] = useState<TrendMetric>('kda')
   // Only metrics with at least two games to connect get a chip
@@ -463,7 +463,7 @@ export function MatchupsTable({ matchups, version }: { matchups: LolMatchup[]; v
   )
 }
 
-/** A difference with its sign, lime when ahead and red when behind. */
+/** A difference with its sign, green when ahead and red when behind. */
 export function DiffValue({ value }: { value: number | null | undefined }) {
   if (value == null) return <>{DASH}</>
   const rounded = Math.round(value)

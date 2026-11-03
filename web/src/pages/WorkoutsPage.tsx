@@ -3,22 +3,26 @@ import { useEffect, useRef, useState } from 'react'
 import { Link, useViewTransitionState } from 'react-router'
 import { api } from '../api/endpoints'
 import { queryKeys } from '../api/queryKeys'
-import type { Routine, WorkoutSummary } from '../api/types'
+import type { Routine, WeeklyVolume, WorkoutSummary } from '../api/types'
 import { RecoveryNudge } from '../components/RecoveryNudge'
 import { WorkoutListSkeleton } from '../components/Skeletons'
 import { ErrorState, MessageState } from '../components/StateViews'
-import { StreakChip } from '../components/StreakChip'
 import { SwipeToDelete } from '../components/SwipeToDelete'
 import { useConfirm, useToast } from '../components/contexts'
-import { formatKg, monthShort, parseDate, weekdayShort } from '../lib/format'
+import { formatKg, formatLongDate, formatShortDate, weekdayShort } from '../lib/format'
 import { t } from '../lib/i18n'
-import { routineSummary } from '../lib/routineLogic'
+import { todayIso } from '../lib/nutrition'
+import { programCycle, type ProgramCycle } from '../lib/programCycle'
 import type { RoutineTemplate } from '../lib/routineTemplates'
 import { NewWorkoutSheet } from './NewWorkoutSheet'
 import { RoutinesSheet } from './RoutinesSheet'
 import { TemplateCards } from './RoutineTemplates'
 import { useStartRoutine } from './useStartRoutine'
 import { DumbbellIcon } from '../components/Icons'
+
+/** Three bars: two weeks back, last week and this one */
+const VOLUME_WEEKS = 3
+const NEXT_UP_EXERCISES = 3
 
 export function WorkoutsPage() {
   const queryClient = useQueryClient()
@@ -28,10 +32,11 @@ export function WorkoutsPage() {
   const [managingRoutines, setManagingRoutines] = useState(false)
   // A template tapped in the empty strip opens the Routines sheet on its preview
   const [previewTemplate, setPreviewTemplate] = useState<RoutineTemplate | null>(null)
-  // An older server has no routines endpoint: the error just hides the strip
+  // An older server has no routines endpoint: the error just hides the program section
   const routines = useQuery({ queryKey: queryKeys.routines, queryFn: api.routines, retry: false })
-  // Same for the streak: no chip on a server without the endpoint, and none before the first week counts
+  // Same for the streak and the weekly volume: no hero line on a server without them
   const streak = useQuery({ queryKey: queryKeys.streak, queryFn: api.streak, retry: false })
+  const volume = useQuery({ queryKey: [...queryKeys.stats, 'volume', VOLUME_WEEKS], queryFn: () => api.weeklyVolume(VOLUME_WEEKS), retry: false })
   // Hidden while their undo window is open; the server delete happens when the toast expires
   const [pendingDelete, setPendingDelete] = useState<Set<number>>(new Set())
 
@@ -80,20 +85,28 @@ export function WorkoutsPage() {
 
   return (
     <div className="page">
-      <header className="page-header">
-        <h1 className="page-title">{t.workoutsTitle}</h1>
-        <p className="page-subtitle">{t.workoutsSubtitle}</p>
-        {streak.data && streak.data.weeks > 0 && (
-          <StreakChip weeks={streak.data.weeks} thisWeekWorkouts={streak.data.thisWeekWorkouts} className="header-streak" />
-        )}
-        {routines.isSuccess && (
-          <button className="routines-btn" onClick={() => setManagingRoutines(true)} data-testid="manage-routines">
-            {t.routines}
+      <header className="home-header">
+        {/* The tab already says where we are, so the page title is for screen readers and the date shows instead */}
+        <h1 className="visually-hidden">{t.workoutsTitle}</h1>
+        <span className="home-date">{formatLongDate(todayIso())}</span>
+        <div className="home-header-actions">
+          {routines.isSuccess && (
+            <button className="btn btn-text" onClick={() => setManagingRoutines(true)} data-testid="manage-routines">
+              {t.routines}
+            </button>
+          )}
+          <button className="home-new" onClick={() => setCreating(true)} aria-label={t.newWorkout} data-testid="fab-new-workout">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" aria-hidden>
+              <path d="M12 5v14M5 12h14" />
+            </svg>
           </button>
-        )}
+        </div>
       </header>
 
-      {routines.data && (routines.data.length > 0 ? <RoutineStrip routines={routines.data} /> : <TemplateStrip onSelect={setPreviewTemplate} />)}
+      {volume.data && <WeekHero weeks={volume.data} streakWeeks={streak.data?.weeks ?? 0} />}
+
+      {routines.data &&
+        (routines.data.length > 0 ? <ProgramSection routines={routines.data} workouts={workouts} /> : <TemplateStrip onSelect={setPreviewTemplate} />)}
 
       {query.isPending ? (
         <WorkoutListSkeleton />
@@ -104,6 +117,7 @@ export function WorkoutsPage() {
       ) : (
         <>
           <RecoveryNudge />
+          <h2 className="home-section-title">{t.recentWorkouts}</h2>
           <div className="workout-list">
             {workouts.map((workout, index) => (
               <SwipeToDelete
@@ -121,9 +135,6 @@ export function WorkoutsPage() {
         </>
       )}
 
-      <button className="fab" onClick={() => setCreating(true)} data-testid="fab-new-workout">
-        <span className="fab-plus">+</span> {t.newWorkout}
-      </button>
       {creating && <NewWorkoutSheet routines={routines.data ?? []} offerTemplates={routines.isSuccess} onClose={() => setCreating(false)} />}
       {(managingRoutines || previewTemplate) && (
         <RoutinesSheet
@@ -138,28 +149,111 @@ export function WorkoutsPage() {
   )
 }
 
-/** "Start a routine": one chip per routine, each a tile with a lime plate offset behind it. */
-function RoutineStrip({ routines }: { routines: Routine[] }) {
-  const { start, startingId } = useStartRoutine()
+/** This week's volume as the screen's big number, last week and the streak under it, three weeks as bars beside it. */
+function WeekHero({ weeks, streakWeeks }: { weeks: WeeklyVolume[]; streakWeeks: number }) {
+  const thisWeek = weeks.at(-1)?.volumeKg ?? 0
+  const lastWeek = weeks.at(-2)?.volumeKg
+  const tallest = Math.max(1, ...weeks.map((week) => week.volumeKg))
+  const meta = [lastWeek != null ? t.lastWeekVolume(formatKg(lastWeek)) : null, streakWeeks > 0 ? t.streakWeeks(streakWeeks) : null]
   return (
-    <section className="routine-strip" aria-label={t.startWithRoutine}>
-      <h2 className="routine-strip-title">{t.startWithRoutine}</h2>
-      <div className="routine-chips">
-        {routines.map((routine) => (
+    <section className="week-hero" data-testid="week-hero">
+      <div className="week-hero-text">
+        <span className="week-hero-label">{t.weekLifted}</span>
+        <span className="week-hero-value">
+          <strong className="num">{formatKg(thisWeek)}</strong> kg
+        </span>
+        <span className="week-hero-meta">{meta.filter(Boolean).join(' · ')}</span>
+      </div>
+      <div className="week-hero-bars" role="img" aria-label={t.weeksVolumeAria}>
+        {weeks.map((week, index) => (
+          <span
+            key={week.weekStart}
+            className={index === weeks.length - 1 ? 'current' : undefined}
+            style={{ height: `${Math.max(8, (week.volumeKg / tallest) * 100)}%` }}
+          />
+        ))}
+      </div>
+    </section>
+  )
+}
+
+/** Where the program stands (tap a day to start it) and the next routine with a big Start. */
+function ProgramSection({ routines, workouts }: { routines: Routine[]; workouts: WorkoutSummary[] }) {
+  const { start, startingId } = useStartRoutine()
+  const cycle = programCycle(routines, workouts)
+  if (!cycle) return null
+  return (
+    <>
+      {routines.length > 1 && <CycleStrip cycle={cycle} startingId={startingId} onStart={start} />}
+      <NextUpCard routine={cycle.next} starting={startingId === cycle.next.id} disabled={startingId !== null} onStart={() => start(cycle.next)} />
+    </>
+  )
+}
+
+function CycleStrip({ cycle, startingId, onStart }: { cycle: ProgramCycle; startingId: number | null; onStart: (routine: Routine) => void }) {
+  return (
+    <section className="cycle" aria-label={t.startWithRoutine}>
+      <div className="home-section-head">
+        <h2 className="home-section-title">{t.programCycle}</h2>
+        <span className="muted">{t.cycleRound(cycle.doneCount, cycle.steps.length)}</span>
+      </div>
+      <div className="cycle-steps">
+        {cycle.steps.map((step, index) => (
           <button
-            key={routine.id}
-            className={startingId === routine.id ? 'routine-chip starting' : 'routine-chip'}
-            onClick={() => start(routine)}
+            key={step.routine.id}
+            className={`cycle-step ${step.state}`}
+            onClick={() => onStart(step.routine)}
             disabled={startingId !== null}
-            title={routineSummary(routine.exercises)}
+            aria-label={t.startRoutineNamed(step.routine.name)}
           >
-            <span className="routine-chip-front">
-              <strong>{routine.name}</strong>
-              <small>{startingId === routine.id ? t.starting : t.exercises(routine.exercises.length)}</small>
-            </span>
+            <span className="cycle-track" aria-hidden />
+            <strong>{shortRoutineName(step.routine.name)}</strong>
+            <small>{stepCaption(step.state, step.doneOn, index, startingId === step.routine.id)}</small>
           </button>
         ))}
       </div>
+    </section>
+  )
+}
+
+function stepCaption(state: ProgramCycle['steps'][number]['state'], doneOn: string | null, index: number, starting: boolean) {
+  if (starting) return t.starting
+  if (state === 'done' && doneOn) return t.cycleDone(formatShortDate(doneOn))
+  if (state === 'next') return t.cycleNext
+  return t.cycleDay(index + 1)
+}
+
+/** "Day 2 · Lower A" reads as "Lower A" in a narrow cell; a name without " · " stays whole. */
+function shortRoutineName(name: string) {
+  const parts = name.split(' · ')
+  return parts.length > 1 ? parts.slice(1).join(' · ') : name
+}
+
+function NextUpCard({ routine, starting, disabled, onStart }: { routine: Routine; starting: boolean; disabled: boolean; onStart: () => void }) {
+  const shown = routine.exercises.slice(0, NEXT_UP_EXERCISES)
+  const more = routine.exercises.length - shown.length
+  return (
+    <section className="next-up" data-testid="next-up">
+      <div className="next-up-head">
+        <span className="next-up-label">{t.upNext}</span>
+        <h2 className="next-up-name">{routine.name}</h2>
+      </div>
+      {shown.length > 0 && (
+        <ul className="next-up-exercises">
+          {shown.map((exercise) => (
+            <li key={exercise.exerciseId}>
+              <span>{exercise.name}</span>
+              <span className="num muted">
+                {exercise.sets} × {exercise.targetReps}
+              </span>
+            </li>
+          ))}
+          {more > 0 && <li className="muted">{t.moreExercises(more)}</li>}
+        </ul>
+      )}
+      <button className="btn btn-primary btn-block" onClick={onStart} disabled={disabled} data-testid="next-up-start">
+        {starting ? t.starting : t.startNow}
+      </button>
     </section>
   )
 }
@@ -177,31 +271,25 @@ function TemplateStrip({ onSelect }: { onSelect: (template: RoutineTemplate) => 
 
 function WorkoutCard({ workout, index }: { workout: WorkoutSummary; index: number }) {
   const to = `/workouts/${workout.id}`
-  // Only the tapped card gets the shared name, so it morphs into the detail page's summary card
+  // Only the tapped row gets the shared name, so it morphs into the detail page's summary card
   const opening = useViewTransitionState(to)
   return (
     <Link
       viewTransition
       to={to}
       className="workout-card"
-      // Stagger the entrance of the first few cards; later pages appear immediately
+      // Stagger the entrance of the first few rows; later pages appear immediately
       style={{ animationDelay: `${Math.min(index, 8) * 40}ms` }}
       draggable={false}
     >
       <div className="workout-card-body" style={{ viewTransitionName: opening ? 'workout-hero' : undefined }}>
-        <h3 className="workout-card-title">{workout.notes ?? t.untitledWorkout}</h3>
-        <div className="chips">
-          <span className="chip">{t.sets(workout.setCount)}</span>
-          <span className="chip">{t.exercises(workout.exerciseCount)}</span>
+        <div className="workout-card-text">
+          <h3 className="workout-card-title">{workout.notes ?? t.untitledWorkout}</h3>
+          <span className="workout-card-meta">
+            {weekdayShort(workout.workoutDate)} {formatShortDate(workout.workoutDate)} · {t.sets(workout.setCount)}
+          </span>
         </div>
-        <span className="accent num">{t.volume(formatKg(workout.totalVolumeKg))}</span>
-      </div>
-      <div className="date-block" aria-hidden>
-        <div className="date-block-front">
-          <small>{weekdayShort(workout.workoutDate)}</small>
-          <strong>{parseDate(workout.workoutDate).getDate()}</strong>
-          <small>{monthShort(workout.workoutDate)}</small>
-        </div>
+        <span className="workout-card-volume num">{formatKg(workout.totalVolumeKg)} kg</span>
       </div>
     </Link>
   )

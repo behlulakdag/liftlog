@@ -1,34 +1,36 @@
 /*
- * "Training equipment" look: near-black, one lime signal color, condensed type for titles and numbers,
- * hairline borders and tight corners. Flat on purpose: no glows or gradients, so numbers carry the screen.
+ * Calm and mature: a soft charcoal (not pure black) with graded surfaces, one muted green accent, the phone's own
+ * system font in sentence case, thin borders and no decorative shadows. Hierarchy comes from size, weight and
+ * spacing; the numbers stay the loudest thing on the screen.
  */
 :root {
   color-scheme: dark;
-  --primary: #c8ff2e;
-  --on-primary: #0a0a0b;
-  --primary-container: #232d0c;
-  --on-primary-container: #c8ff2e;
-  --secondary-container: #232327;
+  --primary: #5cbf83;
+  --on-primary: #08200f;
+  --primary-container: #1b3224;
+  --on-primary-container: #96dcb0;
+  --secondary-container: #2a2b30;
   --on-secondary-container: #e4e4e7;
-  --tertiary: #38d3ff;
-  --bg: #0a0a0b;
-  --surface-low: #111113;
-  --surface: #161618;
-  --surface-high: #1e1e21;
-  --surface-highest: #29292d;
-  --text: #f4f4f5;
-  --text-muted: #8b8b94;
-  --outline: #3a3a40;
-  --outline-variant: #242428;
-  --error: #ff5a4e;
-  --on-error: #0a0a0b;
-  --scrim: rgb(0 0 0 / 65%);
+  --tertiary: #79aee0;
+  --bg: #151618;
+  --surface-low: #1a1b1e;
+  --surface: #1f2023;
+  --surface-high: #27282c;
+  --surface-highest: #313237;
+  --text: #ececee;
+  --text-muted: #9b9ca4;
+  --outline: #3b3c42;
+  --outline-variant: #2b2c31;
+  --error: #f07167;
+  --on-error: #1a0b09;
+  --scrim: rgb(0 0 0 / 55%);
 
-  --radius-s: 4px;
-  --radius-m: 8px;
-  --radius-l: 10px;
-  --radius-xl: 12px;
-  --font-display: 'Barlow Condensed', 'Arial Narrow', system-ui, sans-serif;
+  --radius-s: 6px;
+  --radius-m: 10px;
+  --radius-l: 14px;
+  --radius-xl: 18px;
+  --font-text: -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+  --font-display: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
   --nav-height: 64px;
   --safe-top: env(safe-area-inset-top, 0px);
   --safe-bottom: env(safe-area-inset-bottom, 0px);
@@ -36,7 +38,7 @@
   /* Overshooting curve for things that should feel physical (nav pill, pressed buttons) */
   --ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
 
-  font-family: 'Barlow', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+  font-family: var(--font-text);
   background: var(--bg);
   color: var(--text);
   -webkit-font-smoothing: antialiased;
@@ -46,26 +48,25 @@
 @media (prefers-color-scheme: light) {
   :root {
     color-scheme: light;
-    /* Lime cannot carry text on white, so light mode darkens it to an olive with the same hue */
-    --primary: #4d7c00;
+    --primary: #1f7a45;
     --on-primary: #ffffff;
-    --primary-container: #e6f5c4;
-    --on-primary-container: #2a4400;
-    --secondary-container: #e7e7e3;
-    --on-secondary-container: #0a0a0b;
-    --tertiary: #0077a8;
-    --bg: #f3f3f0;
-    --surface-low: #fafaf8;
+    --primary-container: #d6eedd;
+    --on-primary-container: #124227;
+    --secondary-container: #ebebe8;
+    --on-secondary-container: #17181a;
+    --tertiary: #2f6eab;
+    --bg: #f4f4f2;
+    --surface-low: #fafaf9;
     --surface: #ffffff;
-    --surface-high: #ededea;
-    --surface-highest: #e2e2de;
-    --text: #0a0a0b;
-    --text-muted: #5c5c63;
-    --outline: #b5b5ae;
-    --outline-variant: #dcdcd6;
-    --error: #c62828;
+    --surface-high: #efefec;
+    --surface-highest: #e4e4e0;
+    --text: #17181a;
+    --text-muted: #63646b;
+    --outline: #c4c4be;
+    --outline-variant: #e1e1dc;
+    --error: #c0392b;
     --on-error: #ffffff;
-    --scrim: rgb(0 0 0 / 35%);
+    --scrim: rgb(0 0 0 / 30%);
   }
 }
 
@@ -104,16 +105,23 @@ select {
   color: inherit;
 }
 
-/* Numbers are the point of the app: condensed, tabular, slightly heavier than the text around them */
+/* Numbers are the point of the app: tabular so columns line up, a little heavier than the text around them */
 .num {
-  font-family: var(--font-display);
   font-variant-numeric: tabular-nums;
-  font-weight: 700;
-  letter-spacing: 0.2px;
+  font-weight: 600;
 }
 
 .muted {
   color: var(--text-muted);
+}
+
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
 }
 
 /* A real damped spring where linear() is supported; the cubic-bezier above is the fallback */
