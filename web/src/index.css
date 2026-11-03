@@ -115,6 +115,15 @@ select {
   color: var(--text-muted);
 }
 
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
 /* A real damped spring where linear() is supported; the cubic-bezier above is the fallback */
 @supports (transition-timing-function: linear(0, 1)) {
   :root {

@@ -6,6 +6,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import type { Exercise, Routine } from '../api/types'
 import { ConfirmProvider } from '../components/Confirm'
 import { ToastContext, type ToastOptions } from '../components/contexts'
+import { formatKg, formatShortDate } from '../lib/format'
 import { t } from '../lib/i18n'
 import { todayIso } from '../lib/nutrition'
 import { fakeServer, jsonResponse } from '../test/fakeServer'
@@ -72,8 +73,10 @@ describe('routine strip', () => {
     })
     const user = renderWorkouts()
 
-    const strip = await screen.findByRole('region', { name: t.startWithRoutine })
-    await user.click(within(strip).getByRole('button', { name: /Push A/ }))
+    // One routine is its own cycle: no track, just the next-up card with its Start
+    const nextUp = await screen.findByTestId('next-up')
+    expect(nextUp).toHaveTextContent('Push A')
+    await user.click(within(nextUp).getByRole('button', { name: t.startNow }))
 
     expect(await screen.findByText('opened workout 42')).toBeInTheDocument()
     expect(calls.filter((c) => c.path === '/api/v1/routines/5/start')).toEqual([{ method: 'POST', path: '/api/v1/routines/5/start', body: { workoutDate: todayIso() } }])
@@ -90,8 +93,7 @@ describe('routine strip', () => {
     const toast = vi.fn()
     const user = renderWorkouts(toast)
 
-    const strip = await screen.findByRole('region', { name: t.startWithRoutine })
-    await user.click(within(strip).getByRole('button', { name: /Push A/ }))
+    await user.click(within(await screen.findByTestId('next-up')).getByRole('button', { name: t.startNow }))
 
     await waitFor(() => expect(toast).toHaveBeenCalledWith({ message: t.startWorkoutOnline }))
     expect(screen.queryByText(/opened workout/)).not.toBeInTheDocument()
@@ -101,7 +103,7 @@ describe('routine strip', () => {
     fakeServer({ 'GET /api/v1/workouts': () => jsonResponse(200, emptyPage) })
     renderWorkouts()
     expect(await screen.findByText(t.workoutsEmptyTitle)).toBeInTheDocument()
-    await waitFor(() => expect(screen.queryByRole('region', { name: t.startWithRoutine })).not.toBeInTheDocument())
+    await waitFor(() => expect(screen.queryByTestId('next-up')).not.toBeInTheDocument())
     expect(screen.queryByTestId('manage-routines')).not.toBeInTheDocument()
   })
 
@@ -124,7 +126,7 @@ describe('routine strip', () => {
       'POST /api/v1/routines/5/start': () => jsonResponse(201, { id: 43, workoutDate: '2026-10-18', notes: 'Push A', totalVolumeKg: 0, sets: [], routineId: 5 }),
     })
     const user = renderWorkouts()
-    await screen.findByRole('region', { name: t.startWithRoutine })
+    await screen.findByTestId('next-up')
     await user.click(screen.getByTestId('fab-new-workout'))
 
     const sheet = screen.getByRole('dialog', { name: t.newWorkout })
@@ -189,8 +191,7 @@ describe('templates when there are no routines yet', () => {
     await user.click(await within(sheet).findByTestId('template-add'))
 
     await waitFor(() => expect(calls.find((c) => c.method === 'POST')?.body).toEqual(lowerABody))
-    const strip = await screen.findByRole('region', { name: t.startWithRoutine })
-    expect(within(strip).getByRole('button', { name: new RegExp(t.templateNames.lowerA) })).toBeInTheDocument()
+    expect(await screen.findByTestId('next-up')).toHaveTextContent(t.templateNames.lowerA)
     expect(screen.queryByRole('region', { name: t.readyTemplates })).not.toBeInTheDocument()
   })
 
@@ -220,45 +221,69 @@ describe('templates when there are no routines yet', () => {
   })
 })
 
-describe('weekly streak chip', () => {
-  it('shows the streak and this week count in the header', async () => {
+describe('week hero', () => {
+  const weeks = [
+    { weekStart: '2026-10-19', volumeKg: 2144, setCount: 9 },
+    { weekStart: '2026-10-26', volumeKg: 11270.9, setCount: 18 },
+    { weekStart: '2026-11-02', volumeKg: 1743, setCount: 6 },
+  ]
+
+  it('shows this week as the big number, with last week and the streak under it', async () => {
     fakeServer({
       'GET /api/v1/workouts': () => jsonResponse(200, emptyPage),
-      'GET /api/v1/stats/streak': () => jsonResponse(200, { weeks: 4, thisWeekWorkouts: 2, longestWeeks: 6 }),
+      'GET /api/v1/stats/volume': () => jsonResponse(200, weeks),
+      'GET /api/v1/stats/streak': () => jsonResponse(200, { weeks: 3, thisWeekWorkouts: 1, longestWeeks: 3 }),
     })
     renderWorkouts()
 
-    const chip = await screen.findByRole('img', { name: t.streakAria(4, 2) })
-    expect(chip).toHaveTextContent('4')
-    expect(chip).toHaveTextContent(t.streakLabel)
-    expect(chip).toHaveTextContent(t.streakThisWeek(2))
+    const hero = await screen.findByTestId('week-hero')
+    expect(hero).toHaveTextContent(formatKg(1743))
+    await waitFor(() => expect(hero).toHaveTextContent(`${t.lastWeekVolume(formatKg(11270.9))} · ${t.streakWeeks(3)}`))
+    expect(within(hero).getByRole('img', { name: t.weeksVolumeAria })).toBeInTheDocument()
   })
 
-  it('has no tag before the first workout of the week', async () => {
+  it('leaves the streak out without one, and the hero out on servers without weekly volume', async () => {
     fakeServer({
       'GET /api/v1/workouts': () => jsonResponse(200, emptyPage),
-      'GET /api/v1/stats/streak': () => jsonResponse(200, { weeks: 3, thisWeekWorkouts: 0, longestWeeks: 3 }),
-    })
-    renderWorkouts()
-
-    const chip = await screen.findByRole('img', { name: t.streakAria(3, 0) })
-    expect(chip).not.toHaveTextContent(t.streakThisWeek(0))
-  })
-
-  it('stays hidden without a streak or on servers without the endpoint', async () => {
-    fakeServer({
-      'GET /api/v1/workouts': () => jsonResponse(200, emptyPage),
+      'GET /api/v1/stats/volume': () => jsonResponse(200, weeks),
       'GET /api/v1/stats/streak': () => jsonResponse(200, { weeks: 0, thisWeekWorkouts: 0, longestWeeks: 2 }),
     })
     renderWorkouts()
-    expect(await screen.findByText(t.workoutsEmptyTitle)).toBeInTheDocument()
-    await waitFor(() => expect(screen.queryByRole('img', { name: /./ })).not.toBeInTheDocument())
+    const hero = await screen.findByTestId('week-hero')
+    await waitFor(() => expect(hero).toHaveTextContent(t.lastWeekVolume(formatKg(11270.9))))
+    expect(hero).not.toHaveTextContent(t.streakWeeks(0))
     cleanup()
 
     fakeServer({ 'GET /api/v1/workouts': () => jsonResponse(200, emptyPage) })
     renderWorkouts()
     expect(await screen.findByText(t.workoutsEmptyTitle)).toBeInTheDocument()
-    await waitFor(() => expect(screen.queryByRole('img', { name: /./ })).not.toBeInTheDocument())
+    expect(screen.queryByTestId('week-hero')).not.toBeInTheDocument()
+  })
+})
+
+describe('program cycle', () => {
+  const day = (id: number, name: string): Routine => ({ id, name, exercises: [{ exerciseId: id, name: `Move ${id}`, bodyweight: false, sets: 3, targetReps: 8 }] })
+  const days = [day(1, 'Gün 1 · Üst A'), day(2, 'Gün 2 · Alt A'), day(3, 'Gün 3 · Üst B'), day(4, 'Gün 4 · Alt B')]
+  const done = { id: 50, workoutDate: '2026-11-02', notes: 'Gün 1 · Üst A', setCount: 6, exerciseCount: 2, totalVolumeKg: 1743, routineId: 1 }
+
+  it('marks the days done this round, offers the next one and starts any day from the track', async () => {
+    const calls = fakeServer({
+      'GET /api/v1/workouts': () => jsonResponse(200, { ...emptyPage, content: [done], totalElements: 1, totalPages: 1 }),
+      'GET /api/v1/routines': () => jsonResponse(200, days),
+      'POST /api/v1/routines/3/start': () => jsonResponse(201, { id: 61, workoutDate: '2026-11-03', notes: 'Gün 3 · Üst B', totalVolumeKg: 0, sets: [], routineId: 3 }),
+    })
+    const user = renderWorkouts()
+
+    const cycle = await screen.findByRole('region', { name: t.startWithRoutine })
+    expect(cycle).toHaveTextContent(t.cycleRound(1, 4))
+    expect(within(cycle).getByRole('button', { name: t.startRoutineNamed('Gün 1 · Üst A') })).toHaveTextContent(t.cycleDone(formatShortDate('2026-11-02')))
+    expect(within(cycle).getByRole('button', { name: t.startRoutineNamed('Gün 2 · Alt A') })).toHaveTextContent(t.cycleNext)
+    expect(screen.getByTestId('next-up')).toHaveTextContent('Gün 2 · Alt A')
+
+    // Any day can be started out of order straight from the track
+    await user.click(within(cycle).getByRole('button', { name: t.startRoutineNamed('Gün 3 · Üst B') }))
+    expect(await screen.findByText('opened workout 61')).toBeInTheDocument()
+    expect(calls.find((c) => c.path === '/api/v1/routines/3/start')?.body).toEqual({ workoutDate: todayIso() })
   })
 })
 

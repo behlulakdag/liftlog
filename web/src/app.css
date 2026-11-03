@@ -458,8 +458,7 @@
 .workout-list {
   display: flex;
   flex-direction: column;
-  gap: 14px;
-  padding-bottom: 72px;
+  padding-bottom: 24px;
 }
 
 .workout-card {
@@ -475,29 +474,6 @@
     opacity: 0;
     transform: translateY(12px) scale(0.98);
   }
-}
-
-.workout-card-body {
-  min-height: 92px;
-  padding: 14px 16px 14px 84px;
-  border: 1px solid var(--outline-variant);
-  border-radius: var(--radius-l);
-  background: var(--surface);
-  transition: background 0.15s;
-}
-
-.workout-card:active .workout-card-body {
-  background: var(--surface-high);
-}
-
-.workout-card-title {
-  margin: 0;
-  font-family: var(--font-display);
-  font-size: 18px;
-  font-weight: 600;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
 }
 
 .chips {
@@ -522,45 +498,7 @@
 }
 
 /* The workout's volume is the number a list scan looks for, so it reads a size up from the chips */
-.workout-card .accent {
-  font-size: 19px;
-}
-
 /* The date as a calendar tile inside the card's left side */
-.date-block {
-  position: absolute;
-  left: 14px;
-  top: 14px;
-  width: 56px;
-  height: 64px;
-}
-
-.date-block-front {
-  position: absolute;
-  inset: 0;
-  border-radius: var(--radius-m);
-  background: var(--surface-highest);
-  color: var(--text);
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  line-height: 1.05;
-}
-
-.date-block-front small {
-  font-size: 11px;
-  font-weight: 600;
-  opacity: 0.8;
-}
-
-.date-block-front strong {
-  font-family: var(--font-display);
-  font-size: 24px;
-  font-weight: 600;
-  font-variant-numeric: tabular-nums;
-}
-
 /* ---------- Workout detail ---------- */
 .summary {
   position: relative;
@@ -1683,12 +1621,6 @@ body:has(.rest-timer) .toast {
 .filter-chip,
 .set-row,
 .exercise-item,
-.workout-card-body {
-  transition-property: transform, background, filter, border-color;
-  transition-duration: 0.45s;
-  transition-timing-function: var(--ease-spring);
-}
-
 .btn:active,
 .fab:active,
 .icon-btn:active,
@@ -1700,12 +1632,6 @@ body:has(.rest-timer) .toast {
 
 .set-row:active,
 .exercise-item:active,
-.workout-card:active .workout-card-body {
-  transform: scale(0.985);
-  transition-duration: 0.08s;
-  transition-timing-function: ease-out;
-}
-
 .fab-plus {
   display: inline-block;
   transition: transform 0.45s var(--ease-spring);
@@ -4607,19 +4533,6 @@ a.scoreboard-name {
 /* ---------- Routines and workout mode ---------- */
 
 /* Level with the page title, at the header's right */
-.routines-btn {
-  position: absolute;
-  right: 4px;
-  top: 26px;
-  height: 34px;
-  padding: 0 14px;
-  border-radius: 17px;
-  background: var(--surface-high);
-  color: var(--text);
-  font-size: 14px;
-  font-weight: 600;
-}
-
 .routine-strip {
   margin: 0 0 14px;
 }
@@ -4631,58 +4544,6 @@ a.scoreboard-name {
   font-weight: 500;
 }
 
-.routine-chips {
-  display: flex;
-  gap: 10px;
-  overflow-x: auto;
-  padding-bottom: 4px;
-  scrollbar-width: none;
-}
-
-.routine-chip {
-  position: relative;
-  flex: none;
-  text-align: left;
-}
-
-.routine-chip-front {
-  position: relative;
-  display: flex;
-  flex-direction: column;
-  gap: 2px;
-  min-width: 120px;
-  max-width: 200px;
-  padding: 10px 14px;
-  border: 1px solid var(--outline-variant);
-  border-radius: var(--radius-m);
-  background: var(--surface-high);
-  transition: transform 0.2s var(--ease-spring);
-}
-
-.routine-chip-front strong {
-  font-family: var(--font-display);
-  font-size: 16px;
-  font-weight: 600;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-
-.routine-chip-front small {
-  color: var(--text-muted);
-  font-size: 13px;
-  font-weight: 400;
-}
-
-
-.routine-chip:active:not(:disabled) .routine-chip-front,
-.routine-chip.starting .routine-chip-front {
-  transform: scale(0.98);
-}
-
-.routine-chip:disabled:not(.starting) {
-  opacity: 0.5;
-}
 
 .routine-template {
   border: 1px solid var(--outline-variant);
@@ -5355,10 +5216,6 @@ a.scoreboard-name {
 }
 
 /* On the Workouts header the streak gets its own line under the subtitle */
-.header-streak {
-  margin-top: 12px;
-}
-
 .set-groups:has(+ .finish-btn) {
   padding-bottom: 12px;
 }
@@ -7495,4 +7352,275 @@ body:has(.rest-timer) .finish-btn {
   height: 32px;
   padding: 0 10px;
   font-size: 13px;
+}
+
+/* ---------- Workouts home ---------- */
+/* Today's date as a quiet title, Routines and a round + on the right */
+.home-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 20px 4px 8px;
+}
+
+.home-date {
+  margin: 0;
+  color: var(--text-muted);
+  font-size: 15px;
+  font-weight: 500;
+}
+
+.home-header-actions {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.home-new {
+  display: grid;
+  place-items: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: var(--surface-high);
+  color: var(--text);
+}
+
+.home-new:active {
+  transform: scale(0.94);
+}
+
+/* The week's volume is the loudest thing on the screen; three bars beside it give the trend */
+.week-hero {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 8px 4px 24px;
+}
+
+.week-hero-text {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 0;
+}
+
+.week-hero-label {
+  color: var(--text-muted);
+  font-size: 15px;
+  font-weight: 600;
+}
+
+.week-hero-value {
+  color: var(--text-muted);
+  font-size: 22px;
+  font-weight: 600;
+}
+
+.week-hero-value strong {
+  color: var(--text);
+  font-size: 58px;
+  font-weight: 700;
+  line-height: 1;
+  letter-spacing: -2px;
+}
+
+.week-hero-meta {
+  color: var(--text-muted);
+  font-size: 14px;
+}
+
+.week-hero-bars {
+  flex: none;
+  display: flex;
+  align-items: flex-end;
+  gap: 6px;
+  height: 64px;
+}
+
+.week-hero-bars span {
+  width: 14px;
+  border-radius: 4px;
+  background: var(--surface-highest);
+}
+
+.week-hero-bars span.current {
+  background: var(--primary);
+}
+
+.home-section-head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 0 4px;
+  font-size: 13px;
+}
+
+.home-section-title {
+  margin: 0 4px 10px;
+  color: var(--text-muted);
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.home-section-head .home-section-title {
+  margin: 0;
+}
+
+/* The program as a track: a bar per day, filled when done, white for the one that is next */
+.cycle {
+  margin-bottom: 18px;
+}
+
+.cycle-steps {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 6px;
+  margin-top: 10px;
+}
+
+.cycle-step {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  min-width: 0;
+  min-height: 44px;
+  padding: 0 0 4px;
+  text-align: left;
+}
+
+.cycle-step:disabled {
+  cursor: default;
+}
+
+.cycle-track {
+  height: 6px;
+  border-radius: 3px;
+  background: var(--surface-highest);
+}
+
+.cycle-step.done .cycle-track {
+  background: var(--primary);
+}
+
+.cycle-step.next .cycle-track {
+  background: var(--text);
+}
+
+.cycle-step strong {
+  overflow: hidden;
+  font-size: 15px;
+  font-weight: 600;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.cycle-step.later strong {
+  color: var(--text-muted);
+}
+
+.cycle-step small {
+  color: var(--text-muted);
+  font-size: 12px;
+}
+
+.cycle-step.next small {
+  color: var(--text);
+}
+
+/* The one card on the screen: what to do next and a big Start */
+.next-up {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  margin-bottom: 28px;
+  padding: 18px;
+  border-radius: var(--radius-xl);
+  background: var(--surface);
+}
+
+.next-up-head {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.next-up-label {
+  color: var(--text-muted);
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.next-up-name {
+  margin: 0;
+  font-size: 24px;
+  font-weight: 700;
+  letter-spacing: -0.4px;
+}
+
+.next-up-exercises {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  font-size: 15px;
+}
+
+.next-up-exercises li {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.next-up .btn-block {
+  min-height: 52px;
+  border-radius: 26px;
+  font-size: 17px;
+}
+
+/* History as plain rows with hairlines: the title and when on the left, the volume on the right */
+.workout-card-body {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 12px 4px;
+  border-bottom: 1px solid var(--outline-variant);
+  background: var(--bg);
+  transition: background 0.15s;
+}
+
+.workout-card:active .workout-card-body {
+  background: var(--surface-low);
+}
+
+.workout-card-text {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+
+.workout-card-title {
+  margin: 0;
+  overflow: hidden;
+  font-size: 16px;
+  font-weight: 600;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.workout-card-meta {
+  color: var(--text-muted);
+  font-size: 13px;
+}
+
+.workout-card-volume {
+  flex: none;
+  font-size: 17px;
 }
