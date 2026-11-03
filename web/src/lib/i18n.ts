@@ -27,6 +27,8 @@ const en = {
   save: 'Save',
   delete: 'Delete',
   retry: 'Retry',
+  language: 'Language',
+  languageDevice: 'Phone',
   goBack: 'Go back',
   goHome: 'Home',
   reload: 'Reload',
@@ -798,6 +800,8 @@ const tr: Strings = {
   save: 'Kaydet',
   delete: 'Sil',
   retry: 'Tekrar dene',
+  language: 'Dil',
+  languageDevice: 'Telefon',
   goBack: 'Geri dön',
   goHome: 'Ana sayfa',
   reload: 'Yenile',
@@ -1537,7 +1541,33 @@ const tr: Strings = {
   muscleGroups: { Legs: 'Bacak', Back: 'Sırt', Chest: 'Göğüs', Shoulders: 'Omuz', Arms: 'Kol', Core: 'Karın', Other: 'Diğer' },
 }
 
-export const locale = navigator.language || 'en'
+/** "device" follows the phone's language; the other two are a choice made on the Profile page. */
+export type LanguageChoice = 'device' | 'tr' | 'en'
+const LANGUAGE_KEY = 'liftlog.language'
+
+/** Read once at start: every string below is picked at import time, so a change takes a reload. */
+export function storedLanguage(): LanguageChoice {
+  try {
+    const value = globalThis.localStorage?.getItem(LANGUAGE_KEY)
+    return value === 'tr' || value === 'en' ? value : 'device'
+  } catch {
+    // Private mode or blocked storage: the device language still works
+    return 'device'
+  }
+}
+
+export function saveLanguage(choice: LanguageChoice) {
+  try {
+    if (choice === 'device') globalThis.localStorage?.removeItem(LANGUAGE_KEY)
+    else globalThis.localStorage?.setItem(LANGUAGE_KEY, choice)
+  } catch {
+    // Nothing to keep it in; the reload falls back to the device language
+  }
+}
+
+export const languageChoice = storedLanguage()
+// Numbers and dates follow the chosen language too, so an English page writes 1.5, not 1,5
+export const locale = languageChoice === 'tr' ? 'tr-TR' : languageChoice === 'en' ? 'en-US' : navigator.language || 'en'
 const isTurkish = locale.toLowerCase().startsWith('tr')
 export const t: Strings = isTurkish ? tr : en
 // text-transform: uppercase uses the page language: with lang="en" a Turkish "i" became "I" instead of "İ"

@@ -8130,3 +8130,21 @@ body:has(.rest-timer) .finish-btn {
   justify-content: center;
   gap: 10px;
 }
+
+.language-card .info-row {
+  align-items: center;
+  gap: 12px;
+}
+
+.language-options {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: 6px;
+}
+
+.language-options .filter-chip {
+  height: 32px;
+  padding: 0 10px;
+  font-size: 13px;
+}
