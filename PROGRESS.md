@@ -663,3 +663,26 @@ yüzünden her yeni istek limiter'dan geçiyor ve sonuçlar saklanıp tembelce y
 **Sıradaki adımlar:**
 1. PR'ı birleştir, canlıda kontrol et.
 2. Android'de aynı şablonlar ve dil seçici (Android kullanılmıyor, gerekirse).
+
+## 2026-11-03 — Sakin tasarım (`feature/calm-design`, yalnızca web)
+
+- Behlül arayüzü "çok yapay zeka" buldu; yön: sade ve olgun. Genel "kırık siluet" kuralı LiftLog arayüzünde
+  esnetildi: katman ve detay yalnızca hiyerarşi için.
+- Renkler: simsiyah yerine yumuşak kömür grisi, tek ve kısık yeşil vurgu (#7fc496 / açıkta #2e7a4b), su ve protein
+  için kısık mavi, makro ve kas haritası renkleri yumuşatıldı (yağ artık proteinle aynı mavi değil).
+- Yazı: Barlow / Barlow Condensed kaldırıldı, telefonun sistem yazı tipi; zorunlu büyük harfler ve harf aralıkları
+  gitti, başlıklar cümle düzeninde ve yarı kalın.
+- Süsler: 57 kaydırılmış gölge plakası, 21 sahte arka plaka (`::before`/`::after`), 31 kenar şeridi, başlık üstü
+  çizgi, kenara asılı 19 etiket (akışa indi), üst üste kare boş durum ikonu (tek yuvarlak oldu), kas haritasının
+  kaydırılmış gölgesi kaldırıldı.
+- Yerleşim: antrenman kartında tarih kartın içinde, antrenman özetinde toplam hacim kartın içinde, kalori/protein
+  halkaları yan yana, profil fotoğrafı yuvarlak ve kartın içinde, "Canlı" rozeti oyuncu kartında kendi satırında,
+  istatistik grup başlıkları düz yazı + renkli nokta, "Yeni antrenman" düğmesi yumuşak gölgeli hap.
+- Doğrulama: web 524 test, tsc, lint, build; yerelde 375 px'te Antrenman, antrenman detayı, Beslenme, İlerleme,
+  Profil, Oyun ve oyuncu sayfası koyu temada, Antrenman açık temada bakıldı; bir dedektörle sayfalarda kalan
+  sözde-öğe plakası taranıp sıfırlandı.
+
+**Sıradaki adımlar:**
+1. PR'ı birleştir; telefonda bak.
+2. Uygulama simgesi ve favicon hâlâ eski koyu/gri; istenirse yeni renge uyarla.
+3. Taranmayan ekranlar (paylaşım kartı, maç sayfası, grup, tarayıcı) telefonda gözle kontrol.
