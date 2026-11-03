@@ -288,7 +288,6 @@ export function WorkoutDetailPage() {
       data-muscle={muscleOf(group.exerciseId) ?? undefined}
       style={{ animationDelay: `${index * 40}ms` }}
     >
-      <div className="exercise-rail" aria-hidden />
       <div className="exercise-group-body">
         <h3 className="exercise-group-title">
           {group.exerciseName}
@@ -452,31 +451,21 @@ interface SummaryProps {
 
 function Summary({ date, notes, setCount, exerciseCount, volume, fromRoutine }: SummaryProps) {
   return (
-    <div className="summary">
-      <div className="summary-card" style={{ viewTransitionName: 'workout-hero' }}>
+    // Like the Workouts home: the day's volume is the big number, the counts a quiet line under it
+    <div className="summary" style={{ viewTransitionName: 'workout-hero' }}>
+      <div className="summary-date">
+        {formatLongDate(date)}
         {fromRoutine && <span className="summary-routine-tag">{t.routineTag}</span>}
-        <div className="summary-date">{formatLongDate(date)}</div>
-        <h2 className="summary-title">{notes ?? t.untitledWorkout}</h2>
-        <div className="summary-stats">
-          <div>
-            <div className="stat-value">
-              <CountUp value={setCount} format={String} durationMs={500} />
-            </div>
-            <div className="stat-label">{t.labelSets}</div>
-          </div>
-          <div>
-            <div className="stat-value">
-              <CountUp value={exerciseCount} format={String} durationMs={500} />
-            </div>
-            <div className="stat-label">{t.labelExercises}</div>
-          </div>
-        </div>
       </div>
-      <div className="volume-badge">
-        <small>{t.totalVolume}</small>
-        <strong>
-          <CountUp value={volume} format={(n) => t.kg(formatKg(n))} />
-        </strong>
+      <h2 className="summary-title">{notes ?? t.untitledWorkout}</h2>
+      <div className="summary-volume" aria-label={t.totalVolume}>
+        <strong className="num">
+          <CountUp value={volume} format={(n) => formatKg(n)} />
+        </strong>{' '}
+        kg
+      </div>
+      <div className="summary-meta">
+        {t.sets(setCount)} · {t.exercises(exerciseCount)}
       </div>
     </div>
   )

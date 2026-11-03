@@ -501,114 +501,63 @@
 /* The date as a calendar tile inside the card's left side */
 /* ---------- Workout detail ---------- */
 .summary {
-  position: relative;
-  margin-bottom: 16px;
-}
-
-.summary-card {
-  padding: 18px 20px;
-  border: 1px solid var(--outline-variant);
-  border-radius: var(--radius-xl);
-  background: var(--surface);
+  margin: 4px 4px 26px;
 }
 
 .summary-date {
-  color: var(--primary);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--text-muted);
+  font-size: 15px;
+  font-weight: 500;
+}
+
+.summary-volume {
+  color: var(--text-muted);
+  font-size: 22px;
   font-weight: 600;
-  font-size: 12px;
+}
+
+.summary-volume strong {
+  color: var(--text);
+  font-size: 52px;
+  font-weight: 700;
+  letter-spacing: -1.5px;
+  line-height: 1;
+}
+
+.summary-meta {
+  margin-top: 4px;
+  color: var(--text-muted);
+  font-size: 14px;
 }
 
 .summary-title {
-  margin: 4px 0 16px;
+  margin: 2px 0 10px;
   font-family: var(--font-display);
   font-size: 26px;
-  font-weight: 600;
-  line-height: 1;
-}
-
-.summary-stats {
-  display: flex;
-  gap: 24px;
-}
-
-.stat-value {
-  font-size: 30px;
-  letter-spacing: -0.3px;
-  line-height: 1;
-}
-
-.stat-label {
-  font-size: 11px;
-  font-weight: 600;
-  color: var(--text-muted);
+  font-weight: 700;
+  letter-spacing: -0.4px;
+  line-height: 1.15;
 }
 
 /* Total volume in the card's lower right, on a tinted panel rather than hanging off the edge */
-.volume-badge {
-  position: absolute;
-  right: 16px;
-  bottom: 16px;
-  padding: 8px 12px;
-  border-radius: var(--radius-m);
-  background: var(--primary-container);
-  color: var(--on-primary-container);
-  text-align: right;
-}
-
-.volume-badge small {
-  display: block;
-  font-size: 11px;
-  font-weight: 600;
-  opacity: 0.8;
-}
-
-.volume-badge strong {
-  font-family: var(--font-display);
-  font-size: 22px;
-  font-weight: 600;
-  font-variant-numeric: tabular-nums;
-}
-
 .exercise-group {
-  display: flex;
-  border-radius: var(--radius-l);
-  background: var(--surface);
-  overflow: hidden;
-  margin-bottom: 14px;
+  margin-bottom: 24px;
   animation: card-in 0.55s var(--ease-spring) backwards;
 }
 
-.exercise-rail {
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-  padding: 14px 0;
-}
-
-.exercise-rail::before {
-  content: '';
-  width: 6px;
-  height: 28px;
-  border-radius: 0 4px 4px 0;
-  background: var(--muscle-color, var(--primary));
-}
-
-.exercise-rail::after {
-  content: '';
-  flex: 1;
-  width: 3px;
-  border-radius: 0 2px 2px 0;
-  background: color-mix(in srgb, var(--muscle-color, var(--primary)) 30%, transparent);
-}
-
 .exercise-group-body {
-  flex: 1;
   min-width: 0;
-  padding: 14px 12px 8px;
 }
 
 .exercise-group-title {
-  margin: 0 0 6px;
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+  margin: 0 4px 4px;
   font-size: 17px;
   font-weight: 650;
 }
@@ -621,7 +570,8 @@
   width: 100%;
   min-height: 48px;
   padding: 6px 4px;
-  border-radius: 12px;
+  border-bottom: 1px solid var(--outline-variant);
+  background: var(--bg);
   text-align: left;
 }
 
@@ -641,11 +591,10 @@
 
 .set-number {
   position: relative;
-  padding: 4px 8px;
-  border-radius: var(--radius-s);
-  background: var(--secondary-container);
-  color: var(--on-secondary-container);
+  min-width: 22px;
+  color: var(--text-muted);
   font-size: 14px;
+  font-weight: 500;
 }
 
 .set-weight {
@@ -664,8 +613,8 @@
   width: 64px;
   text-align: right;
   font-size: 13px;
-  font-weight: 600;
-  color: var(--tertiary);
+  font-weight: 500;
+  color: var(--text-muted);
 }
 
 /* ---------- Swipe to delete ---------- */
@@ -701,17 +650,20 @@
   transition: transform 0.18s var(--ease-out);
 }
 
-.workout-list .swipe {
-  border-radius: var(--radius-l);
+/* List rows: square swipe areas on the page background, so a row reads as a row, not a card */
+.workout-list .swipe,
+.set-groups .swipe,
+.food-list .swipe {
+  border-radius: 0;
+}
+
+.set-groups .swipe-content,
+.food-list .swipe-content {
+  background: var(--bg);
 }
 
 .workout-list .swipe-content {
   background: var(--bg);
-}
-
-.workout-list .swipe-bg {
-  margin-left: 18px;
-  border-radius: var(--radius-l);
 }
 
 /* ---------- Bottom sheet ---------- */
@@ -1236,16 +1188,20 @@
   margin-bottom: 16px;
 }
 
+/* Two records side by side as plain columns: the label, a big number, the date; no boxes */
 .stat-tile {
   flex: 1;
-  padding: 16px;
-  border-radius: var(--radius-l);
-  background: var(--surface-high);
+  min-width: 0;
+  padding: 4px;
 }
 
-.stat-tile.emphasized {
-  background: var(--primary-container);
-  color: var(--on-primary-container);
+.stat-tile + .stat-tile {
+  padding-left: 16px;
+  border-left: 1px solid var(--outline-variant);
+}
+
+.stat-tile.emphasized strong {
+  color: var(--primary);
 }
 
 .stat-tile small {
@@ -1258,7 +1214,7 @@
 .stat-tile strong {
   display: block;
   margin: 4px 0 2px;
-  font-size: 22px;
+  white-space: nowrap;
   font-variant-numeric: tabular-nums;
 }
 
@@ -1321,22 +1277,22 @@
 }
 
 .profile-card {
-  padding: 120px 20px 16px;
-  border-radius: var(--radius-xl);
-  background: var(--surface-high);
+  min-height: 88px;
+  padding: 8px 0 0 108px;
 }
 
 .profile-name {
   margin: 0 0 8px;
-  font-size: 28px;
-  font-weight: 600;
+  font-size: 24px;
+  font-weight: 700;
+  letter-spacing: -0.3px;
 }
 
 /* Round avatar inside the card's top, with the camera badge on its lower right */
 .avatar {
   position: absolute;
-  left: 20px;
-  top: 20px;
+  left: 4px;
+  top: 0;
   width: 88px;
   height: 88px;
 }
@@ -1387,20 +1343,22 @@
 
 .body-stats {
   display: flex;
-  gap: 10px;
-  margin: 16px 0;
+  margin: 24px 0;
 }
 
 .body-stat {
   flex: 1;
-  padding: 14px;
-  border-radius: 18px;
-  background: var(--surface);
+  min-width: 0;
+  padding: 2px 4px;
+}
+
+.body-stat + .body-stat {
+  padding-left: 16px;
+  border-left: 1px solid var(--outline-variant);
 }
 
 .body-stat.emphasized {
-  background: var(--primary-container);
-  color: var(--on-primary-container);
+  color: var(--primary);
 }
 
 .body-stat small {
@@ -1520,18 +1478,6 @@ body:has(.rest-timer) .toast {
 }
 
 .skeleton .date-block-front,
-.skeleton .exercise-rail::before {
-  background: var(--surface-highest);
-}
-
-.skeleton .volume-badge {
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
-  align-items: flex-end;
-  background: var(--surface-highest);
-}
-
 .skeleton-set-row {
   display: flex;
   align-items: center;
@@ -1580,15 +1526,23 @@ body:has(.rest-timer) .toast {
   --muscle-color: #ffd43b;
 }
 
+/* The muscle as quiet text after the name; a dot in its color is the only accent */
+.muscle-tag::before {
+  content: '';
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--muscle-color, var(--outline));
+}
+
 .muscle-tag {
-  margin-left: 8px;
-  padding: 2px 7px;
-  border-radius: 6px;
-  vertical-align: 3px;
-  font-size: 11px;
-  font-weight: 600;
-  color: var(--muscle-color, var(--text-muted));
-  background: color-mix(in srgb, var(--muscle-color, var(--outline)) 16%, transparent);
+  display: inline-flex;
+  flex: none;
+  align-items: center;
+  gap: 6px;
+  color: var(--text-muted);
+  font-size: 13px;
+  font-weight: 500;
 }
 
 /* Pastels wash out on a light background; darker siblings of the same hues keep tags readable */
@@ -1959,18 +1913,18 @@ body:has(.rest-timer) .set-groups {
 .food-list {
   display: flex;
   flex-direction: column;
-  gap: 8px;
   padding-bottom: 96px;
 }
 
+/* Each food as a plain row with a hairline, like the workout history */
 .food-row {
   display: flex;
   align-items: center;
   gap: 12px;
   min-height: 52px;
-  padding: 10px 14px;
-  border-radius: var(--radius-m);
-  background: var(--surface);
+  padding: 10px 4px;
+  border-bottom: 1px solid var(--outline-variant);
+  background: var(--bg);
   animation: card-in 0.55s var(--ease-spring) backwards;
 }
 
@@ -2228,9 +2182,6 @@ body:has(.rest-timer) .set-groups {
 }
 
 /* ---------- Sport style: shared panel outline ---------- */
-.exercise-group,
-.stat-tile,
-.food-row,
 .quick-chip,
 .record-row,
 .selector {
@@ -2240,7 +2191,7 @@ body:has(.rest-timer) .set-groups {
 .stat-tile strong,
 .record-row-side .accent {
   font-family: var(--font-display);
-  font-size: 28px;
+  font-size: 26px;
   letter-spacing: -0.3px;
   font-weight: 600;
 }
@@ -4549,10 +4500,6 @@ a.scoreboard-name {
   border: 1px solid var(--outline-variant);
 }
 
-.summary-card {
-  position: relative;
-}
-
 .summary-routine-tag {
   padding: 3px 10px;
   border-radius: var(--radius-s);
@@ -5787,7 +5734,7 @@ body:has(.rest-timer) .finish-btn {
 .muscle-card h2 {
   margin: 2px 0 0;
   font-family: var(--font-display);
-  font-size: 26px;
+  font-size: 20px;
   font-weight: 600;
   line-height: 1;
 }
@@ -6355,13 +6302,12 @@ body:has(.rest-timer) .finish-btn {
   position: relative;
   flex: none;
   display: flex;
+  flex-wrap: wrap;
   align-items: baseline;
-  gap: 3px;
+  justify-content: flex-end;
+  gap: 0 3px;
   margin-top: 4px;
-  padding: 10px 12px 6px;
-  border-radius: var(--radius-m);
-  background: var(--primary-container);
-  color: var(--on-primary-container);
+  color: var(--text);
 }
 
 .weight-latest strong {
@@ -6377,49 +6323,40 @@ body:has(.rest-timer) .finish-btn {
 }
 
 .weight-latest-tag {
-  padding: 1px 6px;
-  border: 1px solid var(--primary);
-  border-radius: 3px;
-  background: var(--bg);
-  color: var(--primary);
-  font-size: 10px;
-  font-weight: 600;
+  flex-basis: 100%;
+  text-align: right;
+  color: var(--text-muted);
+  font-size: 12px;
+  font-weight: 500;
   white-space: nowrap;
-  align-self: flex-start;
 }
 
 .weight-chips {
   display: flex;
   flex-wrap: wrap;
-  gap: 8px;
-  margin: 16px 0 4px;
+  gap: 4px 16px;
+  margin: 14px 0 6px;
 }
 
 /* Direction is shown by the edge color only: down and up are neither good nor bad without a goal */
 .weight-chip {
   display: inline-flex;
   align-items: center;
-  height: 28px;
-  padding: 0 10px;
-  border-left: 3px solid var(--outline);
-  border-radius: var(--radius-s);
-  background: var(--surface-high);
-  font-size: 13px;
+  font-size: 14px;
   font-weight: 600;
 }
 
 .weight-chip.down {
-  border-left-color: var(--tertiary);
+  color: var(--tertiary);
 }
 
 .weight-chip.up {
-  border-left-color: var(--primary);
+  color: var(--primary);
 }
 
 .weight-chip.average {
-  border: 1px dashed var(--outline);
-  background: transparent;
   color: var(--text-muted);
+  font-weight: 500;
 }
 
 .weight-entry {
@@ -6511,19 +6448,14 @@ body:has(.rest-timer) .finish-btn {
   font-size: 14px;
 }
 
+/* Current weight as a quiet line under the subtitle: "Weight 78,3 kg ›" */
 .weight-link-chip {
   display: inline-flex;
   align-items: baseline;
-  gap: 5px;
-  margin-top: 12px;
-  padding: 3px 10px 3px 3px;
-  border: 1px solid var(--outline-variant);
-  border-radius: var(--radius-s);
-  background: var(--surface-high);
+  gap: 6px;
+  margin-top: 10px;
   color: var(--text);
   text-decoration: none;
-  box-shadow: none;
-  transition: transform 0.12s;
 }
 
 .weight-link-chip:active {
@@ -6532,19 +6464,14 @@ body:has(.rest-timer) .finish-btn {
 }
 
 .weight-link-chip-tag {
-  align-self: center;
-  margin-left: -7px;
-  padding: 2px 6px;
-  border-radius: 3px;
-  background: var(--primary);
-  color: var(--on-primary);
-  font-size: 11px;
-  font-weight: 600;
+  color: var(--text-muted);
+  font-size: 14px;
+  font-weight: 500;
 }
 
 .weight-link-chip strong {
   font-family: var(--font-display);
-  font-size: 18px;
+  font-size: 15px;
   font-weight: 600;
 }
 
@@ -7288,10 +7215,9 @@ body:has(.rest-timer) .finish-btn {
   gap: 8px;
   padding: 12px 14px;
   border-radius: var(--radius-m);
-  background: var(--tertiary);
-  color: var(--surface-low);
-  box-shadow: none;
-  transition: transform 0.45s var(--ease-spring), box-shadow 0.45s var(--ease-spring);
+  background: color-mix(in srgb, var(--tertiary) 18%, var(--surface));
+  color: var(--tertiary);
+  transition: transform 0.45s var(--ease-spring);
 }
 
 .water-add:active {
@@ -7313,11 +7239,9 @@ body:has(.rest-timer) .finish-btn {
 
 .water-add-size {
   margin-left: auto;
-  padding: 2px 8px;
-  border-radius: var(--radius-s);
-  background: color-mix(in srgb, var(--surface-low) 18%, transparent);
-  font-size: 13px;
-  font-weight: 600;
+  font-size: 14px;
+  font-weight: 500;
+  opacity: 0.85;
 }
 
 .water-set-goal {
