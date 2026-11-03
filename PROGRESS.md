@@ -682,7 +682,13 @@ yüzünden her yeni istek limiter'dan geçiyor ve sonuçlar saklanıp tembelce y
   Profil, Oyun ve oyuncu sayfası koyu temada, Antrenman açık temada bakıldı; bir dedektörle sayfalarda kalan
   sözde-öğe plakası taranıp sıfırlandı.
 
+- İkinci geçiş: Antrenman başlığı hizalandı ("Rutinler" başlıkla aynı satırda, seri tek satır "3 haftalık seri |
+  bu hafta 1×"), yeşil derinleşti (#5cbf83 / açıkta #1f7a45), önemli sayılar büyüdü (antrenman hacmi, rekor
+  kutuları, istatistikler, halkalar), rutin kartları sadeleşti. Maç sayfası, grup, antrenman özeti, bitir düğmesi,
+  barkod tarayıcı CSS'i ve çevrimdışı şerit de temizlendi; eski süsleri anlatan yorumlar güncellendi.
+  Paylaşım düz metin (görsel değil). Uygulama simgesi zaten nötr gri, değişmedi.
+- Doğrulama (ikinci geçiş): web 524 test, tsc, lint, build; maç, grup ve özet ekranları dedektörle tarandı.
+  Barkod tarayıcı kamerasız açılamadığı için yalnızca CSS'te temizlendi.
+
 **Sıradaki adımlar:**
-1. PR'ı birleştir; telefonda bak.
-2. Uygulama simgesi ve favicon hâlâ eski koyu/gri; istenirse yeni renge uyarla.
-3. Taranmayan ekranlar (paylaşım kartı, maç sayfası, grup, tarayıcı) telefonda gözle kontrol.
+1. PR'ı birleştir; telefonda bak (özellikle barkod tarayıcı).
