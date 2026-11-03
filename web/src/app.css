@@ -7624,3 +7624,107 @@ body:has(.rest-timer) .finish-btn {
   flex: none;
   font-size: 17px;
 }
+
+/* ---------- Training block and goals ---------- */
+.home-date-block {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 1px;
+}
+
+.block-line {
+  color: var(--primary);
+  font-size: 13px;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+}
+
+.block-line.empty {
+  color: var(--text-muted);
+  font-weight: 500;
+}
+
+.goals {
+  margin-bottom: 28px;
+}
+
+.goal-rows {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin: 10px 0 0;
+  padding: 0 4px;
+  list-style: none;
+}
+
+.goal-row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) 108px;
+  align-items: center;
+  gap: 10px;
+  font-size: 14px;
+}
+
+.goal-name {
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.goal-bar {
+  height: 4px;
+  border-radius: 2px;
+  background: var(--surface-highest);
+}
+
+.goal-bar span {
+  display: block;
+  height: 100%;
+  border-radius: inherit;
+  background: var(--primary);
+  transition: width 0.6s var(--ease-spring);
+}
+
+.goal-text {
+  color: var(--text-muted);
+  font-size: 13px;
+  font-weight: 500;
+  text-align: right;
+}
+
+.program-sheet-actions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.program-sheet-title {
+  margin: 12px 0 0;
+  font-size: 15px;
+  font-weight: 600;
+}
+
+.program-goal {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 92px 44px;
+  align-items: center;
+  gap: 8px;
+}
+
+.program-goal label {
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.program-add-goal {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  gap: 8px;
+}
+
+.program-add-goal .field:first-child {
+  flex: 1 1 180px;
+}
