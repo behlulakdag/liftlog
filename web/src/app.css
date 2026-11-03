@@ -8131,6 +8131,10 @@ body:has(.rest-timer) .finish-btn {
   gap: 10px;
 }
 
+.route-error-actions .btn {
+  text-decoration: none;
+}
+
 .language-card .info-row {
   align-items: center;
   gap: 12px;
