@@ -690,5 +690,18 @@ yüzünden her yeni istek limiter'dan geçiyor ve sonuçlar saklanıp tembelce y
 - Doğrulama (ikinci geçiş): web 524 test, tsc, lint, build; maç, grup ve özet ekranları dedektörle tarandı.
   Barkod tarayıcı kamerasız açılamadığı için yalnızca CSS'te temizlendi.
 
+- Taslak turu: Behlül tasarımı hâlâ "AI slop" buldu; Antrenman sayfası için 3 yönde taslak çizildi (tuval:
+  https://claude.ai/artifact/BcTxUur1UPt8e7Pj75XLyq), B (büyük rakam) + C'nin döngü şeridi seçildi.
+- Yeni Antrenman ana sayfası: üstte tarih + Rutinler + yuvarlak "+" (yüzen düğme kalktı); haftalık hacim büyük
+  rakam, altında geçen hafta ve seri, yanında 3 haftalık çubuk; program döngüsü şeridi (bu turda yapılan / sıradaki
+  / sonraki, bir güne dokununca başlar); tek kart "Sıradaki" rutin + ilk 3 hareket + büyük Başla; geçmiş düz satırlar.
+- API: antrenman listesine `routineId` (döngü bunu kullanıyor). Mantık: `lib/programCycle.ts` (+ 7 test).
+- Doğrulama: backend `mvnw verify`; web 531 test, tsc, lint, build; yerelde 4 gün rutin eklenip Gün 1 başlatıldı →
+  döngü "✓ 3 Kas", sıradaki Alt A; açık ve koyu tema.
+- Taslaktaki "Blok 1 · hafta 3/12" ve "12. hafta hedefleri" yapılmadı: hedef ve blok verisi için yeni bir özellik
+  gerekiyor.
+
 **Sıradaki adımlar:**
 1. PR'ı birleştir; telefonda bak (özellikle barkod tarayıcı).
+2. Blok ve hedefler özelliği (blok başlangıcı, hafta sayısı, hareket başına hedef kg).
+3. Aynı tasarım dilini diğer sayfalara taşı (antrenman detayı, Beslenme, İlerleme, Profil).
