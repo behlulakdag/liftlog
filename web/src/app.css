@@ -1188,16 +1188,20 @@
   margin-bottom: 16px;
 }
 
+/* Two records side by side as plain columns: the label, a big number, the date; no boxes */
 .stat-tile {
   flex: 1;
-  padding: 16px;
-  border-radius: var(--radius-l);
-  background: var(--surface-high);
+  min-width: 0;
+  padding: 4px;
 }
 
-.stat-tile.emphasized {
-  background: var(--primary-container);
-  color: var(--on-primary-container);
+.stat-tile + .stat-tile {
+  padding-left: 16px;
+  border-left: 1px solid var(--outline-variant);
+}
+
+.stat-tile.emphasized strong {
+  color: var(--primary);
 }
 
 .stat-tile small {
@@ -1210,7 +1214,7 @@
 .stat-tile strong {
   display: block;
   margin: 4px 0 2px;
-  font-size: 22px;
+  white-space: nowrap;
   font-variant-numeric: tabular-nums;
 }
 
@@ -1273,22 +1277,22 @@
 }
 
 .profile-card {
-  padding: 120px 20px 16px;
-  border-radius: var(--radius-xl);
-  background: var(--surface-high);
+  min-height: 88px;
+  padding: 8px 0 0 108px;
 }
 
 .profile-name {
   margin: 0 0 8px;
-  font-size: 28px;
-  font-weight: 600;
+  font-size: 24px;
+  font-weight: 700;
+  letter-spacing: -0.3px;
 }
 
 /* Round avatar inside the card's top, with the camera badge on its lower right */
 .avatar {
   position: absolute;
-  left: 20px;
-  top: 20px;
+  left: 4px;
+  top: 0;
   width: 88px;
   height: 88px;
 }
@@ -1339,20 +1343,22 @@
 
 .body-stats {
   display: flex;
-  gap: 10px;
-  margin: 16px 0;
+  margin: 24px 0;
 }
 
 .body-stat {
   flex: 1;
-  padding: 14px;
-  border-radius: 18px;
-  background: var(--surface);
+  min-width: 0;
+  padding: 2px 4px;
+}
+
+.body-stat + .body-stat {
+  padding-left: 16px;
+  border-left: 1px solid var(--outline-variant);
 }
 
 .body-stat.emphasized {
-  background: var(--primary-container);
-  color: var(--on-primary-container);
+  color: var(--primary);
 }
 
 .body-stat small {
@@ -2176,7 +2182,6 @@ body:has(.rest-timer) .set-groups {
 }
 
 /* ---------- Sport style: shared panel outline ---------- */
-.stat-tile,
 .quick-chip,
 .record-row,
 .selector {
@@ -2186,7 +2191,7 @@ body:has(.rest-timer) .set-groups {
 .stat-tile strong,
 .record-row-side .accent {
   font-family: var(--font-display);
-  font-size: 28px;
+  font-size: 26px;
   letter-spacing: -0.3px;
   font-weight: 600;
 }
@@ -5729,7 +5734,7 @@ body:has(.rest-timer) .finish-btn {
 .muscle-card h2 {
   margin: 2px 0 0;
   font-family: var(--font-display);
-  font-size: 26px;
+  font-size: 20px;
   font-weight: 600;
   line-height: 1;
 }
@@ -6297,13 +6302,12 @@ body:has(.rest-timer) .finish-btn {
   position: relative;
   flex: none;
   display: flex;
+  flex-wrap: wrap;
   align-items: baseline;
-  gap: 3px;
+  justify-content: flex-end;
+  gap: 0 3px;
   margin-top: 4px;
-  padding: 10px 12px 6px;
-  border-radius: var(--radius-m);
-  background: var(--primary-container);
-  color: var(--on-primary-container);
+  color: var(--text);
 }
 
 .weight-latest strong {
@@ -6319,49 +6323,40 @@ body:has(.rest-timer) .finish-btn {
 }
 
 .weight-latest-tag {
-  padding: 1px 6px;
-  border: 1px solid var(--primary);
-  border-radius: 3px;
-  background: var(--bg);
-  color: var(--primary);
-  font-size: 10px;
-  font-weight: 600;
+  flex-basis: 100%;
+  text-align: right;
+  color: var(--text-muted);
+  font-size: 12px;
+  font-weight: 500;
   white-space: nowrap;
-  align-self: flex-start;
 }
 
 .weight-chips {
   display: flex;
   flex-wrap: wrap;
-  gap: 8px;
-  margin: 16px 0 4px;
+  gap: 4px 16px;
+  margin: 14px 0 6px;
 }
 
 /* Direction is shown by the edge color only: down and up are neither good nor bad without a goal */
 .weight-chip {
   display: inline-flex;
   align-items: center;
-  height: 28px;
-  padding: 0 10px;
-  border-left: 3px solid var(--outline);
-  border-radius: var(--radius-s);
-  background: var(--surface-high);
-  font-size: 13px;
+  font-size: 14px;
   font-weight: 600;
 }
 
 .weight-chip.down {
-  border-left-color: var(--tertiary);
+  color: var(--tertiary);
 }
 
 .weight-chip.up {
-  border-left-color: var(--primary);
+  color: var(--primary);
 }
 
 .weight-chip.average {
-  border: 1px dashed var(--outline);
-  background: transparent;
   color: var(--text-muted);
+  font-weight: 500;
 }
 
 .weight-entry {
