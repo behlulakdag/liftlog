@@ -7,11 +7,14 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import java.time.LocalDate;
+import java.util.List;
 import java.util.Optional;
 
 public interface WaterDayRepository extends JpaRepository<WaterDay, Long> {
 
     Optional<WaterDay> findByUserIdAndEntryDate(Long userId, LocalDate entryDate);
+
+    List<WaterDay> findByUserIdOrderByEntryDateAsc(Long userId);
 
     /**
      * Adds {@code deltaMl} (negative to take a glass back) to the day's total in one statement, so two quick taps

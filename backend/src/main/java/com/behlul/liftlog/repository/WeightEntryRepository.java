@@ -13,6 +13,8 @@ public interface WeightEntryRepository extends JpaRepository<WeightEntry, Long> 
 
     Optional<WeightEntry> findByUserIdAndEntryDate(Long userId, LocalDate entryDate);
 
+    List<WeightEntry> findByUserIdOrderByEntryDateAsc(Long userId);
+
     /** The current weight: the entry with the latest date (not the one written last). */
     Optional<WeightEntry> findFirstByUserIdOrderByEntryDateDesc(Long userId);
 }
