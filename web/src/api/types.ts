@@ -212,6 +212,13 @@ export interface ProgressPoint {
   volumeKg: number
 }
 
+/** One cardio move's sessions, oldest first, one per day */
+export interface CardioHistory {
+  exerciseId: number
+  exerciseName: string
+  sessions: { date: string; durationSec: number; distanceM: number | null }[]
+}
+
 export interface WeeklyVolume {
   weekStart: string
   volumeKg: number

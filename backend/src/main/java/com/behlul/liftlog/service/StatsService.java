@@ -1,5 +1,7 @@
 package com.behlul.liftlog.service;
 
+import com.behlul.liftlog.dto.StatsDtos.CardioHistoryResponse;
+import com.behlul.liftlog.dto.StatsDtos.CardioSessionResponse;
 import com.behlul.liftlog.dto.StatsDtos.ExerciseSetsResponse;
 import com.behlul.liftlog.dto.StatsDtos.MuscleSetsResponse;
 import com.behlul.liftlog.dto.StatsDtos.MuscleStatsResponse;
@@ -9,6 +11,7 @@ import com.behlul.liftlog.dto.StatsDtos.StreakResponse;
 import com.behlul.liftlog.dto.StatsDtos.WeeklyVolumeResponse;
 import com.behlul.liftlog.exception.FieldValidationException;
 import com.behlul.liftlog.exception.ResourceNotFoundException;
+import com.behlul.liftlog.repository.CardioDay;
 import com.behlul.liftlog.repository.ExerciseRepository;
 import com.behlul.liftlog.repository.ExerciseSetCount;
 import com.behlul.liftlog.repository.SetFact;
@@ -73,6 +76,16 @@ public class StatsService {
         return byExercise.values().stream()
                 .map(StatsService::toPersonalRecord)
                 .sorted(Comparator.comparing(PersonalRecordResponse::exerciseName, String.CASE_INSENSITIVE_ORDER))
+                .toList();
+    }
+
+    /** Each cardio move the user has done, with one session per day, for the Progress page. */
+    public List<CardioHistoryResponse> cardio() {
+        Map<Long, List<CardioDay>> byExercise = statsRepository.findCardioDays(currentUser.currentUserId()).stream()
+                .collect(Collectors.groupingBy(CardioDay::exerciseId, LinkedHashMap::new, Collectors.toList()));
+        return byExercise.values().stream()
+                .map(days -> new CardioHistoryResponse(days.getFirst().exerciseId(), days.getFirst().exerciseName(),
+                        days.stream().map(d -> new CardioSessionResponse(d.date(), d.durationSec(), d.distanceM())).toList()))
                 .toList();
     }
 

@@ -362,7 +362,19 @@ export function WorkoutDetailPage() {
             fromRoutine={routineId != null}
           />
           {plan.data && plan.data.length > 0 ? (
-            <WorkoutMode plan={plan.data} sets={visibleSets} muscleOf={muscleOf} renderSet={renderSet} renderExtra={renderGroup} onLog={logPlannedSet} />
+            <WorkoutMode
+              plan={plan.data}
+              sets={visibleSets}
+              muscleOf={muscleOf}
+              renderSet={renderSet}
+              renderExtra={renderGroup}
+              onLog={logPlannedSet}
+              isCardio={(exerciseId) => exercises.data?.some((e) => e.id === exerciseId && isCardioExercise(e)) ?? false}
+              onLogCardio={(exerciseId) => {
+                const exercise = exercises.data?.find((e) => e.id === exerciseId)
+                if (exercise) setEditor({ mode: 'add', exercise })
+              }}
+            />
           ) : visibleSets.length === 0 ? (
             <MessageState icon={<DumbbellIcon size={32} />} title={t.detailEmptyTitle} body={t.detailEmptyBody} />
           ) : (

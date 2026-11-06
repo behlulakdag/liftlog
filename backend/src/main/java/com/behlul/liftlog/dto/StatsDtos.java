@@ -34,6 +34,14 @@ public final class StatsDtos {
     public record StreakResponse(int weeks, int thisWeekWorkouts, int longestWeeks) {
     }
 
+    /** One cardio move's history for its chart; sessions oldest first, one per day. */
+    public record CardioHistoryResponse(Long exerciseId, String exerciseName, List<CardioSessionResponse> sessions) {
+    }
+
+    /** @param distanceM null when the day's sets had no distance */
+    public record CardioSessionResponse(LocalDate date, long durationSec, Long distanceM) {
+    }
+
     /** @param cardioSeconds time spent on cardio sets that week */
     public record WeeklyVolumeResponse(LocalDate weekStart, BigDecimal volumeKg, long setCount, long cardioSeconds) {
     }

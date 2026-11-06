@@ -1194,6 +1194,17 @@ class ApiIntegrationTest {
                 .andExpect(jsonPath("$[0].exerciseName").value("Bench Press"));
         mockMvc.perform(get("/api/v1/stats/progress?exerciseId=" + running).header(HttpHeaders.AUTHORIZATION, "Bearer " + token))
                 .andExpect(jsonPath("$.length()").value(0));
+        // ...but a history of its own, one session per day
+        authed(post("/api/v1/workouts/" + workout + "/sets"), token,
+                "{\"exerciseId\":" + running + ",\"reps\":1,\"weightKg\":0,\"durationSec\":600}")
+                .andExpect(status().isCreated());
+        mockMvc.perform(get("/api/v1/stats/cardio").header(HttpHeaders.AUTHORIZATION, "Bearer " + token))
+                .andExpect(jsonPath("$.length()").value(1))
+                .andExpect(jsonPath("$[0].exerciseName").value("Running"))
+                .andExpect(jsonPath("$[0].sessions.length()").value(1))
+                .andExpect(jsonPath("$[0].sessions[0].date").value("2026-11-04"))
+                .andExpect(jsonPath("$[0].sessions[0].durationSec").value(2400))
+                .andExpect(jsonPath("$[0].sessions[0].distanceM").value(5200));
     }
 
     @Test

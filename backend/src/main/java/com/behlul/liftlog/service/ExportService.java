@@ -96,14 +96,32 @@ public class ExportService {
     }
 
     private void writeWorkouts(User user, OutputStream out) {
+        // The cardio columns come last, so a sheet built on the older layout still finds its columns
         CsvWriter csv = CsvWriter.start(out, "Tarih", "Antrenman notu", "Egzersiz", "Set", "Ağırlık (kg)",
-                "Tekrar", "RPE", "Vücut ağırlığı", "Tahmini 1RM (kg)");
+                "Tekrar", "RPE", "Vücut ağırlığı", "Tahmini 1RM (kg)", "Süre (dk)", "Mesafe (km)", "Kalori (kcal)");
         try (Stream<ExportedSet> sets = exportRepository.streamSets(user.getId())) {
-            sets.forEach(set -> csv.row(set.workoutDate(), set.workoutNotes(), set.exerciseName(), set.setOrder(),
-                    set.weightKg(), set.reps(), set.rpe(), set.bodyweight() ? "evet" : "hayır",
-                    estimatedOneRepMax(set, user.getBodyWeightKg())));
+            sets.forEach(set -> {
+                if (set.cardio()) {
+                    csv.row(set.workoutDate(), set.workoutNotes(), set.exerciseName(), set.setOrder(), null, null, null,
+                            "hayır", null, minutes(set.durationSec()), kilometres(set.distanceM()), set.calories());
+                } else {
+                    csv.row(set.workoutDate(), set.workoutNotes(), set.exerciseName(), set.setOrder(),
+                            set.weightKg(), set.reps(), set.rpe(), set.bodyweight() ? "evet" : "hayır",
+                            estimatedOneRepMax(set, user.getBodyWeightKg()), null, null, null);
+                }
+            });
         }
         csv.flush();
+    }
+
+    /** 1815 s → 30,25: minutes with decimals sum and chart in a spreadsheet, unlike "30:15" text */
+    private static BigDecimal minutes(Integer seconds) {
+        return seconds == null ? null : BigDecimal.valueOf(seconds).divide(BigDecimal.valueOf(60), 2, java.math.RoundingMode.HALF_UP)
+                .stripTrailingZeros();
+    }
+
+    private static BigDecimal kilometres(Integer metres) {
+        return metres == null ? null : BigDecimal.valueOf(metres).movePointLeft(3).stripTrailingZeros();
     }
 
     private void writeNutrition(Long userId, OutputStream out) {

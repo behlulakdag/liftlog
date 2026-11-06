@@ -763,3 +763,18 @@ yüzünden her yeni istek limiter'dan geçiyor ve sonuçlar saklanıp tembelce y
 **Sıradaki adımlar:**
 1. PR'ı birleştir; telefonda bir koşu kaydet.
 2. Android APK (TWA).
+
+## 2026-11-06 — Android APK (TWA) ve kardiyo eksikleri
+
+- #49: `android/twa` modülü (`com.behlul.liftlog.web`) canlı siteyi tam ekran açan bir Trusted Web Activity;
+  `:app` ile aynı git dışı anahtarla imzalı, SHA-256'sı `web/public/.well-known/assetlinks.json`'da. Emülatörde
+  tam ekran açıldı; APK `Masaüstü\LiftLog-APK\LiftLog.apk`. Web güncellemeleri APK'ya kendiliğinden gelir.
+- Kardiyo eksikleri (`feature/cardio-gaps`): `GET /api/v1/stats/cardio` (hareket başına günlük seanslar);
+  İlerleme'de kardiyo kartı (son seans, en iyi tempo, seans başına mesafe/süre çubukları); rutinde kardiyo
+  hareketi "Kardiyoyu kaydet" düğmesiyle set penceresini açar, bir koşudan sonra tamam sayılır; `antrenman.csv`
+  sonuna Süre (dk), Mesafe (km), Kalori (kcal); kardiyo satırında ağırlık/tekrar/1RM boş.
+- Doğrulama: backend `mvnw verify`; web 555 test, tsc, lint, build; yerelde iki koşu → kart "30:00 · 5,2 km ·
+  5:46 /km", en iyi tempo 5:46, çubuklar 4 ve 5,2 km; CSV sütunları doğru.
+
+**Sıradaki adımlar:**
+1. PR'ı birleştir; telefonda İlerleme'deki kardiyo kartına bak.
