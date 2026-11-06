@@ -105,6 +105,14 @@ if (typeof window !== 'undefined') {
   })
 }
 
+/**
+ * Which account the phone's saved screens belong to. A cache written for another account (after a restore or a
+ * fresh start) is thrown away instead of showing that account's workouts for a moment.
+ */
+export function cacheAccountKey(): string {
+  return readCredentials()?.email ?? ''
+}
+
 export function hasDeviceCredentials(): boolean {
   return readCredentials() !== null
 }
