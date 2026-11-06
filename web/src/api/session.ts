@@ -143,6 +143,36 @@ export function hasPendingPassword(): boolean {
   return readCredentials()?.pendingPassword != null
 }
 
+/** Renew this long before the token runs out, so a phone opened every few weeks never has to wait on a sign-in */
+const RENEW_WITHIN_MS = 7 * 24 * 60 * 60 * 1000
+
+/**
+ * Whether a JWT expires within {@code withinMs}. Read from its own payload (the "exp" claim), so no extra
+ * storage is needed; a token that cannot be read counts as not expiring, and the server's 401 still decides.
+ */
+export function tokenExpiresSoon(jwt: string, now = Date.now(), withinMs = RENEW_WITHIN_MS): boolean {
+  try {
+    const payload = jwt.split('.')[1]
+    const json = JSON.parse(atob(payload.replace(/-/g, '+').replace(/_/g, '/'))) as { exp?: number }
+    return typeof json.exp === 'number' && json.exp * 1000 - now < withinMs
+  } catch {
+    return false
+  }
+}
+
+/**
+ * Signs in again in the background when the token is close to expiring. The app keeps using the current token
+ * meanwhile; without this a token that ran out would hold the whole app on the sign-in spinner, and on a server
+ * that is still waking up that spinner can last a minute.
+ */
+export function renewSessionIfExpiring(now = Date.now()) {
+  if (token && hasDeviceCredentials() && tokenExpiresSoon(token, now)) {
+    signInDevice().catch(() => {
+      // Kept quiet: the current token still works, and the next start tries again
+    })
+  }
+}
+
 let inFlight: Promise<void> | null = null
 
 /** Signs in with this browser's account, creating it on first visit. Concurrent callers share one attempt. */

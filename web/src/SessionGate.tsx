@@ -1,6 +1,6 @@
 import { useEffect, useState, useSyncExternalStore, type ReactNode } from 'react'
 import { AppError } from './api/client'
-import { hasDeviceCredentials, session, signInDevice, startFresh } from './api/session'
+import { hasDeviceCredentials, renewSessionIfExpiring, session, signInDevice, startFresh } from './api/session'
 import { SignedOutScreen, WelcomeScreen } from './components/Recovery'
 import { ErrorState, Loading } from './components/StateViews'
 
@@ -21,6 +21,11 @@ export function SessionGate({ children, onRestored = reloadHome }: { children: R
     if (token || welcome) return
     signInDevice().catch(setError)
   }, [token, welcome])
+
+  // Once per start: a token near its end is replaced quietly while the app keeps running
+  useEffect(() => {
+    renewSessionIfExpiring()
+  }, [])
 
   if (token) return <>{children}</>
   if (welcome) return <WelcomeScreen onStart={() => setWelcome(false)} onRestored={onRestored} />
