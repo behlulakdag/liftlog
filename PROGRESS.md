@@ -736,3 +736,12 @@ yüzünden her yeni istek limiter'dan geçiyor ve sonuçlar saklanıp tembelce y
 
 **Sıradaki adımlar:**
 1. #45 (blok ve hedefler) ve bu PR'ı birleştir; telefonda bak.
+
+## 2026-11-06 — Sehpada yapılan vücut ağırlığı hareketleri (`fix/bodyweight-bench-moves`)
+
+- Behlül'ün arkadaşı Back Extension'da ne yazacağını sordu: hareket makine olarak işaretliydi, alan "Ağırlık"
+  diyordu ve 0 kg hacme 0 ekliyordu. V28: Back Extension, 45° Back Extension, GHD Sit-up, Glute-Ham Raise artık
+  vücut ağırlığı hareketi (ekipman BODYWEIGHT). Alan "Ek ağırlık" olur, vücut ağırlığı hacme eklenir.
+  Asistanlı barfiks/dips makineleri bilerek bırakıldı (yazılan kilo yardım miktarı).
+- Doğrulama: `mvnw verify` (katalog testi yeni hareketleri de kontrol ediyor); yerelde 78 kg profil + Back
+  Extension 17 tekrar, 0 ek ağırlık → hacim 1.326 kg, pencere "Ek ağırlık (kg)" gösteriyor.
