@@ -72,12 +72,15 @@ class ExportIntegrationTest {
         byte[] body = result.getResponse().getContentAsByteArray();
         assertThat(body).startsWith(0xEF, 0xBB, 0xBF);
         assertThat(new String(body, StandardCharsets.UTF_8)).isEqualTo(BOM
-                + "Tarih;Antrenman notu;Egzersiz;Set;Ağırlık (kg);Tekrar;RPE;Vücut ağırlığı;Tahmini 1RM (kg)\r\n"
+                + "Tarih;Antrenman notu;Egzersiz;Set;Ağırlık (kg);Tekrar;RPE;Vücut ağırlığı;Tahmini 1RM (kg);"
+                + "Süre (dk);Mesafe (km);Kalori (kcal)\r\n"
                 // ordered by date: the older workout first, then its sets in order
-                + "2026-03-01;;Squat;1;140;3;;hayır;154\r\n"
-                + "2026-03-05;\"Leg day; \"\"heavy\"\"\nfelt strong\";Squat;1;102,5;5;8,5;hayır;119,58\r\n"
+                + "2026-03-01;;Squat;1;140;3;;hayır;154;;;\r\n"
+                + "2026-03-05;\"Leg day; \"\"heavy\"\"\nfelt strong\";Squat;1;102,5;5;8,5;hayır;119,58;;;\r\n"
                 // pull-up: 10 kg added + 80 kg body weight = 90 kg load for the estimate
-                + "2026-03-05;\"Leg day; \"\"heavy\"\"\nfelt strong\";Pull-up;2;10;6;;evet;108\r\n");
+                + "2026-03-05;\"Leg day; \"\"heavy\"\"\nfelt strong\";Pull-up;2;10;6;;evet;108;;;\r\n"
+                // a run: time, distance and calories, no weight, reps or 1RM
+                + "2026-03-05;\"Leg day; \"\"heavy\"\"\nfelt strong\";Running;3;;;;hayır;;30,25;5,2;380\r\n");
     }
 
     @Test
@@ -188,6 +191,9 @@ class ExportIntegrationTest {
         long earlier = createWorkout(token, "2026-03-01", null);
         addSet(token, later, squat, 5, "102.5", "8.5");
         addSet(token, later, pullUp, 6, "10", null);
+        authed(post("/api/v1/workouts/" + later + "/sets"), token, "{\"exerciseId\":" + exerciseId(token, "Running")
+                + ",\"reps\":1,\"weightKg\":0,\"durationSec\":1815,\"distanceM\":5200,\"calories\":380}")
+                .andExpect(status().isCreated());
         addSet(token, earlier, squat, 3, "140", null);
     }
 

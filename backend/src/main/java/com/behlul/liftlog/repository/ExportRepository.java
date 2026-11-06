@@ -24,7 +24,8 @@ public interface ExportRepository extends Repository<WorkoutSet, Long> {
             @QueryHint(name = HINT_READ_ONLY, value = "true")})
     @Query("""
             select new com.behlul.liftlog.repository.ExportedSet(
-                       w.workoutDate, w.notes, e.name, s.setOrder, s.weightKg, s.reps, s.rpe, e.bodyweight)
+                       w.workoutDate, w.notes, e.name, s.setOrder, s.weightKg, s.reps, s.rpe, e.bodyweight,
+                       case when e.equipment = 'CARDIO' then true else false end, s.durationSec, s.distanceM, s.calories)
             from WorkoutSet s
             join s.workout w
             join s.exercise e

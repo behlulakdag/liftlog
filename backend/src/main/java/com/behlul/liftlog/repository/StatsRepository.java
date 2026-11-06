@@ -33,6 +33,17 @@ public interface StatsRepository extends Repository<WorkoutSet, Long> {
             """)
     List<SetFact> findFactsForExercise(@Param("userId") Long userId, @Param("exerciseId") Long exerciseId);
 
+    /** The user's cardio, one row per move and day, oldest first. */
+    @Query("""
+            select new com.behlul.liftlog.repository.CardioDay(e.id, e.name, w.workoutDate,
+                sum(s.durationSec), sum(s.distanceM))
+            from WorkoutSet s join s.workout w join s.exercise e
+            where w.user.id = :userId and e.equipment = 'CARDIO' and s.durationSec is not null
+            group by e.id, e.name, w.workoutDate
+            order by e.name, w.workoutDate
+            """)
+    List<CardioDay> findCardioDays(@Param("userId") Long userId);
+
     /** Every set of the given exercises on the user's timeline: by date, then workout (creation order), then set. */
     @Query("""
             select new com.behlul.liftlog.repository.TimelineSet(

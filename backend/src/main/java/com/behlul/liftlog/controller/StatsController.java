@@ -1,5 +1,6 @@
 package com.behlul.liftlog.controller;
 
+import com.behlul.liftlog.dto.StatsDtos.CardioHistoryResponse;
 import com.behlul.liftlog.dto.StatsDtos.MuscleStatsResponse;
 import com.behlul.liftlog.dto.StatsDtos.PersonalRecordResponse;
 import com.behlul.liftlog.dto.StatsDtos.ProgressPointResponse;
@@ -33,6 +34,11 @@ public class StatsController {
     @GetMapping("/progress")
     public List<ProgressPointResponse> progress(@RequestParam Long exerciseId) {
         return statsService.progress(exerciseId);
+    }
+
+    @GetMapping("/cardio")
+    public List<CardioHistoryResponse> cardio() {
+        return statsService.cardio();
     }
 
     @GetMapping("/streak")
