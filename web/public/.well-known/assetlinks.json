@@ -1,0 +1,14 @@
+[
+  {
+    "relation": [
+      "delegate_permission/common.handle_all_urls"
+    ],
+    "target": {
+      "namespace": "android_app",
+      "package_name": "com.behlul.liftlog.web",
+      "sha256_cert_fingerprints": [
+        "79:19:F1:F4:EB:94:B0:55:F8:9B:B0:B6:01:A0:5B:11:57:06:6F:86:EE:ED:81:BA:F1:FD:2A:C7:38:F2:42:E0"
+      ]
+    }
+  }
+]
