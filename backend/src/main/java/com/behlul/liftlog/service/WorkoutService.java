@@ -9,6 +9,7 @@ import com.behlul.liftlog.dto.WorkoutSummaryResponse;
 import com.behlul.liftlog.entity.Exercise;
 import com.behlul.liftlog.entity.Workout;
 import com.behlul.liftlog.entity.WorkoutSet;
+import com.behlul.liftlog.exception.FieldValidationException;
 import com.behlul.liftlog.exception.ResourceNotFoundException;
 import com.behlul.liftlog.repository.ExerciseRepository;
 import com.behlul.liftlog.repository.StatsRepository;
@@ -88,6 +89,15 @@ public class WorkoutService {
     public SetResponse addSet(Long workoutId, SetRequest request) {
         Workout workout = loadDetail(workoutId);
         Exercise exercise = loadExercise(request.exerciseId());
+        if (exercise.isCardio()) {
+            WorkoutSet set = new WorkoutSet(exercise, workout.nextSetOrder(), 1, BigDecimal.ZERO, null);
+            applyCardio(set, exercise, request);
+            workout.addSet(set);
+            setRepository.saveAndFlush(set);
+            // Cardio has no 1RM, so it is never announced as a record
+            return SetResponse.from(set);
+        }
+        applyCardio(null, exercise, request);
         // Read the previous best before saving, otherwise the new set would compare against itself
         BigDecimal previousBest = StatsService.bestEstimate(
                 statsRepository.findFactsForExercise(currentUser.currentUserId(), exercise.getId()));
@@ -109,10 +119,18 @@ public class WorkoutService {
     @Transactional
     public SetResponse updateSet(Long setId, SetRequest request) {
         WorkoutSet set = loadSet(setId);
-        set.setExercise(loadExercise(request.exerciseId()));
-        set.setReps(request.reps());
-        set.setWeightKg(request.weightKg());
-        set.setRpe(request.rpe());
+        Exercise exercise = loadExercise(request.exerciseId());
+        set.setExercise(exercise);
+        if (exercise.isCardio()) {
+            set.setReps(1);
+            set.setWeightKg(BigDecimal.ZERO);
+            set.setRpe(null);
+        } else {
+            set.setReps(request.reps());
+            set.setWeightKg(request.weightKg());
+            set.setRpe(request.rpe());
+        }
+        applyCardio(set, exercise, request);
         return SetResponse.from(set);
     }
 
@@ -120,6 +138,25 @@ public class WorkoutService {
     public void deleteSet(Long setId) {
         WorkoutSet set = loadSet(setId);
         set.getWorkout().removeSet(set);
+    }
+
+    /**
+     * A cardio set needs its duration; a weight set takes no cardio fields, so a client that mixes them up hears
+     * about it instead of having them dropped. {@code set} null only checks.
+     */
+    private static void applyCardio(WorkoutSet set, Exercise exercise, SetRequest request) {
+        if (exercise.isCardio()) {
+            if (request.durationSec() == null) {
+                throw new FieldValidationException("durationSec", "is required for cardio");
+            }
+        } else if (request.durationSec() != null || request.distanceM() != null || request.calories() != null) {
+            throw new FieldValidationException("durationSec", "only cardio sets have a duration");
+        }
+        if (set != null) {
+            set.setCardio(exercise.isCardio() ? request.durationSec() : null,
+                    exercise.isCardio() ? request.distanceM() : null,
+                    exercise.isCardio() ? request.calories() : null);
+        }
     }
 
     private Workout loadDetail(Long id) {

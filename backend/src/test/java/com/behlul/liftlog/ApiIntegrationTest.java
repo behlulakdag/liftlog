@@ -652,18 +652,19 @@ class ApiIntegrationTest {
     }
 
     @Test
-    void everyBuiltInExerciseHasAPrimaryMuscle() {
-        // Queried in SQL because the API would hide a missing seed row behind the muscle-group fallback
+    void everyBuiltInLiftHasAPrimaryMuscle() {
+        // Queried in SQL because the API would hide a missing seed row behind the muscle-group fallback. Cardio moves
+        // have no muscles on purpose: half an hour of running is not a set for the muscle map.
         List<String> withoutPrimary = jdbcTemplate.queryForList("""
                 select e.name from exercises e
-                where e.user_id is null and not exists (
+                where e.user_id is null and e.equipment <> 'CARDIO' and not exists (
                     select 1 from exercise_muscles m where m.exercise_id = e.id and m.role = 'PRIMARY')
                 order by e.name
                 """, String.class);
         assertThat(withoutPrimary).isEmpty();
 
         Integer builtIns = jdbcTemplate.queryForObject("select count(*) from exercises where user_id is null", Integer.class);
-        assertThat(builtIns).isEqualTo(256);
+        assertThat(builtIns).isEqualTo(256 + 14);
     }
 
     @Test
@@ -1155,6 +1156,44 @@ class ApiIntegrationTest {
                 .andExpect(jsonPath("$.goals[0].exerciseName").value("Pull-up"))
                 .andExpect(jsonPath("$.currentWeek").doesNotExist());
         mockMvc.perform(get(program)).andExpect(status().isUnauthorized());
+    }
+
+    @Test
+    void cardioSetsAreTimeAndDistanceAndStayOutOfLiftingStats() throws Exception {
+        String token = register(randomEmail(), "s3cret-pass", null);
+        long running = exerciseId(token, "Running");
+        long bench = exerciseId(token, "Bench Press");
+        long workout = createWorkout(token, "2026-11-04", null);
+
+        // A cardio set needs a duration; reps and weight are stored as 1 × 0 whatever comes in
+        authed(post("/api/v1/workouts/" + workout + "/sets"), token, "{\"exerciseId\":" + running + ",\"reps\":1,\"weightKg\":0}")
+                .andExpect(status().isBadRequest());
+        authed(post("/api/v1/workouts/" + workout + "/sets"), token,
+                "{\"exerciseId\":" + running + ",\"reps\":9,\"weightKg\":50,\"durationSec\":1800,\"distanceM\":5200,\"calories\":380}")
+                .andExpect(status().isCreated())
+                .andExpect(jsonPath("$.cardio").value(true))
+                .andExpect(jsonPath("$.reps").value(1))
+                .andExpect(jsonPath("$.weightKg").value(0))
+                .andExpect(jsonPath("$.durationSec").value(1800))
+                .andExpect(jsonPath("$.distanceM").value(5200))
+                .andExpect(jsonPath("$.calories").value(380))
+                .andExpect(jsonPath("$.newPersonalRecord").value(false));
+        // A weight set takes no duration
+        authed(post("/api/v1/workouts/" + workout + "/sets"), token,
+                "{\"exerciseId\":" + bench + ",\"reps\":5,\"weightKg\":70,\"durationSec\":60}")
+                .andExpect(status().isBadRequest());
+        addSet(token, workout, bench, 5, "70");
+
+        // Volume is only the lifting
+        mockMvc.perform(get("/api/v1/workouts").header(HttpHeaders.AUTHORIZATION, "Bearer " + token))
+                .andExpect(jsonPath("$.content[0].totalVolumeKg").value(350.0))
+                .andExpect(jsonPath("$.content[0].setCount").value(2));
+        // No records or progress points for a run
+        mockMvc.perform(get("/api/v1/stats/prs").header(HttpHeaders.AUTHORIZATION, "Bearer " + token))
+                .andExpect(jsonPath("$.length()").value(1))
+                .andExpect(jsonPath("$[0].exerciseName").value("Bench Press"));
+        mockMvc.perform(get("/api/v1/stats/progress?exerciseId=" + running).header(HttpHeaders.AUTHORIZATION, "Bearer " + token))
+                .andExpect(jsonPath("$.length()").value(0));
     }
 
     @Test

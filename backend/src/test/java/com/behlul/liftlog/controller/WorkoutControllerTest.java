@@ -79,7 +79,7 @@ class WorkoutControllerTest {
     @Test
     void addSetWithValidBodyReturns201() throws Exception {
         when(workoutService.addSet(eq(1L), any())).thenReturn(new com.behlul.liftlog.dto.SetResponse(
-                318L, 1L, "Squat", 3, 5, new java.math.BigDecimal("140.00"), new java.math.BigDecimal("8.0"), false, false));
+                318L, 1L, "Squat", 3, 5, new java.math.BigDecimal("140.00"), new java.math.BigDecimal("8.0"), false, false, false, null, null, null));
 
         mockMvc.perform(post("/api/v1/workouts/1/sets")
                         .contentType(MediaType.APPLICATION_JSON)

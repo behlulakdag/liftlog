@@ -154,6 +154,7 @@ class StatsServiceTest {
             @Override public LocalDate getWeekStart() { return week; }
             @Override public BigDecimal getVolumeKg() { return new BigDecimal(volume); }
             @Override public long getSetCount() { return sets; }
+            @Override public long getCardioSeconds() { return 0; }
         };
     }
 }

@@ -18,7 +18,12 @@ public record SetResponse(
         BigDecimal rpe,
         boolean newPersonalRecord,
         /* weightKg is the added load (0 = bodyweight only) when this is true */
-        boolean bodyweight
+        boolean bodyweight,
+        /* A cardio set: duration (and maybe distance and calories) instead of weight × reps */
+        boolean cardio,
+        Integer durationSec,
+        Integer distanceM,
+        Integer calories
 ) {
 
     public static SetResponse from(WorkoutSet set) {
@@ -35,6 +40,10 @@ public record SetResponse(
                 set.getWeightKg(),
                 set.getRpe(),
                 newPersonalRecord,
-                set.getExercise().isBodyweight());
+                set.getExercise().isBodyweight(),
+                set.getExercise().isCardio(),
+                set.getDurationSec(),
+                set.getDistanceM(),
+                set.getCalories());
     }
 }

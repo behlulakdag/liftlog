@@ -14,6 +14,8 @@ import jakarta.persistence.Table;
 @Table(name = "exercises")
 public class Exercise {
 
+    public static final String CARDIO = "CARDIO";
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -52,6 +54,11 @@ public class Exercise {
 
     public String getEquipment() {
         return equipment;
+    }
+
+    /** Cardio moves are logged as time and distance, not weight × reps */
+    public boolean isCardio() {
+        return CARDIO.equals(equipment);
     }
 
     public boolean isBodyweight() {
