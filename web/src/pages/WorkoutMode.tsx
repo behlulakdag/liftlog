@@ -16,12 +16,15 @@ interface WorkoutModeProps {
   renderSet: (set: WorkoutSet, index: number, exerciseName: string) => ReactNode
   /** Draws an exercise that is not part of the routine */
   renderExtra: (group: ExerciseGroup, index: number) => ReactNode
+  /** Cardio moves have no weight × reps rows: their card opens the set sheet for a time instead */
+  isCardio?: (exerciseId: number) => boolean
+  onLogCardio?: (exerciseId: number) => void
   /** Posts one set; resolves once the workout and plan were refetched so the row can disappear */
   onLog: (input: SetInput) => Promise<void>
 }
 
 /** Workout mode: one card per routine exercise with its logged sets, then its remaining planned rows. */
-export function WorkoutMode({ plan, sets, muscleOf, renderSet, renderExtra, onLog }: WorkoutModeProps) {
+export function WorkoutMode({ plan, sets, muscleOf, renderSet, renderExtra, onLog, isCardio, onLogCardio }: WorkoutModeProps) {
   const [edits, setEdits] = useState<Record<string, RowValues>>({})
   const [openKey, setOpenKey] = useState<string | null>(null)
   const [invalidKey, setInvalidKey] = useState<string | null>(null)
@@ -59,9 +62,23 @@ export function WorkoutMode({ plan, sets, muscleOf, renderSet, renderExtra, onLo
   return (
     <div className="set-groups">
       {exercises.map((exercise, index) => (
-        <PlannedExerciseCard key={`${exercise.item.exerciseId}-${index}`} exercise={exercise} muscle={muscleOf(exercise.item.exerciseId)} index={index}>
+        <PlannedExerciseCard
+          key={`${exercise.item.exerciseId}-${index}`}
+          exercise={exercise}
+          muscle={muscleOf(exercise.item.exerciseId)}
+          index={index}
+          cardio={isCardio?.(exercise.item.exerciseId) ?? false}
+        >
           {exercise.logged.map((set, i) => renderSet(set, i, exercise.item.name))}
-          {exercise.rows.map((row) => (
+          {isCardio?.(exercise.item.exerciseId) ? (
+            // One run is the whole planned cardio, however many "sets" the routine lists
+            exercise.rows.length > 0 && exercise.logged.length === 0 && (
+              <button type="button" className="btn btn-tonal btn-block cardio-log-btn" onClick={() => onLogCardio?.(exercise.item.exerciseId)}>
+                + {t.logCardio}
+              </button>
+            )
+          ) : (
+            exercise.rows.map((row) => (
             <PlannedSetRow
               key={row.key}
               row={row}
@@ -73,7 +90,8 @@ export function WorkoutMode({ plan, sets, muscleOf, renderSet, renderExtra, onLo
               onChange={(patch) => edit(exercise, row, patch)}
               onTick={() => tick(exercise, row)}
             />
-          ))}
+            ))
+          )}
         </PlannedExerciseCard>
       ))}
       {extras.map((group, i) => renderExtra(group, exercises.length + i))}
@@ -81,10 +99,11 @@ export function WorkoutMode({ plan, sets, muscleOf, renderSet, renderExtra, onLo
   )
 }
 
-function PlannedExerciseCard({ exercise, muscle, index, children }: { exercise: PlannedExercise; muscle: string | null; index: number; children: ReactNode }) {
+function PlannedExerciseCard({ exercise, muscle, index, cardio, children }: { exercise: PlannedExercise; muscle: string | null; index: number; cardio: boolean; children: ReactNode }) {
   const { item, rows } = exercise
   const tag = suggestionTag(item)
-  const done = rows.length === 0
+  // Weight progression and "last time 0 kg × 1" mean nothing for a run: a cardio card is done once it is logged
+  const done = cardio ? exercise.logged.length > 0 : rows.length === 0
   return (
     <section
       className={done ? 'exercise-group plan-card done' : 'exercise-group plan-card'}
@@ -94,14 +113,14 @@ function PlannedExerciseCard({ exercise, muscle, index, children }: { exercise: 
     >
       <div className="exercise-rail" aria-hidden />
       <div className="exercise-group-body">
-        {!done && <span className={`suggestion-tag ${tag.kind}`}>{tag.text}</span>}
+        {!done && !cardio && <span className={`suggestion-tag ${tag.kind}`}>{tag.text}</span>}
         <h3 className="exercise-group-title">
           {item.name}
           {muscle && <span className="muscle-tag">{t.muscleGroups[muscle] ?? muscle}</span>}
         </h3>
         <div className="plan-meta">
-          <span className={done ? 'plan-progress done' : 'plan-progress'}>{done ? `✓ ${t.exerciseDone}` : t.setsLeft(rows.length)}</span>
-          {item.lastWeightKg != null && item.lastReps.length > 0 && (
+          <span className={done ? 'plan-progress done' : 'plan-progress'}>{done ? `✓ ${t.exerciseDone}` : cardio ? t.cardio : t.setsLeft(rows.length)}</span>
+          {!cardio && item.lastWeightKg != null && item.lastReps.length > 0 && (
             <span className="muted num">{t.lastTime(`${formatLoad(item.lastWeightKg, item.bodyweight)} × ${item.lastReps.join(' · ')}`)}</span>
           )}
         </div>

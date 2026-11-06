@@ -7652,3 +7652,14 @@ body:has(.rest-timer) .finish-btn {
 .program-add-goal .field:first-child {
   flex: 1 1 180px;
 }
+
+/* A cardio move in a routine: one button that opens the set sheet for a time, instead of weight × reps rows */
+.cardio-log-btn {
+  margin-top: 6px;
+}
+
+/* The latest session is a line of text ("30:00 · 5,2 km · 5:46 /km"), not one number: smaller and allowed to wrap */
+.cardio-card .stat-tile strong {
+  font-size: 18px;
+  white-space: normal;
+}

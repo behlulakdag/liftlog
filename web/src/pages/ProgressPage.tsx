@@ -4,6 +4,7 @@ import { Bar, BarChart, CartesianGrid, Line, LineChart, ResponsiveContainer, Too
 import { api } from '../api/endpoints'
 import { queryKeys } from '../api/queryKeys'
 import type { PersonalRecord, ProgressPoint, WeeklyVolume } from '../api/types'
+import { CardioCard } from '../components/CardioCard'
 import { CountUp } from '../components/CountUp'
 import { MuscleMapCard } from '../components/MuscleMapCard'
 import { ProgressSkeleton } from '../components/Skeletons'
@@ -18,6 +19,8 @@ const WEEKS = 8
 export function ProgressPage() {
   const records = useQuery({ queryKey: [...queryKeys.stats, 'prs'], queryFn: api.personalRecords })
   const volume = useQuery({ queryKey: [...queryKeys.stats, 'volume', WEEKS], queryFn: () => api.weeklyVolume(WEEKS) })
+  // An older server has no cardio endpoint: the card just stays away
+  const cardio = useQuery({ queryKey: [...queryKeys.stats, 'cardio'], queryFn: api.cardioHistory, retry: false })
   const [picked, setPicked] = useState<number | null>(null)
 
   const selectedId = records.data ? chooseExercise(records.data, picked) : null
@@ -42,7 +45,12 @@ export function ProgressPage() {
     return (
       <div className="page">
         {header}
-        <MessageState icon={<ChartIcon size={32} />} title={t.progressEmptyTitle} body={t.progressEmptyBody} />
+        {/* Someone who only runs has no lifting records yet, but a cardio history */}
+        {cardio.data && cardio.data.length > 0 ? (
+          <CardioCard history={cardio.data} />
+        ) : (
+          <MessageState icon={<ChartIcon size={32} />} title={t.progressEmptyTitle} body={t.progressEmptyBody} />
+        )}
       </div>
     )
   }
@@ -82,6 +90,8 @@ export function ProgressPage() {
           <OneRepMaxChart points={progress.data} />
         )}
       </section>
+
+      {cardio.data && <CardioCard history={cardio.data} />}
 
       <section className="chart-card">
         <h2>{t.volumeTitle}</h2>

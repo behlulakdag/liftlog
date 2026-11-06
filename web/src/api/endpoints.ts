@@ -1,6 +1,6 @@
 import type { CreationOptionsJson, CredentialJson, RequestOptionsJson } from '../lib/webauthn'
 import { request, requestFile } from './client'
-import type { AuthResponse, GroupTraining, LolDeepStats, LolGroup, LolGroupDuo, LolGroupLive, LolLiveGame, LolMastery, LolMatchDetail, LolPlayer, LolPlayerDetail, LolRankPoint, LolRankQueue, LolStatsQueue, LolStatsWindow, LolTimeline, CatalogFood, MuscleStats, Exercise, FoodEntry, FoodInput, FrequentFood, NutritionDay, NutritionGoals, Page, Passkey, PasskeyCeremony, PersonalRecord, PlanItem, Profile, Program, ProgressPoint, Routine, RoutineInput, SetInput, Streak, WeeklyVolume, WeightEntry, WeightHistory, WorkoutDetail, WorkoutRecap, WorkoutSet, WaterDay, WorkoutSummary } from './types'
+import type { AuthResponse, CardioHistory, GroupTraining, LolDeepStats, LolGroup, LolGroupDuo, LolGroupLive, LolLiveGame, LolMastery, LolMatchDetail, LolPlayer, LolPlayerDetail, LolRankPoint, LolRankQueue, LolStatsQueue, LolStatsWindow, LolTimeline, CatalogFood, MuscleStats, Exercise, FoodEntry, FoodInput, FrequentFood, NutritionDay, NutritionGoals, Page, Passkey, PasskeyCeremony, PersonalRecord, PlanItem, Profile, Program, ProgressPoint, Routine, RoutineInput, SetInput, Streak, WeeklyVolume, WeightEntry, WeightHistory, WorkoutDetail, WorkoutRecap, WorkoutSet, WaterDay, WorkoutSummary } from './types'
 
 export const api = {
   register: (email: string, password: string) =>
@@ -43,6 +43,7 @@ export const api = {
   streak: () => request<Streak>('/api/v1/stats/streak'),
   /** `today` is the phone's date, so "the last 7 days" ends on the user's day, not the server's */
   muscleStats: (days: 1 | 7 | 30, today: string) => request<MuscleStats>(`/api/v1/stats/muscles?days=${days}&today=${today}`),
+  cardioHistory: () => request<CardioHistory[]>('/api/v1/stats/cardio'),
   weeklyVolume: (weeks: number) => request<WeeklyVolume[]>(`/api/v1/stats/volume?weeks=${weeks}`),
 
   nutritionDay: (date: string) => request<NutritionDay>(`/api/v1/nutrition/days/${date}`),
