@@ -7,8 +7,8 @@ export interface Exercise {
   custom: boolean
   /** Calisthenics: the logged weight is the added load, and body weight counts in stats */
   bodyweight: boolean
-  /** BARBELL, DUMBBELL, MACHINE, CABLE or BODYWEIGHT for built-ins; null (or missing from older servers) for custom ones */
-  equipment?: 'BARBELL' | 'DUMBBELL' | 'MACHINE' | 'CABLE' | 'BODYWEIGHT' | null
+  /** BARBELL, DUMBBELL, MACHINE, CABLE, BODYWEIGHT or CARDIO for built-ins; null (or missing from older servers) for custom ones */
+  equipment?: 'BARBELL' | 'DUMBBELL' | 'MACHINE' | 'CABLE' | 'BODYWEIGHT' | 'CARDIO' | null
   /** Muscles the exercise works; missing from servers before the muscle map */
   muscles?: ExerciseMuscle[]
 }
@@ -59,6 +59,11 @@ export interface WorkoutSet {
   newPersonalRecord: boolean
   /** weightKg is the added load (0 = bodyweight only) when true */
   bodyweight: boolean
+  /** A cardio set: time (and maybe distance and calories) instead of weight × reps; missing from older servers */
+  cardio?: boolean
+  durationSec?: number | null
+  distanceM?: number | null
+  calories?: number | null
 }
 
 export interface WorkoutDetail {
@@ -125,6 +130,10 @@ export interface SetInput {
   reps: number
   weightKg: number
   rpe: number | null
+  /** Cardio only: the server stores reps 1 and weight 0 beside them */
+  durationSec?: number | null
+  distanceM?: number | null
+  calories?: number | null
 }
 
 export interface AuthResponse {
@@ -207,6 +216,8 @@ export interface WeeklyVolume {
   weekStart: string
   volumeKg: number
   setCount: number
+  /** Time on cardio that week; missing from older servers */
+  cardioSeconds?: number
 }
 
 export interface Profile {
