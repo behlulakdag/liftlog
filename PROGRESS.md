@@ -778,3 +778,13 @@ yüzünden her yeni istek limiter'dan geçiyor ve sonuçlar saklanıp tembelce y
 
 **Sıradaki adımlar:**
 1. PR'ı birleştir; telefonda İlerleme'deki kardiyo kartına bak.
+
+## 2026-11-06 — Hızlı açılış (`feature/fast-start`)
+
+- Arkadaş geri bildirimi: "Sunucu uyanıyor" yazıp uygulama gelmiyordu (Render ücretsiz plan 15 dk sonra uyutuyor).
+- `.github/workflows/keep-alive.yml`: her 10 dakikada `/api/v1/health` ping'i; API uyumaz (750 saatlik kota bir
+  servise yeter). GitHub, depoya 60 gün commit gelmezse zamanlanmış görevleri durdurur.
+- Web: TanStack Query önbelleği telefonda (`liftlog.queryCache.v1`, en fazla 1 hafta, hesap e-postası "buster");
+  antrenman, rutin, beslenme, su, kilo, profil, istatistik saklanır; LoL boyut yüzünden dışarıda.
+  `lib/queryCache.ts` + test. Doğrulama: yerelde API durdurulup sayfa yenilendi, ana sayfa anında son verilerle
+  açıldı; web 557 test, tsc, lint, build.
