@@ -1,5 +1,5 @@
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
-import { render, screen, waitFor } from '@testing-library/react'
+import { cleanup, render, screen, waitFor } from '@testing-library/react'
 import { createMemoryRouter, RouterProvider } from 'react-router'
 import { afterEach, describe, expect, it, vi } from 'vitest'
 import { ConfirmProvider } from '../components/Confirm'
@@ -23,7 +23,11 @@ function renderRoute(path: string) {
   )
 }
 
-afterEach(() => vi.unstubAllGlobals())
+afterEach(() => {
+  // A page left mounted would leak its fallback into the next test
+  cleanup()
+  vi.unstubAllGlobals()
+})
 
 describe('lazy page routes', () => {
   it('a lazy page shows its header and skeleton while its chunk loads, then the page itself', async () => {
@@ -34,7 +38,8 @@ describe('lazy page routes', () => {
     expect(screen.getByTestId('page-fallback')).toBeInTheDocument()
     expect(screen.getByRole('heading', { name: t.profileTitle })).toBeInTheDocument()
 
-    await waitFor(() => expect(screen.queryByTestId('page-fallback')).not.toBeInTheDocument())
+    // The first import of a page chunk is transformed on the fly, which can take seconds while the whole suite runs
+    await waitFor(() => expect(screen.queryByTestId('page-fallback')).not.toBeInTheDocument(), { timeout: 10_000 })
     expect(await screen.findByRole('heading', { name: t.profileTitle })).toBeInTheDocument()
   })
 

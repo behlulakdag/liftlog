@@ -1,7 +1,9 @@
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
+import { QueryClient } from '@tanstack/react-query'
+import { PersistQueryClientProvider } from '@tanstack/react-query-persist-client'
 import { useEffect } from 'react'
 import { createBrowserRouter, RouterProvider } from 'react-router'
 import { AppError } from './api/client'
+import { cacheAccountKey } from './api/session'
 import { ConfirmProvider } from './components/Confirm'
 import { Layout } from './components/Layout'
 import { RestTimerProvider } from './components/RestTimer'
@@ -9,6 +11,7 @@ import { RouteError } from './components/RouteError'
 import { ToastProvider } from './components/Toast'
 import { prefetchRoutePages } from './routing/pageLoaders'
 import { pageRoutes } from './routing/pageRoutes'
+import { QUERY_CACHE_MAX_AGE_MS, queryPersister, shouldKeepQuery } from './lib/queryCache'
 import { SessionGate } from './SessionGate'
 
 const queryClient = new QueryClient({
@@ -18,6 +21,8 @@ const queryClient = new QueryClient({
       retry: (failureCount, error) =>
         failureCount < 2 && error instanceof AppError && (error.kind === 'network' || error.kind === 'server'),
       staleTime: 30_000,
+      // Kept in memory as long as on the phone, so a screen restored from the cache is not dropped before it is shown
+      gcTime: QUERY_CACHE_MAX_AGE_MS,
     },
   },
 })
@@ -38,7 +43,16 @@ export function App() {
   }, [])
 
   return (
-    <QueryClientProvider client={queryClient}>
+    // Opens on the last saved screens at once and refetches behind them; offline they stay visible
+    <PersistQueryClientProvider
+      client={queryClient}
+      persistOptions={{
+        persister: queryPersister,
+        maxAge: QUERY_CACHE_MAX_AGE_MS,
+        buster: cacheAccountKey(),
+        dehydrateOptions: { shouldDehydrateQuery: shouldKeepQuery },
+      }}
+    >
       <ToastProvider>
         <ConfirmProvider>
           <RestTimerProvider>
@@ -48,6 +62,6 @@ export function App() {
           </RestTimerProvider>
         </ConfirmProvider>
       </ToastProvider>
-    </QueryClientProvider>
+    </PersistQueryClientProvider>
   )
 }
