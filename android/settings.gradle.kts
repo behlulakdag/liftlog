@@ -16,3 +16,4 @@ dependencyResolutionManagement {
 
 rootProject.name = "LiftLog"
 include(":app")
+include(":twa")
