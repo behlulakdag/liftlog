@@ -10,11 +10,12 @@ import { t } from '../lib/i18n'
 import { clampSetCount, MAX_SETS_AT_ONCE, sanitizeDecimal, validateSet, type SetField, type SetForm } from '../lib/validation'
 import { groupByMuscle, weightAfterPick, matchesExerciseFilter, type ExerciseFilter } from '../lib/workoutLogic'
 import { BodyFigureIcon, BodyweightIcon } from '../components/Icons'
+import { isCardioExercise, validateCardio, type CardioField, type CardioForm } from '../lib/cardio'
 import { exercisesForMuscle, muscleName, type MapMuscle } from '../lib/muscles'
 import { PickerMuscleMap } from './PickerMuscleMap'
 
 export interface SetEditorProps {
-  initial: SetForm & { exerciseName: string | null; bodyweight: boolean }
+  initial: SetForm & { exerciseName: string | null; bodyweight: boolean; cardio?: boolean; cardioForm?: CardioForm }
   isEditing: boolean
   isSaving: boolean
   /** count > 1 adds that many identical sets (add mode only) */
@@ -27,6 +28,9 @@ export function SetEditorSheet({ initial, isEditing, isSaving, onSave, onDelete,
   const [form, setForm] = useState<SetForm>(initial)
   const [exerciseName, setExerciseName] = useState(initial.exerciseName)
   const [bodyweight, setBodyweight] = useState(initial.bodyweight)
+  const [cardio, setCardio] = useState(initial.cardio ?? false)
+  const [cardioForm, setCardioForm] = useState<CardioForm>(initial.cardioForm ?? { duration: '', distance: '', calories: '' })
+  const [cardioErrors, setCardioErrors] = useState<Set<CardioField>>(new Set())
   const [errors, setErrors] = useState<Set<SetField>>(new Set())
   const [picking, setPicking] = useState(initial.exerciseId === null)
   const [setCount, setSetCount] = useState(1)
@@ -40,7 +44,26 @@ export function SetEditorSheet({ initial, isEditing, isSaving, onSave, onDelete,
     })
   }
 
+  const updateCardio = (patch: Partial<CardioForm>, cleared: CardioField) => {
+    setCardioForm((f) => ({ ...f, ...patch }))
+    setCardioErrors((e) => {
+      const next = new Set(e)
+      next.delete(cleared)
+      return next
+    })
+  }
+
   const submit = () => {
+    if (cardio) {
+      const result = validateCardio(form.exerciseId, cardioForm)
+      if (!result.input) {
+        setCardioErrors(result.errors)
+        if (form.exerciseId === null) setErrors(new Set(['exercise']))
+        return
+      }
+      onSave(result.input, 1)
+      return
+    }
     const result = validateSet(form)
     if (!result.input) {
       setErrors(result.errors)
@@ -57,6 +80,7 @@ export function SetEditorSheet({ initial, isEditing, isSaving, onSave, onDelete,
             update({ exerciseId: exercise.id, weight: weightAfterPick(form.weight, bodyweight, exercise) }, 'exercise')
             setExerciseName(exercise.name)
             setBodyweight(exercise.bodyweight)
+            setCardio(isCardioExercise(exercise))
             setPicking(false)
           }}
           onBack={form.exerciseId !== null ? () => setPicking(false) : undefined}
@@ -80,10 +104,42 @@ export function SetEditorSheet({ initial, isEditing, isSaving, onSave, onDelete,
             <span className="selector-value">
               {exerciseName ?? t.chooseExercise}
               {bodyweight && <span className="badge badge-bodyweight">{t.calisthenics}</span>}
+              {cardio && <span className="badge badge-bodyweight">{t.cardio}</span>}
             </span>
           </span>
           <span aria-hidden>›</span>
         </button>
+        {cardio ? (
+          <>
+            <NumberField
+              id="duration"
+              label={t.cardioDurationLabel}
+              value={cardioForm.duration}
+              error={cardioErrors.has('duration') ? t.errorDuration : null}
+              inputMode="decimal"
+              onChange={(value) => updateCardio({ duration: value.replace(/[^\d:]/g, '').slice(0, 8) }, 'duration')}
+            />
+            <div className="row">
+              <NumberField
+                id="distance"
+                label={t.distanceKmOptional}
+                value={cardioForm.distance}
+                error={cardioErrors.has('distance') ? t.errorDistance : null}
+                inputMode="decimal"
+                onChange={(value) => updateCardio({ distance: sanitizeDecimal(value, 7) }, 'distance')}
+              />
+              <NumberField
+                id="calories"
+                label={t.caloriesOptional}
+                value={cardioForm.calories}
+                error={cardioErrors.has('calories') ? t.cardioErrorCalories : null}
+                inputMode="numeric"
+                onChange={(value) => updateCardio({ calories: value.replace(/\D/g, '').slice(0, 5) }, 'calories')}
+              />
+            </div>
+          </>
+        ) : (
+          <>
         <div className="row">
           <NumberField
             id="weight"
@@ -114,6 +170,8 @@ export function SetEditorSheet({ initial, isEditing, isSaving, onSave, onDelete,
           />
           {!isEditing && <SetCountStepper value={setCount} onChange={setSetCount} />}
         </div>
+          </>
+        )}
         <div className="row" style={{ alignItems: 'center' }}>
           {isEditing && onDelete && (
             <button type="button" className="btn btn-danger" style={{ flex: 'none' }} onClick={onDelete} disabled={isSaving}>
@@ -121,7 +179,7 @@ export function SetEditorSheet({ initial, isEditing, isSaving, onSave, onDelete,
             </button>
           )}
           <button type="submit" className="btn btn-primary btn-block" disabled={isSaving} data-testid="save-set">
-            {isSaving ? <span className="spinner small" /> : setCount > 1 && !isEditing ? t.saveSets(setCount) : t.save}
+            {isSaving ? <span className="spinner small" /> : setCount > 1 && !isEditing && !cardio ? t.saveSets(setCount) : t.save}
           </button>
         </div>
       </form>
@@ -229,6 +287,9 @@ export function ExercisePicker({ onPick, onBack }: { onPick: (exercise: Exercise
         </button>
         <button className={filter === 'bodyweight' ? 'filter-chip selected' : 'filter-chip'} onClick={() => setFilter('bodyweight')}>
           <BodyweightIcon /> {t.calisthenics}
+        </button>
+        <button className={filter === 'cardio' ? 'filter-chip selected' : 'filter-chip'} onClick={() => setFilter('cardio')}>
+          {t.cardio}
         </button>
         <button className="btn btn-text" style={{ marginLeft: 'auto' }} onClick={() => setCreating(true)}>
           + {t.newExercise}

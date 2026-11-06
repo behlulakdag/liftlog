@@ -17,7 +17,7 @@ public interface StatsRepository extends Repository<WorkoutSet, Long> {
                 s.weightKg + case when e.bodyweight = true then coalesce(u.bodyWeightKg, 0) else 0 end,
                 s.weightKg, e.bodyweight)
             from WorkoutSet s join s.workout w join w.user u join s.exercise e
-            where u.id = :userId
+            where u.id = :userId and (e.equipment is null or e.equipment <> 'CARDIO')
             order by w.workoutDate, s.setOrder
             """)
     List<SetFact> findAllFacts(@Param("userId") Long userId);
@@ -28,7 +28,7 @@ public interface StatsRepository extends Repository<WorkoutSet, Long> {
                 s.weightKg + case when e.bodyweight = true then coalesce(u.bodyWeightKg, 0) else 0 end,
                 s.weightKg, e.bodyweight)
             from WorkoutSet s join s.workout w join w.user u join s.exercise e
-            where u.id = :userId and e.id = :exerciseId
+            where u.id = :userId and e.id = :exerciseId and (e.equipment is null or e.equipment <> 'CARDIO')
             order by w.workoutDate, s.setOrder
             """)
     List<SetFact> findFactsForExercise(@Param("userId") Long userId, @Param("exerciseId") Long exerciseId);
@@ -120,7 +120,8 @@ public interface StatsRepository extends Repository<WorkoutSet, Long> {
             select cast(date_trunc('week', w.workout_date) as date) as week_start,
                    sum(s.reps * (s.weight_kg + case when e.bodyweight then coalesce(u.body_weight_kg, 0) else 0 end))
                                                                     as volume_kg,
-                   count(s.id)                                      as set_count
+                   count(s.id)                                      as set_count,
+                   coalesce(sum(s.duration_sec), 0)                 as cardio_seconds
             from workout_sets s
             join workouts w on w.id = s.workout_id
             join exercises e on e.id = s.exercise_id
@@ -137,5 +138,7 @@ public interface StatsRepository extends Repository<WorkoutSet, Long> {
         java.math.BigDecimal getVolumeKg();
 
         long getSetCount();
+
+        long getCardioSeconds();
     }
 }

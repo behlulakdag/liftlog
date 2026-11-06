@@ -40,6 +40,15 @@ public class WorkoutSet {
     @Column(precision = 3, scale = 1)
     private BigDecimal rpe;
 
+    /* Cardio only; null on a weight set */
+    @Column(name = "duration_sec")
+    private Integer durationSec;
+
+    @Column(name = "distance_m")
+    private Integer distanceM;
+
+    private Integer calories;
+
     protected WorkoutSet() {
     }
 
@@ -49,6 +58,25 @@ public class WorkoutSet {
         this.reps = reps;
         this.weightKg = weightKg;
         this.rpe = rpe;
+    }
+
+    public Integer getDurationSec() {
+        return durationSec;
+    }
+
+    public Integer getDistanceM() {
+        return distanceM;
+    }
+
+    public Integer getCalories() {
+        return calories;
+    }
+
+    /** All null for a weight set */
+    public void setCardio(Integer durationSec, Integer distanceM, Integer calories) {
+        this.durationSec = durationSec;
+        this.distanceM = distanceM;
+        this.calories = calories;
     }
 
     public Long getId() {

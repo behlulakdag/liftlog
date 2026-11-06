@@ -34,7 +34,8 @@ public final class StatsDtos {
     public record StreakResponse(int weeks, int thisWeekWorkouts, int longestWeeks) {
     }
 
-    public record WeeklyVolumeResponse(LocalDate weekStart, BigDecimal volumeKg, long setCount) {
+    /** @param cardioSeconds time spent on cardio sets that week */
+    public record WeeklyVolumeResponse(LocalDate weekStart, BigDecimal volumeKg, long setCount, long cardioSeconds) {
     }
 
     /**

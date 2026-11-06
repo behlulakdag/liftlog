@@ -745,3 +745,21 @@ yüzünden her yeni istek limiter'dan geçiyor ve sonuçlar saklanıp tembelce y
   Asistanlı barfiks/dips makineleri bilerek bırakıldı (yazılan kilo yardım miktarı).
 - Doğrulama: `mvnw verify` (katalog testi yeni hareketleri de kontrol ediyor); yerelde 78 kg profil + Back
   Extension 17 tekrar, 0 ek ağırlık → hacim 1.326 kg, pencere "Ek ağırlık (kg)" gösteriyor.
+
+## 2026-11-06 — Kardiyo (`feature/cardio`)
+
+- Backend: V29; ekipman `CARDIO` ile 14 kardiyo hareketi (Running, Treadmill, Incline Treadmill Walk, Walking,
+  Hiking, Outdoor Cycling, Stationary Bike, Assault Bike, Elliptical, Rowing Machine, Stair Climber, Jump Rope,
+  Swimming, Ski Erg); setlere `duration_sec`, `distance_m`, `calories`. Kardiyo seti süre ister, 1 × 0 kg saklanır
+  (hacim ve set sayısı bozulmaz); rekor, 1RM ve ilerleme grafiği kardiyoyu dışarıda bırakır; haftalık özette
+  `cardioSeconds`. Test: `cardioSetsAreTimeAndDistanceAndStayOutOfLiftingStats`.
+- Web: hareket seçicide "Kardiyo" filtresi; kardiyo seçilince set penceresi süre (30 ya da 30:15), mesafe (km),
+  kalori sorar; set satırı "30:00 · 5,2 km · 5:46 /km"; kardiyodan sonra dinlenme sayacı başlamaz; ana sayfada
+  "30 dk kardiyo". `lib/cardio.ts` + 6 test, `CardioSetEditor.test.tsx` 3 test.
+- Doğrulama: backend `mvnw verify`; web 550 test, tsc, lint, build; yerelde koşu 30:00 / 5,2 km eklendi.
+- Bilinen eksik: rutinlerde kardiyo hareketi için "planlı set ✓" süre göndermediği için reddedilir; kardiyo
+  grafikleri ve dışa aktarmada süre/mesafe sütunları yok.
+
+**Sıradaki adımlar:**
+1. PR'ı birleştir; telefonda bir koşu kaydet.
+2. Android APK (TWA).

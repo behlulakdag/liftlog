@@ -157,6 +157,17 @@ const en = {
   bodyweightPlus: (kg: string) => `BW + ${kg} kg`,
   calisthenics: 'Bodyweight',
   machines: 'Machines',
+  cardio: 'Cardio',
+  cardioDurationLabel: 'Time (min or min:sec)',
+  distanceKmOptional: 'Distance (km, optional)',
+  caloriesOptional: 'Calories (optional)',
+  errorDuration: 'Enter a time, e.g. 30 or 30:15',
+  errorDistance: 'Enter a distance in km',
+  cardioErrorCalories: 'Enter a whole number',
+  paceShort: (pace: string) => `${pace} /km`,
+  kmShort: (km: string) => `${km} km`,
+  kcalShort: (kcal: number) => `${kcal} kcal`,
+  cardioWeek: (minutes: number) => `${minutes} min cardio`,
   machineBadge: 'Machine',
   cableBadge: 'Cable',
   allExercises: 'All',
@@ -798,7 +809,7 @@ const en = {
     HAMSTRINGS: 'Hamstrings',
     CALVES: 'Calves',
   } as Record<string, string>,
-  muscleGroups: { Legs: 'Legs', Back: 'Back', Chest: 'Chest', Shoulders: 'Shoulders', Arms: 'Arms', Core: 'Core', Other: 'Other' } as Record<string, string>,
+  muscleGroups: { Legs: 'Legs', Back: 'Back', Chest: 'Chest', Shoulders: 'Shoulders', Arms: 'Arms', Core: 'Core', Cardio: 'Cardio', Other: 'Other' } as Record<string, string>,
 }
 
 type Strings = typeof en
@@ -960,6 +971,17 @@ const tr: Strings = {
   bodyweightPlus: (kg) => `VA + ${kg} kg`,
   calisthenics: 'Kalistenik',
   machines: 'Makine',
+  cardio: 'Kardiyo',
+  cardioDurationLabel: 'Süre (dk ya da dk:sn)',
+  distanceKmOptional: 'Mesafe (km, isteğe bağlı)',
+  caloriesOptional: 'Kalori (isteğe bağlı)',
+  errorDuration: 'Bir süre yaz, ör. 30 ya da 30:15',
+  errorDistance: 'Mesafeyi km olarak yaz',
+  cardioErrorCalories: 'Tam sayı yaz',
+  paceShort: (pace) => `${pace} /km`,
+  kmShort: (km) => `${km} km`,
+  kcalShort: (kcal) => `${kcal} kcal`,
+  cardioWeek: (minutes) => `${minutes} dk kardiyo`,
   machineBadge: 'Makine',
   cableBadge: 'Kablo',
   allExercises: 'Tümü',
@@ -1598,7 +1620,7 @@ const tr: Strings = {
     HAMSTRINGS: 'Arka bacak',
     CALVES: 'Baldır',
   },
-  muscleGroups: { Legs: 'Bacak', Back: 'Sırt', Chest: 'Göğüs', Shoulders: 'Omuz', Arms: 'Kol', Core: 'Karın', Other: 'Diğer' },
+  muscleGroups: { Legs: 'Bacak', Back: 'Sırt', Chest: 'Göğüs', Shoulders: 'Omuz', Arms: 'Kol', Core: 'Karın', Cardio: 'Kardiyo', Other: 'Diğer' },
 }
 
 /** "device" follows the phone's language; the other two are a choice made on the Profile page. */

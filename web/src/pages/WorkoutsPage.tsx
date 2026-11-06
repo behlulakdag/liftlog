@@ -164,7 +164,12 @@ function WeekHero({ weeks, streakWeeks }: { weeks: WeeklyVolume[]; streakWeeks: 
   const thisWeek = weeks.at(-1)?.volumeKg ?? 0
   const lastWeek = weeks.at(-2)?.volumeKg
   const tallest = Math.max(1, ...weeks.map((week) => week.volumeKg))
-  const meta = [lastWeek != null ? t.lastWeekVolume(formatKg(lastWeek)) : null, streakWeeks > 0 ? t.streakWeeks(streakWeeks) : null]
+  const cardioMinutes = Math.round((weeks.at(-1)?.cardioSeconds ?? 0) / 60)
+  const meta = [
+    lastWeek != null ? t.lastWeekVolume(formatKg(lastWeek)) : null,
+    streakWeeks > 0 ? t.streakWeeks(streakWeeks) : null,
+    cardioMinutes > 0 ? t.cardioWeek(cardioMinutes) : null,
+  ]
   return (
     <section className="week-hero" data-testid="week-hero">
       <div className="week-hero-text">

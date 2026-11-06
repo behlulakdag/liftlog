@@ -27,6 +27,7 @@ import { WorkoutMode } from './WorkoutMode'
 import { WorkoutRecapSheet } from './WorkoutRecapSheet'
 import { CheckIcon, CloudUploadIcon, DumbbellIcon } from '../components/Icons'
 import { goBackOrHome } from '../lib/navigation'
+import { formatDuration, formatKm, formatPace, isCardioExercise, isCardioSet } from '../lib/cardio'
 
 /** `exercise`: adding starts on it, as if it had been picked (from the muscle map's suggestions) */
 type Editor = { mode: 'add'; exercise?: Exercise } | { mode: 'edit'; set: WorkoutSet }
@@ -136,7 +137,7 @@ export function WorkoutDetailPage() {
         // If one fails, the sets already saved stay and the list is refreshed in `finally`.
         const results: AddResult[] = []
         for (let i = 0; i < count; i++) results.push(await addOrQueue(input))
-        reachedServer = afterSetsAdded(results)
+        reachedServer = afterSetsAdded(results, input.durationSec != null)
       } else {
         await changeOrQueue(editor.set.id, input)
       }
@@ -151,14 +152,15 @@ export function WorkoutDetailPage() {
   }
 
   /**
-   * Highlights the newest set, starts the rest timer and celebrates any personal record.
+   * Highlights the newest set, starts the rest timer (not after cardio) and celebrates any personal record.
    * Returns false when every set is waiting on the phone, so there is nothing to refetch.
    */
-  const afterSetsAdded = (results: AddResult[]): boolean => {
+  const afterSetsAdded = (results: AddResult[], cardio: boolean): boolean => {
     const saved = results.flatMap((r) => ('saved' in r ? [r.saved] : []))
     const last = results.at(-1)!
     setNewSetId('saved' in last ? last.saved.id : last.queuedId)
-    restTimer.start()
+    // A run or a ride needs no rest countdown before the next exercise
+    if (!cardio) restTimer.start()
     const queued = results.length - saved.length
     // Explained once, when the queue starts; after that the banner keeps the count
     if (queued > 0 && outbox.items().length === queued) toast({ message: t.setSavedOffline, durationMs: 4500 })
@@ -180,7 +182,7 @@ export function WorkoutDetailPage() {
     unlockAudio()
     let reachedServer = true
     try {
-      reachedServer = afterSetsAdded([await addOrQueue(input)])
+      reachedServer = afterSetsAdded([await addOrQueue(input)], input.durationSec != null)
     } catch (error) {
       toast({ message: errorMessage(error) })
     } finally {
@@ -265,9 +267,22 @@ export function WorkoutDetailPage() {
             #{i + 1}
             {recordSetIds.has(set.id) && <span className="pr-badge">{t.prBadge}</span>}
           </span>
-          <span className={set.bodyweight ? 'set-weight num bodyweight' : 'set-weight num'}>{formatLoad(set.weightKg, set.bodyweight)}</span>
-          <span className="set-reps num">× {set.reps}</span>
-          <span className="set-rpe">{set.rpe != null ? t.rpe(formatKg(set.rpe)) : ''}</span>
+          {isCardioSet(set) && set.durationSec != null ? (
+            // A cardio set reads like a watch: time, then distance and pace when there is a distance
+            <>
+              <span className="set-weight num">{formatDuration(set.durationSec)}</span>
+              <span className="set-reps num">{set.distanceM ? t.kmShort(formatKm(set.distanceM)) : ''}</span>
+              <span className="set-rpe">
+                {formatPace(set.durationSec, set.distanceM) ? t.paceShort(formatPace(set.durationSec, set.distanceM)!) : set.calories != null ? t.kcalShort(set.calories) : ''}
+              </span>
+            </>
+          ) : (
+            <>
+              <span className={set.bodyweight ? 'set-weight num bodyweight' : 'set-weight num'}>{formatLoad(set.weightKg, set.bodyweight)}</span>
+              <span className="set-reps num">× {set.reps}</span>
+              <span className="set-rpe">{set.rpe != null ? t.rpe(formatKg(set.rpe)) : ''}</span>
+            </>
+          )}
           {waiting ? (
             <span className="pending-badge">
               <CloudUploadIcon size={13} />
@@ -407,6 +422,8 @@ function editorProps(editor: Editor, sets: WorkoutSet[], saving: boolean): Omit<
     exerciseId: source?.exerciseId ?? null,
     exerciseName: source?.exerciseName ?? null,
     bodyweight: source?.bodyweight ?? false,
+    cardio: source ? isCardioSet(source) : false,
+    cardioForm: cardioFormOf(source),
     reps: source ? String(source.reps) : '',
     weight: source ? String(source.weightKg) : '',
     rpe: editor.mode === 'edit' && editor.set.rpe != null ? String(editor.set.rpe) : '',
@@ -416,6 +433,16 @@ function editorProps(editor: Editor, sets: WorkoutSet[], saving: boolean): Omit<
     isEditing: editor.mode === 'edit',
     isSaving: saving,
     initial: picked ? suggestedStart(picked, sets, initial.reps) : initial,
+  }
+}
+
+/** The editor's text fields for a cardio set, so editing or repeating one starts from its values. */
+function cardioFormOf(set: WorkoutSet | undefined) {
+  if (!set?.durationSec) return undefined
+  return {
+    duration: formatDuration(set.durationSec),
+    distance: set.distanceM ? String(set.distanceM / 1000) : '',
+    calories: set.calories != null ? String(set.calories) : '',
   }
 }
 
@@ -429,6 +456,8 @@ function suggestedStart(picked: Exercise, sets: WorkoutSet[], reps: string): Set
     exerciseId: picked.id,
     exerciseName: picked.name,
     bodyweight: picked.bodyweight,
+    cardio: isCardioExercise(picked),
+    cardioForm: cardioFormOf(last),
     reps: last ? String(last.reps) : reps,
     weight: last ? String(last.weightKg) : weightAfterPick('', !picked.bodyweight, picked),
     rpe: '',

@@ -107,8 +107,8 @@ public class StatsService {
         for (LocalDate week = firstMonday; !week.isAfter(thisMonday); week = week.plusWeeks(1)) {
             StatsRepository.WeeklyVolumeRow row = rows.get(week);
             result.add(row == null
-                    ? new WeeklyVolumeResponse(week, BigDecimal.ZERO, 0)
-                    : new WeeklyVolumeResponse(week, row.getVolumeKg(), row.getSetCount()));
+                    ? new WeeklyVolumeResponse(week, BigDecimal.ZERO, 0, 0)
+                    : new WeeklyVolumeResponse(week, row.getVolumeKg(), row.getSetCount(), row.getCardioSeconds()));
         }
         return result;
     }

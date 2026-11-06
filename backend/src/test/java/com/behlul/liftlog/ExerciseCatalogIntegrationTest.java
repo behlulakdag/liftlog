@@ -43,7 +43,8 @@ class ExerciseCatalogIntegrationTest {
     @Test
     void v25AddsTheCalisthenicsMachinesAndFreeWeightsPerGroup() {
         Integer builtIns = jdbcTemplate.queryForObject("SELECT count(*) FROM exercises WHERE user_id IS NULL", Integer.class);
-        assertThat(builtIns).isEqualTo(BUILT_INS_BEFORE_V25 + 180);
+        // V25 adds 180, V29 the 14 cardio moves
+        assertThat(builtIns).isEqualTo(BUILT_INS_BEFORE_V25 + 180 + 14);
 
         List<String> names = jdbcTemplate.queryForList("SELECT name FROM exercises WHERE user_id IS NULL", String.class);
         assertThat(names).contains("Negative Pull-up", "Archer Pull-up", "Ring Dip", "Pseudo Planche Push-up", "Nordic Curl",
