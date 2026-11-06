@@ -61,11 +61,15 @@ class ExerciseCatalogIntegrationTest {
         Map<String, Object> flags = jdbcTemplate.queryForMap("""
                 SELECT bool_and(bodyweight) FILTER (WHERE name IN ('Negative Pull-up', 'Ring Dip', 'Plank', 'Burpee', 'Nordic Curl'))
                            AS calisthenics,
+                       bool_and(bodyweight) FILTER (WHERE name IN ('Back Extension', '45° Back Extension', 'GHD Sit-up', 'Glute-Ham Raise'))
+                           AS benchBodyweight,
                        bool_or(bodyweight) FILTER (WHERE name IN ('Pendulum Squat', 'Cable Crossover', 'Arnold Press', 'Sumo Deadlift'))
                            AS loaded,
                        count(*) FILTER (WHERE bodyweight <> (equipment = 'BODYWEIGHT')) AS mismatched
                 FROM exercises WHERE user_id IS NULL""");
         assertThat(flags.get("calisthenics")).isEqualTo(true);
+        // V28: moved on a bench or a GHD, loaded by the body
+        assertThat(flags.get("benchbodyweight")).isEqualTo(true);
         assertThat(flags.get("loaded")).isEqualTo(false);
         assertThat(((Number) flags.get("mismatched")).intValue()).isZero();
 
