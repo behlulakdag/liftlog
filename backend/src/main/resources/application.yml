@@ -14,10 +14,14 @@ spring:
     hikari:
       # Small pool: free hosted PostgreSQL plans allow few connections
       maximum-pool-size: ${DB_POOL_SIZE:5}
-      # Neon suspends idle databases and drops their connections; recycle ours before that happens
-      idle-timeout: 120000
+      # Neon only suspends (and stops counting free compute hours) once no connection is open. The API itself never
+      # sleeps (an uptime monitor pings it), so an always-full pool with keepalive queries kept the database awake
+      # around the clock and used up the month's free quota. Hold no idle connections: close them after 1 minute
+      # and send no keepalive, so Neon can sleep 5 minutes after the last real request.
+      minimum-idle: 0
+      idle-timeout: 60000
       max-lifetime: 240000
-      keepalive-time: 60000
+      keepalive-time: 0
   jpa:
     hibernate:
       # Flyway owns the schema; Hibernate only checks that entities match it
